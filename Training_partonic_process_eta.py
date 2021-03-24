@@ -32,7 +32,9 @@ training_data_eta = tf.constant([train_dataset["Eta"]], shape=(len(train_dataset
 test_data_eta = tf.constant([test_dataset["Eta"]], shape=(len(test_dataset["Eta"]), 1), dtype="float32")
 
 training_data = tf.data.Dataset.from_tensor_slices((training_data_eta, train_dataset["WQ"]))
+print(training_data)
 training_data = training_data.batch(batch_size=batch_size)
+print(training_data)
 
 #initialisiere Model
 eta_model = Layers.DNN(nr_hidden_layers=3, units=units, outputs=1)

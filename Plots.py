@@ -13,11 +13,11 @@ theta = diff_WQ_theta_data["Theta"]
 diff_WQ_theta = diff_WQ_theta_data["WQ"]
 
 plt.plot(eta, diff_WQ_eta)
-plt.ylabel("d(sigma)/d(eta)")
+plt.ylabel(r"$\frac{d\sigma}{d\eta}$")
 plt.show()
 
 Graph_theta = plt.plot(theta, diff_WQ_theta)
-plt.ylabel("d(sigma)/d(theta)")
+plt.ylabel(r"$\frac{d\sigma}{d\theta}$")
 plt.ylim([0, 50])
 plt.xlim([0.01, 3.14])
 plt.show()

@@ -14,10 +14,10 @@ best_losses_theta = pd.read_csv("best_losses_theta")
 total_data = len(diff_WQ_theta_data_raw["Theta"])
 print("Messwerte:", total_data)
 train_frac = 0.8
-batch_size = 128
+batch_size = 64
 buffer_size = int(total_data * train_frac)
 training_epochs = 100
-units = 64
+units = 32
 learning_rate  = 3e-4
 best_total_loss = best_losses_theta["best_total_loss"]
 best_total_loss_squared = best_losses_theta["best_total_loss_squared"]
