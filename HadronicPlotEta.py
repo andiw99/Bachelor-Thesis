@@ -1,5 +1,8 @@
 from matplotlib import pyplot as plt
 import pandas as pd
+import time
+
+time1 = time.time()
 
 #Daten einlesen
 hadronic_WQ_data = pd.read_csv("hadronic_WQ_data")
@@ -32,4 +35,8 @@ plt.text(1, 1.2e-4, r"$x_1 = 0.2, $"
 
 plt.tight_layout()
 plt.show()
+
+time2 = time.time()
+
+print("Zeit, um Plot zu generieren:", time2-time1)
 

@@ -42,12 +42,15 @@ test_dataset = dataset.drop(train_dataset.index)
 #plt.show()
 train_features = train_dataset.copy()
 test_features = test_dataset.copy()
+print("train_features bevor Normalizer:", train_features)
 
 train_labels = train_features.pop('MPG')
 test_labels = test_features.pop('MPG')
 
 normalizer = preprocessing.Normalization()
 normalizer.adapt(np.array(train_features))
+
+print("train_features nach Normalizer:", train_features)
 
 horsepower = np.array(train_features["Horsepower"])
 horsepower_normalizer = preprocessing.Normalization(input_shape=[1,])

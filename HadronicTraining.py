@@ -9,20 +9,24 @@ import time
 
 time1 = time.time()
 #Daten einlesen
-hadronic_WQ_data_raw = pd.read_csv("hadronic_WQ_data")
+hadronic_WQ_data_raw = pd.read_csv("less_hadronic_WQ_data")
 #best_losses = pd.read_csv("hadronic_best_losses")
-time2= time.time()
-print("Zeit nur zum Einlesen von 4000000 Punkten:", time2-time1,"s")
+
 
 #Variablen...
 total_data = len(hadronic_WQ_data_raw["eta"])
 train_frac = 0.999
-batch_size = 256
+batch_size = 32
 buffer_size = int(total_data * train_frac)
 training_epochs = 5
-units = 128
-learning_rate = 3e-3
+nr_layers = 4
+units = 64
+learning_rate = 3e-5
+l2_kernel = 0.005
+l2_bias = 0.005
 #best_total_loss = best_losses
+time2= time.time()
+print("Zeit nur zum Einlesen von ", total_data, "Punkten:", time2-time1,"s")
 
 #Daten vorbereiten
 train_dataset = hadronic_WQ_data_raw.sample(frac=train_frac, random_state=0)
@@ -51,24 +55,31 @@ time3 = time.time()
 print("Zeit, um Daten vorzubereiten:", time3-time1)
 
 #initialisiere Model
-hadronic_model = Layers.DNN(nr_hidden_layers=5, units=units, outputs=1)
-loss_fn = tf.keras.losses.MeanAbsoluteError()
+hadronic_model = Layers.DNN(nr_hidden_layers=nr_layers, units=units, outputs=1, kernel_regularization=keras.regularizers.l2(l2=l2_kernel), bias_regularization=keras.regularizers.l2(l2=l2_bias))
+loss_fn = tf.keras.losses.MeanSquaredError()
 optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)
+print("regularizer:", keras.regularizers.l2(l2=0.01))
 
 #Training starten
 losses = []
 steps =[]
 epochs = []
-
+total_steps = 0
 for epoch in range(training_epochs):
     epochs.append(epoch)
     loss = 0
+    #Evaluation in every epoch
+    results = hadronic_model(test_features)
+    total_loss = loss_fn(results, test_labels)
+    print("total loss:", float(total_loss))
     for step, (x,y) in enumerate(training_data):
-        loss += hadronic_model.train_on_batch(x=x, y=y, loss_fn=loss_fn, optimizer=optimizer)
-        if step % 1000 == 0:
+        loss = hadronic_model.train_on_batch(x=x, y=y, loss_fn=loss_fn, optimizer=optimizer)
+        total_steps += 1
+        if step % (int(total_data/(8*batch_size))) == 0:
             print("Epoch:", epoch+1, "Step:", step, "Loss:", float(loss))
-            steps.append(step)
-    losses.append(loss)
+            steps.append(total_steps)
+            losses.append(loss)
+    training_data.shuffle(buffer_size=total_data)
 
 #Überprüfen wie gut es war
 results = hadronic_model(test_features)
@@ -76,9 +87,29 @@ total_loss = loss_fn(results, test_labels)
 print("total loss:", float(total_loss))
 
 #Losses plotten
-plt.plot(epochs, losses)
+plt.plot(steps, losses)
 plt.ylabel("Losses")
 plt.xlabel("Epoch")
 plt.show()
 
+#plot für eta plotten
+#plotte Graphen für eta, für x_1=x_2=0.2
+x_1 = 0.2
+x_2 = x_1
+WQ_list = []
+eta_list = []
+step = 0
+for i in range(-200, 200):
+    eta = 3*i/200
+    x = tf.constant([[x_1, x_2, eta]])
+    step += 1
+    if step % 50 == 0:
+        print("Prediction für", eta, "ist", float(hadronic_model(x)))
+    WQ_list.append(float(hadronic_model(x)))
+    eta_list.append(eta)
+
+plt.plot(eta_list, WQ_list)
+plt.xlabel(r"$\eta$")
+plt.ylabel("WQ")
+plt.show()
 

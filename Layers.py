@@ -7,29 +7,41 @@ from tensorflow import keras
 class Linear(keras.layers.Layer):
     """y = w.x + b"""
 
-    def __init__(self, units=32, name="Linear_layer"):
+    def __init__(self, units=32, name="Linear_layer", kernel_regularization=None, bias_regularization=None):
         super(Linear, self).__init__()
         self.units = units
         self.weight_name = name
+        self.kernel_regularization = kernel_regularization
+        self.bias_regularization = bias_regularization
 
     def build(self, input_shape):
-        print("input shape:", input_shape)
-        print("input shape[-1]:", input_shape[-1])
+        #print("input shape in Layer:", self.weight_name, input_shape)
+        #print("input shape[-1]:", input_shape[-1])
 
         self.w = self.add_weight(
             shape=(input_shape[-1], self.units),
-            initializer="random_normal",
+            initializer="HeNormal",
             trainable=True,
             name= self.weight_name,
         )
-        print("weights:", self.w)
+        #print("weights von:", self.weight_name, self.w)
         self.b = self.add_weight(
             shape=(self.units,), initializer="random_normal", trainable=True,
             name = self.weight_name,
         )
 
     def call(self, inputs):
-        return tf.matmul(inputs, self.w) + self.b
+        output = tf.matmul(inputs, self.w) + self.b
+        #print("output von Layer:", self.weight_name, output)
+        return output
+
+    def get_regularization(self):
+        if self.kernel_regularization == None:
+            return self.bias_regularization(self.b)
+        if self.bias_regularization == None:
+            return self.kernel_regularization(self.w)
+        else:
+            return self.kernel_regularization(self.w) + self.bias_regularization(self.b)
 
     def get_config(self):
         return {"units": self.units}
@@ -68,7 +80,7 @@ class MLP(keras.Model):
             logits = self.call(x)
             loss = loss_fn(logits, y)
             gradients = tape.gradient(loss, self.trainable_weights)
-        optimizer.apply_gradients(zip(gradients, self.trainable_weights))
+            optimizer.apply_gradients(zip(gradients, self.trainable_weights))
         return loss
 
     def get_config(self):
@@ -80,22 +92,35 @@ class MLP(keras.Model):
 
 class DNN(keras.Model):
     #im def oder im call läuft noch irgendetwas falsch, sollte eigentlich gleich sein wie MLP
-    def __init__(self, nr_hidden_layers=3, units=64, outputs=1):
+    def __init__(self, nr_hidden_layers=3, units=64, outputs=1, kernel_regularization=None, bias_regularization=None):
         super(DNN, self).__init__()
         self.units = units
         self.nr_hidden_layers = nr_hidden_layers
         self.hidden_layers = []
+        self.kernel_regularization = kernel_regularization
+        self.bias_regularization = bias_regularization
         for i in range(self.nr_hidden_layers):
             name = "Layer_" + str(i)
-            self.hidden_layers.append(Linear(units=self.units, name=name))
+            self.hidden_layers.append(Linear(units=self.units, name=name, kernel_regularization=self.kernel_regularization, bias_regularization=self.bias_regularization))
         #self.hidden_layers = [Linear(units=self.units, name="hidden_layer") in range(self.nr_hidden_layers)]
-        self.linear_output = Linear(units=outputs, name="output_layer")
+        self.linear_output = Linear(units=outputs, name="output_layer", kernel_regularization=self.kernel_regularization, bias_regularization=self.bias_regularization)
+
 
     def call(self, inputs):
-        for i in self.hidden_layers:
-            x = i(inputs)
+        x = inputs
+        for layer in self.hidden_layers:
+            x = layer(x)
             x = tf.nn.relu(x)
         return self.linear_output(x)
+
+    def get_regularization(self):
+        penalty = 0
+        if self.kernel_regularization != None or self.bias_regularization != None:
+            for layer in self.hidden_layers:
+                penalty += layer.get_regularization()
+            penalty += self.linear_output.get_regularization()
+        return penalty
+
 
     @tf.function
     def train_on_batch(self,
@@ -105,14 +130,19 @@ class DNN(keras.Model):
                             optimizer):
         with tf.GradientTape() as tape:
             logits = self.call(x)
-            loss = loss_fn(logits, y)
+            loss = float(loss_fn(logits, y)) + self.get_regularization()
             gradients = tape.gradient(loss, self.trainable_weights)
+            #print("gradienten:", gradients)
         optimizer.apply_gradients(zip(gradients, self.trainable_weights))
         return loss
 
 
     def get_config(self):
-        return
+        return {"units": self.units,
+                "nr_hidden_layers": self.nr_hidden_layers,
+                "kernel_regularization": self.kernel_regularization,
+                "bias_regularization": self.bias_regularization
+                }
 
     @classmethod
     def from_config(cls, config):

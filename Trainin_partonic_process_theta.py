@@ -17,8 +17,11 @@ train_frac = 0.8
 batch_size = 64
 buffer_size = int(total_data * train_frac)
 training_epochs = 100
-units = 32
+units = 64
 learning_rate  = 3e-4
+nr_hidden_layers = 3
+l2_kernel = 0.01
+l2_bias = 0.01
 best_total_loss = best_losses_theta["best_total_loss"]
 best_total_loss_squared = best_losses_theta["best_total_loss_squared"]
 
@@ -36,7 +39,7 @@ training_data = tf.data.Dataset.from_tensor_slices((training_data_theta, train_d
 training_data = training_data.batch(batch_size=batch_size)
 
 #initialisiere Model
-theta_model = Layers.MLP()
+theta_model = Layers.DNN(nr_hidden_layers=nr_hidden_layers, units=units, outputs=1, kernel_regularization=keras.regularizers.l2(l2=l2_kernel), bias_regularization=keras.regularizers.l2(l2=l2_bias))
 loss_fn = tf.keras.losses.MeanSquaredError()
 optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)
 

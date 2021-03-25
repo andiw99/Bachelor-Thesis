@@ -18,8 +18,8 @@ PDF = pdf.mkPDF("NNPDF30_nnlo_as_0118", 0)
 #Variablen
 e = 1.602e-19
 E = 10 #Strahlenergie in GeV, im Vornherein festgelegt?
-x_total = int(100) #Anzahl an x Werten
-eta_total = int(400) # Anzahl an eta Werten
+x_total = int(50) #Anzahl an x Werten
+eta_total = int(200) # Anzahl an eta Werten
 
 #Test
 print("Wir berechnen ", x_total**2 * eta_total, "Werte")
@@ -92,7 +92,7 @@ hadronic_diff_WQ_data = pd.DataFrame(
     }
 )
 
-hadronic_diff_WQ_data.to_csv("hadronic_WQ_data", index=False)
+hadronic_diff_WQ_data.to_csv("less_hadronic_WQ_data", index=False)
 print(hadronic_diff_WQ_data)
 
 
