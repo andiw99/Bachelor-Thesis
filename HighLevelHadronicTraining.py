@@ -8,14 +8,14 @@ import Layers
 import time
 
 #Daten einlesem
-hadronic_WQ_data_raw = pd.read_csv("hadronic_WQ_data")
+hadronic_WQ_data_raw = pd.read_csv("less_hadronic_WQ_data")
 
 #Variablen
 units = 64
-train_frac = 0.95
+train_frac = 0.90
 learning_rate = 1e-2
-batch_size = 512
-epochs = 2
+batch_size = 128
+epochs = 10
 
 #Daten vorbereiten
 train_dataset = hadronic_WQ_data_raw.sample(frac=train_frac, random_state=0)
@@ -29,34 +29,47 @@ train_labels = train_features.pop("WQ")
 test_labels = test_features.pop("WQ")
 
 #Schauen wir uns mal die Daten an
+print("train_features:", type(train_features))
+print("train_labels:", type(train_labels))
+
+#Aus den Pandas Dataframes tf-Tensoren machen, ist das richtig?
+train_features = tf.constant([train_features["x_1"], train_features["x_2"], train_features["eta"]],  dtype="float32")
+test_features = tf.constant([test_features["x_1"], test_features["x_2"], test_features["eta"]],  dtype="float32")
+
+train_labels = tf.transpose(tf.constant([train_labels.to_numpy(dtype="float32")]))
+test_labels = tf.transpose(tf.constant([test_labels.to_numpy(dtype="float32")]))
+
+#Dimensionen arrangieren, sicher? lassen wir erstmal weg
+train_features = tf.transpose(train_features)
+test_features = tf.transpose(test_features)
+
 print("train_features:", train_features)
 print("train_labels:", train_labels)
 
-
-#Aus den Pandas Dataframes tf-Tensoren machen, ist das richtig?
-#train_features = tf.constant([train_features["x_1"], train_features["x_2"], train_features["eta"]],  dtype="float32")
-#test_features = tf.constant([test_features["x_1"], test_features["x_2"], test_features["eta"]],  dtype="float32")
-#Dimensionen arrangieren, sicher? lassen wir erstmal weg
-#train_features = tf.transpose(train_features)
-#test_features = tf.transpose(test_features)
-
-print(train_features)
-
+#Architektur des Models festlegen, weiterhin activation, units, initialisierung und regularisierung
 high_hadronic_model = keras.Sequential(
     [
-        layers.Dense(units=units, activation="relu", input_shape=(3,) ,name="layer1", kernel_initializer="HeNormal"),
-        layers.Dense(units=units, activation="relu", name="layer2", kernel_initializer="HeNormal"),
-        layers.Dense(units=units, activation="relu", name="layer3", kernel_initializer="HeNormal"),
-        layers.Dense(units=1, activation="relu", name="output_layer", kernel_initializer="HeNormal")
+        layers.Dense(units=units, activation="tanh", name="layer1", kernel_regularizer=None, bias_regularizer=None),
+        layers.Dense(units=units, activation="tanh", name="layer2", kernel_regularizer=None, bias_regularizer=None),
+        layers.Dense(units=units, activation="tanh", name="layer3", kernel_regularizer=None, bias_regularizer=None),
+        layers.Dense(units=1, activation="tanh", name="output_layer", kernel_regularizer=None, bias_regularizer=None)
     ]
 )
+#Model compilen, optimizer und loss festlegen
+high_hadronic_model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=learning_rate), loss="mean_absolute_error")
+#Model bauen, eigentlich nur damit summary aufgerufen werden kann
+high_hadronic_model.build(input_shape=(1, 3))
 
-high_hadronic_model.compile(optimizer=tf.keras.optimizers.SGD(learning_rate=learning_rate), loss=keras.losses.mean_squared_error)
-
+#Debuggin, Summary und gewichte angucken
 print("Summary:", high_hadronic_model.summary())
 print("weights", high_hadronic_model.get_weights())
+
+#hier sollte eigentlich das Training stattfinden
 history = high_hadronic_model.fit(x=train_features, y=train_labels, batch_size=batch_size, epochs=epochs, verbose=2, shuffle=True)
+#History der losses ausgeben, momentan leider konstant
 print("history:", history.history)
+
+#Model testen, indem fehler auf die Testdaten berechnet wird.
 test_results = high_hadronic_model.evaluate(test_features, test_labels, batch_size=batch_size, verbose=2)
 
 #Plotte den Loss

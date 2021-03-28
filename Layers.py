@@ -2,7 +2,13 @@ from tensorflow.keras import layers
 import tensorflow as tf
 from tensorflow import keras
 
-
+from tensorflow.python.ops import array_ops
+from tensorflow.python.ops import nn
+from tensorflow.python.framework import ops
+from tensorflow.python.eager import monitoring
+from tensorflow.python.util.tf_export import keras_export
+from tensorflow.python.keras import backend as K
+from tensorflow.python.keras.utils import control_flow_util
 
 class Linear(keras.layers.Layer):
     """y = w.x + b"""
@@ -30,7 +36,7 @@ class Linear(keras.layers.Layer):
             name = self.weight_name,
         )
 
-    def call(self, inputs):
+    def call(self, inputs, training=True):
         output = tf.matmul(inputs, self.w) + self.b
         #print("output von Layer:", self.weight_name, output)
         return output
@@ -91,27 +97,35 @@ class MLP(keras.Model):
         return cls(**config)
 
 class DNN(keras.Model):
-    #im def oder im call läuft noch irgendetwas falsch, sollte eigentlich gleich sein wie MLP
-    def __init__(self, nr_hidden_layers=3, units=64, outputs=1, kernel_regularization=None, bias_regularization=None):
+    def __init__(self, nr_hidden_layers=3, units=64, outputs=1, kernel_regularization=None, bias_regularization=None, dropout=False, dropout_rate=0):
         super(DNN, self).__init__()
         self.units = units
         self.nr_hidden_layers = nr_hidden_layers
         self.hidden_layers = []
         self.kernel_regularization = kernel_regularization
         self.bias_regularization = bias_regularization
+        self.dropout_rate = dropout_rate
+        self.names = set()
+
         for i in range(self.nr_hidden_layers):
             name = "Layer_" + str(i)
+            dropout_name = "Dropout_" + str(i)
+            self.names.add(name)
+            if dropout:
+                self.hidden_layers.append(Dropout(rate=self.dropout_rate, name=dropout_name))
             self.hidden_layers.append(Linear(units=self.units, name=name, kernel_regularization=self.kernel_regularization, bias_regularization=self.bias_regularization))
         #self.hidden_layers = [Linear(units=self.units, name="hidden_layer") in range(self.nr_hidden_layers)]
         self.linear_output = Linear(units=outputs, name="output_layer", kernel_regularization=self.kernel_regularization, bias_regularization=self.bias_regularization)
+        print("names:", self.names)
 
 
-    def call(self, inputs):
+    def call(self, inputs, training=True):
         x = inputs
         for layer in self.hidden_layers:
-            x = layer(x)
-            x = tf.nn.relu(x)
-        return self.linear_output(x)
+            x = layer(x, training=training)
+            if layer.weight_name in self.names:
+                x = tf.nn.relu(x)
+        return self.linear_output(x, training=training)
 
     def get_regularization(self):
         penalty = 0
@@ -149,7 +163,58 @@ class DNN(keras.Model):
         return cls(**config)
 
 
+#Dropout class stammt aus der tensorflow doku
+class Dropout(keras.layers.Layer):
+  def __init__(self, rate, name=None, noise_shape=None, seed=None, **kwargs):
+    super(Dropout, self).__init__(**kwargs)
+    self.rate = rate
+    self.noise_shape = noise_shape
+    self.seed = seed
+    self.supports_masking = True
+    self.weight_name = name
 
+  def _get_noise_shape(self, inputs):
+    # Subclasses of `Dropout` may implement `_get_noise_shape(self, inputs)`,
+    # which will override `self.noise_shape`, and allows for custom noise
+    # shapes with dynamically sized inputs.
+    if self.noise_shape is None:
+      return None
+
+    concrete_inputs_shape = array_ops.shape(inputs)
+    noise_shape = []
+    for i, value in enumerate(self.noise_shape):
+      noise_shape.append(concrete_inputs_shape[i] if value is None else value)
+    return ops.convert_to_tensor_v2_with_dispatch(noise_shape)
+
+  def call(self, inputs, training=None):
+    if training is None:
+      training = K.learning_phase()
+
+    def dropped_inputs():
+      return nn.dropout(
+          inputs,
+          noise_shape=self._get_noise_shape(inputs),
+          seed=self.seed,
+          rate=self.rate)
+
+    output = control_flow_util.smart_cond(training, dropped_inputs,
+                                          lambda: array_ops.identity(inputs))
+    return output
+
+  def compute_output_shape(self, input_shape):
+    return input_shape
+
+  def get_config(self):
+    config = {
+        'rate': self.rate,
+        'noise_shape': self.noise_shape,
+        'seed': self.seed
+    }
+    base_config = super(Dropout, self).get_config()
+    return dict(list(base_config.items()) + list(config.items()))
+
+  def get_regularization(self):
+      return 0
 
 if __name__ == "__main__":
     print("Achtung, dieses Skript ist geschrieben um importiert zu werden")

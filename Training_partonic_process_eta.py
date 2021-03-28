@@ -48,10 +48,15 @@ epochs = []
 
 for epoch in range(training_epochs):
     epochs.append(epoch)
+    results = []
     loss=0
+
+    results = eta_model(test_data_eta)
+    total_loss = loss_fn(y_pred=results, y_true=test_dataset["WQ"])
+    print("total loss:", float(total_loss))
     for step, (x,y) in enumerate(training_data):
-        loss += eta_model.train_on_batch(x=x, y=y, loss_fn=loss_fn, optimizer=optimizer)
-        if step % 100 == 0:
+        loss = eta_model.train_on_batch(x=x, y=y, loss_fn=loss_fn, optimizer=optimizer)
+        if step % 250 == 0:
             print("Epoch:", epoch+1, "Step:", step, "Loss:", float(loss))
             steps.append(step)
     losses.append(loss)
@@ -66,6 +71,13 @@ plt.show()
 plt.plot(epochs, losses)
 plt.ylabel("Losses")
 plt.xlabel("Epoch")
+plt.show()
+
+#Prediction plotten
+results = eta_model(test_data_eta)
+plt.plot(test_dataset["Eta"], results)
+plt.ylabel("WQ")
+plt.xlabel("pred.data")
 plt.show()
 
 print(training_data_eta)
