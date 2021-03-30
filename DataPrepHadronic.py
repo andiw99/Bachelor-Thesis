@@ -18,9 +18,13 @@ PDF = pdf.mkPDF("NNPDF30_nnlo_as_0118", 0)
 #Variablen
 e = 1.602e-19
 E = 10 #Strahlenergie in GeV, im Vornherein festgelegt?
-x_total = int(50) #Anzahl an x Werten
+x_total = int(25) #Anzahl an x Werten
 eta_total = int(200) # Anzahl an eta Werten
+x_lower_limit = 0.05
+x_upper_limit = 0.075
+eta_limit =  3
 
+name = "some_hadronic_data"
 #Test
 print("Wir berechnen ", x_total**2 * eta_total, "Werte")
 """
@@ -41,31 +45,45 @@ for eta_test_raw in range(-30, 30):
         print("eta_test:", eta_test, "diff WQ test:", diff_WQ_test)
 """
 
+#Step-sizes herausfinden, um anständig die anderen Listen zu generieren
+(_, x_step) = np.linspace(start=x_lower_limit, stop=x_upper_limit, num=x_total, retstep=True)
+(_, eta_step) = np.linspace(start=-eta_limit, stop=eta_limit, num=eta_total, retstep=True)
+#Feste werte setzen
+x_constant = x_lower_limit + 20 * x_step
+eta_constant = (-eta_limit) + 150 * eta_step
+
+print(x_constant)
+print(eta_constant)
+
 #Listen mit Funktionswerten anlegen
 #Ausgangswerte
 diff_WQ_list = []
+diff_WQ_list_eta_constant=[]
+diff_WQ_list_x_constant = []
 #Eingangswerte
 x_1_list = []
 x_2_list = []
 eta_list = []
-
+eta_list_x_constant = []
+x_list_eta_constant = []
+x_1_list_x_constant = []
+x_2_list_x_constant = []
+eta_list_eta_constant = []
+x_2_list_eta_constant = []
 
 #diff WQ berechnen und Listen füllen
 step = 0
-for x_1_raw in range(x_total):
-    x_1 = x_1_raw/x_total
+for x_1 in np.linspace(start=x_lower_limit, stop=x_upper_limit, num=x_total):
     #Polstelle behandeln
     if x_1 < PDF.xMin:
         x_1 = PDF.xMin
-    for x_2_raw in range(x_total):
-        x_2 = x_2_raw/x_total
+    for x_2 in np.linspace(start=x_lower_limit, stop=x_upper_limit, num=x_total):
         #Polstelle behandeln
         if x_2 < PDF.xMin:
             x_2 = PDF.xMin
-        for eta_raw in range(-int(1/2 * eta_total), int(1/2 * eta_total)):
+        for eta in np.linspace(start=-eta_limit, stop=eta_limit, num=eta_total):
             # diff WQ nullen, damit die nächste Summe wieder in sinnvolles Ergebnis liefert:
             diff_WQ = 0
-            eta = 3*eta_raw/(1/2 * eta_total)
             #Viererimpuls initialisieren
             Q2 = 2* x_1 * x_2 * (E**2)
             #Listen der Eingangswerte füllen:
@@ -79,9 +97,26 @@ for x_1_raw in range(x_total):
                             (1 + (np.tanh(eta + 1/2 * np.log(x_2/x_1)))**2)
             #diff WQ in Liste einfügen:
             diff_WQ_list.append(diff_WQ)
+
+            #Listet mit konstantem x anlegen
+            if x_1 == x_constant and x_2 == x_constant:
+                eta_list_x_constant.append(eta)
+                diff_WQ_list_x_constant.append(diff_WQ)
+                x_1_list_x_constant.append(x_1)
+                x_2_list_x_constant.append(x_2)
+
+            #Listen mit konstantem eta anlegen
+            if eta == eta_constant and x_2 == x_constant:
+                x_list_eta_constant.append(x_1)
+                diff_WQ_list_eta_constant.append(diff_WQ)
+                eta_list_eta_constant.append(eta)
+                x_2_list_eta_constant.append(x_2)
+
             step += 1
             if step % 50000 == 0:
                 print("x_1:", x_1 , "x_2:", x_2, "eta:", eta, "diff_WQ:", diff_WQ)
+
+
 
 hadronic_diff_WQ_data = pd.DataFrame(
     {
@@ -91,9 +126,33 @@ hadronic_diff_WQ_data = pd.DataFrame(
         "WQ": diff_WQ_list
     }
 )
+hadronic_diff_WQ_data_x_constant = pd.DataFrame(
+    {   "x_1": x_1_list_x_constant,
+        "x_2": x_2_list_x_constant,
+        "eta": eta_list_x_constant,
+        "WQ": diff_WQ_list_x_constant
+    }
+)
 
-hadronic_diff_WQ_data.to_csv("less_hadronic_WQ_data", index=False)
+hadronic_diff_WQ_data_eta_constant = pd.DataFrame(
+    {
+        "x_1": x_list_eta_constant,
+        "x_2": x_2_list_eta_constant,
+        "eta": eta_list_eta_constant,
+        "WQ": diff_WQ_list_eta_constant
+    }
+)
+
+x_constant_name = name + "__x_constant__" + str(x_constant)
+eta_constant_name = name + "__eta_constant__" + str(eta_constant)
+
+hadronic_diff_WQ_data.to_csv("HadronicData/" + name, index=False)
+hadronic_diff_WQ_data_x_constant.to_csv("HadronicData/" + x_constant_name, index=False)
+hadronic_diff_WQ_data_eta_constant.to_csv("HadronicData/" + eta_constant_name, index=False)
+
 print(hadronic_diff_WQ_data)
+print(hadronic_diff_WQ_data_x_constant)
+print(hadronic_diff_WQ_data_eta_constant)
 
 
 

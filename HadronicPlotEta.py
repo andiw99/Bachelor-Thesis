@@ -5,7 +5,7 @@ import time
 time1 = time.time()
 
 #Daten einlesen
-hadronic_WQ_data = pd.read_csv("hadronic_WQ_data")
+hadronic_WQ_data = pd.read_csv("less_hadronic_WQ_data")
 
 #Listen erzeugen
 x_1 = hadronic_WQ_data["x_1"]

@@ -72,6 +72,8 @@ dataset = tf.data.Dataset.from_tensor_slices(
     x_train.reshape(60000, 784).astype("float32") / 255
 )
 dataset = dataset.shuffle(buffer_size=1024).batch(32)
+print("dataset:", dataset)
+exit()
 
 #@tf.function für mehr power im Trainingsloop
 @tf.function

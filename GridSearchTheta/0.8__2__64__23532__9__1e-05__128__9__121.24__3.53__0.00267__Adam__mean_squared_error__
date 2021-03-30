@@ -1,0 +1,2 @@
+train_frac,nr_hidden_layers,batch_size,buffer_size,training_epochs,learning_rate,units,epochs,validation loss,training_time,performance_time,optimizer,Loss-Function
+0.8,2,64,23532,9,1e-05,128,9,121.24,3.53,0.00267,Adam,mean_squared_error

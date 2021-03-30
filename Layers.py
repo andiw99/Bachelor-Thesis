@@ -35,9 +35,10 @@ class Linear(keras.layers.Layer):
             shape=(self.units,), initializer="random_normal", trainable=True,
             name = self.weight_name,
         )
+        #print("weights von", self.weight_name, ":", self.w)
 
     def call(self, inputs, training=True):
-        output = tf.matmul(inputs, self.w) + self.b
+        output = tf.math.add(tf.linalg.matmul(inputs, self.w), self.b)
         #print("output von Layer:", self.weight_name, output)
         return output
 
@@ -116,7 +117,7 @@ class DNN(keras.Model):
             self.hidden_layers.append(Linear(units=self.units, name=name, kernel_regularization=self.kernel_regularization, bias_regularization=self.bias_regularization))
         #self.hidden_layers = [Linear(units=self.units, name="hidden_layer") in range(self.nr_hidden_layers)]
         self.linear_output = Linear(units=outputs, name="output_layer", kernel_regularization=self.kernel_regularization, bias_regularization=self.bias_regularization)
-        print("names:", self.names)
+        #print("names:", self.names)
 
 
     def call(self, inputs, training=True):
@@ -161,6 +162,65 @@ class DNN(keras.Model):
     @classmethod
     def from_config(cls, config):
         return cls(**config)
+
+class MeanSquaredLogarithmicError(tf.keras.losses.Loss):
+    def __init__(self, name="mean_squared_logarithmic_error"):
+        super(MeanSquaredLogarithmicError, self).__init__()
+        self.name = name
+
+    def __call__(self, y_pred, y_true, sample_weight=None):
+        #y_pred und y_true sind tensoren
+        #print("y_true:", y_true)
+        #print("y_pred:", y_pred)
+        ln_y_pred = tf.math.log(tf.math.abs(y_pred+1))
+        ln_y_true = tf.math.log(y_true+1)
+        #print("ln_y_true:", ln_y_true)
+        #print("ln_y_pred:", ln_y_pred)
+        diff = tf.math.subtract(x=ln_y_pred, y=ln_y_true)
+        #print("diff:", diff)
+        loss = tf.reduce_mean(tf.square(diff))
+        #print("loss:", loss)
+        return loss
+
+class MeanAbsoluteLogarithmicError(tf.keras.losses.Loss):
+    def __init__(self, name="mean_squared_logarithmic_error"):
+        super(MeanAbsoluteLogarithmicError, self).__init__()
+        self.name = name
+
+    def __call__(self, y_pred, y_true, sample_weight=None):
+        ln_y_pred = tf.math.log(tf.math.abs(y_pred)+1)
+        ln_y_true = tf.math.log(y_true+1)
+        diff = tf.math.subtract(x=ln_y_pred, y=ln_y_true)
+        loss = tf.reduce_mean(tf.abs(diff))
+        return loss
+
+class MeanLogarithmOfAbsoluteError(tf.keras.losses.Loss):
+    def __init__(self, name="mean_squared_logarithmic_error"):
+        super(MeanLogarithmOfAbsoluteError, self).__init__()
+        self.name = name
+
+    def __call__(self, y_pred, y_true, sample_weight=None):
+        diff = tf.math.subtract(x=y_pred, y=y_true)
+        loss = tf.reduce_mean((tf.abs(diff)))
+        return tf.math.log(1+loss)
+
+class CustomError(tf.keras.losses.Loss):
+    def __init__(self, scaling = 1, name="mean_squared_logarithmic_error"):
+        super(CustomError, self).__init__()
+        self.name = name
+        self.scaling = scaling
+
+    def __call__(self, y_pred, y_true, sample_weight=None):
+        #Anstatt zwischen 1 und 1e-16 arbeiten wir jetzt zwischen 1e+16 und 1
+        scaled_y_true = self.scaling * y_true
+        scaled_y_pred = tf.math.abs(self.scaling * y_pred)
+        #Wir berechnen den Logarithmus der Werte und verringern somit das intervall auf [0,40]
+        log_y_true_scaled = tf.math.log(scaled_y_true)
+        log_y_pred_scaled = tf.math.log(scaled_y_pred)
+        diff = tf.math.subtract(x=log_y_pred_scaled, y=log_y_true_scaled)
+        loss = tf.reduce_mean(tf.abs(diff))
+        #print("loss:", loss)
+        return loss
 
 
 #Dropout class stammt aus der tensorflow doku
@@ -215,6 +275,9 @@ class Dropout(keras.layers.Layer):
 
   def get_regularization(self):
       return 0
+
+
+
 
 if __name__ == "__main__":
     print("Achtung, dieses Skript ist geschrieben um importiert zu werden")
