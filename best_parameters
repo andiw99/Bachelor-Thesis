@@ -1,2 +1,0 @@
-train_frac,batch_size,buffer_size,training_epochs,learning_rate,units
-0.8,64,48000.0,15,3e-05,64

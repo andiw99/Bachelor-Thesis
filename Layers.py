@@ -107,6 +107,7 @@ class DNN(keras.Model):
         self.bias_regularization = bias_regularization
         self.dropout_rate = dropout_rate
         self.names = set()
+        self.dropout = dropout
 
         for i in range(self.nr_hidden_layers):
             name = "Layer_" + str(i)
@@ -124,9 +125,13 @@ class DNN(keras.Model):
         x = inputs
         for layer in self.hidden_layers:
             x = layer(x, training=training)
-            if layer.weight_name in self.names:
+            if self.dropout:
+                if layer.weight_name in self.names:
+                    x = tf.nn.relu(x)
+            else:
                 x = tf.nn.relu(x)
-        return self.linear_output(x, training=training)
+        x = self.linear_output(x, training=training)
+        return tf.nn.relu(x)
 
     def get_regularization(self):
         penalty = 0
@@ -156,12 +161,91 @@ class DNN(keras.Model):
         return {"units": self.units,
                 "nr_hidden_layers": self.nr_hidden_layers,
                 "kernel_regularization": self.kernel_regularization,
-                "bias_regularization": self.bias_regularization
+                "bias_regularization": self.bias_regularization,
+                "dropout": self.dropout,
+                "dropout_rate": self.dropout_rate
                 }
 
     @classmethod
     def from_config(cls, config):
         return cls(**config)
+
+class DNN2(keras.Model):
+    def __init__(self, nr_hidden_layers=3, units=64, loss_fn=keras.losses.MeanAbsoluteError(), optimizer=keras.optimizers.Adam(),  outputs=1, kernel_regularization=None, bias_regularization=None, dropout=False, dropout_rate=0):
+        super(DNN2, self).__init__()
+        self.units = units
+        self.nr_hidden_layers = nr_hidden_layers
+        self.hidden_layers = []
+        self.kernel_regularization = kernel_regularization
+        self.bias_regularization = bias_regularization
+        self.dropout_rate = dropout_rate
+        self.names = set()
+        self.dropout = dropout
+        self.loss_fn = loss_fn
+        self.optimizer = optimizer
+
+        for i in range(self.nr_hidden_layers):
+            name = "Layer_" + str(i)
+            dropout_name = "Dropout_" + str(i)
+            self.names.add(name)
+            if dropout:
+                self.hidden_layers.append(Dropout(rate=self.dropout_rate, name=dropout_name))
+            self.hidden_layers.append(Linear(units=self.units, name=name, kernel_regularization=self.kernel_regularization, bias_regularization=self.bias_regularization))
+        #self.hidden_layers = [Linear(units=self.units, name="hidden_layer") in range(self.nr_hidden_layers)]
+        self.linear_output = Linear(units=outputs, name="output_layer", kernel_regularization=self.kernel_regularization, bias_regularization=self.bias_regularization)
+        #print("names:", self.names)
+
+
+    def call(self, inputs, training=True):
+        x = inputs
+        for layer in self.hidden_layers:
+            x = layer(x, training=training)
+            if self.dropout:
+                if layer.weight_name in self.names:
+                    x = tf.nn.relu(x)
+            else:
+                x = tf.nn.relu(x)
+        x = self.linear_output(x, training=training)
+        return tf.nn.relu(x)
+
+    def get_regularization(self):
+        penalty = 0
+        if self.kernel_regularization != None or self.bias_regularization != None:
+            for layer in self.hidden_layers:
+                penalty += layer.get_regularization()
+            penalty += self.linear_output.get_regularization()
+        return penalty
+
+
+    @tf.function
+    def train_on_batch(self,
+                            x,
+                            y
+                       ):
+        with tf.GradientTape() as tape:
+            logits = self.call(x)
+            loss = float(self.loss_fn(logits, y)) + self.get_regularization()
+            gradients = tape.gradient(loss, self.trainable_weights)
+            #print("gradienten:", gradients)
+        self.optimizer.apply_gradients(zip(gradients, self.trainable_weights))
+        return loss
+
+
+    def get_config(self):
+        return {"units": self.units,
+                "nr_hidden_layers": self.nr_hidden_layers,
+                "loss_fn": self.loss_fn.name,
+                "optimizer": self.optimizer._name,
+                "kernel_regularization": self.kernel_regularization,
+                "bias_regularization": self.bias_regularization,
+                "dropout": self.dropout,
+                "dropout_rate": self.dropout_rate
+                }
+
+    @classmethod
+    def from_config(cls, config):
+        return cls(**config)
+
 
 class MeanSquaredLogarithmicError(tf.keras.losses.Loss):
     def __init__(self, name="mean_squared_logarithmic_error"):
@@ -169,18 +253,14 @@ class MeanSquaredLogarithmicError(tf.keras.losses.Loss):
         self.name = name
 
     def __call__(self, y_pred, y_true, sample_weight=None):
-
-        ln_y_pred = tf.math.log(tf.math.abs(y_pred))
-        ln_y_true = tf.math.log(y_true)
-
+        ln_y_pred = tf.math.log(y_pred+1)
+        ln_y_true = tf.math.log(y_true+1)
         diff = tf.math.subtract(x=ln_y_pred, y=ln_y_true)
-
         loss = tf.reduce_mean(tf.square(diff))
-
         return loss
 
 class MeanAbsoluteLogarithmicError(tf.keras.losses.Loss):
-    def __init__(self, name="mean_squared_logarithmic_error"):
+    def __init__(self, name="mean_absolute_logarithmic_error"):
         super(MeanAbsoluteLogarithmicError, self).__init__()
         self.name = name
 
@@ -192,7 +272,7 @@ class MeanAbsoluteLogarithmicError(tf.keras.losses.Loss):
         return loss
 
 class MeanLogarithmOfAbsoluteError(tf.keras.losses.Loss):
-    def __init__(self, name="mean_squared_logarithmic_error"):
+    def __init__(self, name="mean_logarithm_of_absolute_error"):
         super(MeanLogarithmOfAbsoluteError, self).__init__()
         self.name = name
 
@@ -202,7 +282,7 @@ class MeanLogarithmOfAbsoluteError(tf.keras.losses.Loss):
         return tf.math.log(1+loss)
 
 class CustomError(tf.keras.losses.Loss):
-    def __init__(self, scaling = 1, name="mean_squared_logarithmic_error"):
+    def __init__(self, scaling = 1, name="Custom_error"):
         super(CustomError, self).__init__()
         self.name = name
         self.scaling = scaling
