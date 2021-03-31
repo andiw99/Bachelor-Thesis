@@ -19,13 +19,13 @@ PDF = pdf.mkPDF("NNPDF30_nnlo_as_0118", 0)
 #Variablen
 e = 1.602e-19
 E = 10 #Strahlenergie in GeV, im Vornherein festgelegt?
-x_total = int(20) #Anzahl an x Werten
-eta_total = int(2000) # Anzahl an eta Werten
+x_total = int(25) #Anzahl an x Werten
+eta_total = int(1500) # Anzahl an eta Werten
 x_lower_limit = 0
 x_upper_limit = 1
 eta_limit = 3
 
-set_name = "log_neg_x12/"
+set_name = "log_neg_3D/"
 path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/HadronicData/" + set_name
 
 name = "logarithmic_hadronic_data_no_negative"
@@ -48,13 +48,16 @@ print(eta_constant)
 diff_WQ_list = []
 diff_WQ_list_eta_constant=[]
 diff_WQ_list_x_constant = []
+diff_WQ_list_3D = []
 #Eingangswerte
 x_1_list = []
 x_2_list = []
 eta_list = []
 eta_list_x_constant = []
+eta_list_3D = []
 x_list_eta_constant = []
 x_list_x_constant = []
+x_list_3D = []
 eta_list_eta_constant = []
 x_2_list_eta_constant = []
 step = 0
@@ -99,8 +102,12 @@ for x_1_raw in np.linspace(start=np.log10(x_lower_limit+1), stop=np.log10(x_uppe
                 x_list_eta_constant.append(x_1)
                 diff_WQ_list_eta_constant.append(diff_WQ)
                 eta_list_eta_constant.append(eta)
-                x_2_list_eta_constant.append(x_2)
 
+            #Liste für den 3D-Plot erstellen
+            if x_2 == x_constant:
+                x_list_3D.append(x_1)
+                eta_list_3D.append(eta)
+                diff_WQ_list_3D.append(diff_WQ)
 
             step += 1
             if step % 50000 == 0:
@@ -128,7 +135,7 @@ hadronic_diff_WQ_data_x_constant = pd.DataFrame(
 hadronic_diff_WQ_data_eta_x_2_constant = pd.DataFrame(
     {
         "x_1": x_list_eta_constant,
-        "x_2": x_2_list_eta_constant,
+        "x_2": x_list_x_constant,
         "eta": eta_list_eta_constant,
         "WQ": diff_WQ_list_eta_constant
     }
@@ -136,16 +143,26 @@ hadronic_diff_WQ_data_eta_x_2_constant = pd.DataFrame(
 
 hadronic_diff_WQ_data_eta_x_1_constant = pd.DataFrame(
     {
-        "x_1": x_2_list_eta_constant,
+        "x_1": x_list_x_constant,
         "x_2": x_list_eta_constant,
         "eta": eta_list_eta_constant,
         "WQ": diff_WQ_list_eta_constant
     }
 )
 
+hadronic_diff_WQ_data_x_2_constant = pd.DataFrame(
+    {
+        "x_1": x_list_3D,
+        "x_2": x_list_x_constant,
+        "eta": eta_list_3D,
+        "WQ": diff_WQ_list_3D
+    }
+)
+
 x_constant_name = name + "__x_constant__" + str("{:.2f}".format(x_constant))
 eta_x_2_constant_name = name + "__eta_x_2_constant__" + str("{:.2f}".format(eta_constant))
 eta_x_1_constant_name = name + "__eta_x_1_constant__" + str("{:.2f}".format(eta_constant))
+x_2_constant_name = name + "__x_2_constant__3D"
 
 #ggf. Verzeichnis erstellen
 if not os.path.exists(path=path):
@@ -155,6 +172,7 @@ hadronic_diff_WQ_data.to_csv(path + name, index=False)
 hadronic_diff_WQ_data_x_constant.to_csv(path + x_constant_name, index=False)
 hadronic_diff_WQ_data_eta_x_2_constant.to_csv(path + eta_x_2_constant_name, index=False)
 hadronic_diff_WQ_data_eta_x_1_constant.to_csv(path + eta_x_1_constant_name, index=False)
+hadronic_diff_WQ_data_x_2_constant.to_csv(path + x_2_constant_name, index=False)
 
 print(hadronic_diff_WQ_data)
 print(hadronic_diff_WQ_data_x_constant)

@@ -32,7 +32,7 @@ class Linear(keras.layers.Layer):
         )
         #print("weights von:", self.weight_name, self.w)
         self.b = self.add_weight(
-            shape=(self.units,), initializer="random_normal", trainable=True,
+            shape=(self.units,), initializer=tf.keras.initializers.RandomUniform(minval=0, maxval=1), trainable=True,
             name = self.weight_name,
         )
         #print("weights von", self.weight_name, ":", self.w)

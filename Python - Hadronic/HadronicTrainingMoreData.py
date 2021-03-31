@@ -22,12 +22,12 @@ hadronic_WQ_data_raw = pd.read_csv(data_path+data_name)
 #Variablen...
 total_data = len(hadronic_WQ_data_raw["eta"])
 train_frac = 0.90
-batch_size = 32
+batch_size = 48
 buffer_size = int(total_data * train_frac)
-training_epochs = 5
-nr_layers = 2
-units = 256
-learning_rate = 7e-3
+training_epochs = 50
+nr_layers = 1
+units = 512
+learning_rate = 3e-2
 l2_kernel = 0
 l2_bias = 0
 dropout = False
@@ -42,6 +42,11 @@ path ="/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadr
 loss_function = keras.losses.MeanAbsoluteError()
 loss_function_name = "MeanAbsoluteError()"
 loss_fn_name = "Layers.MeanSquaredLogarithmicError()"
+#Verzeichnis erstellen
+if not os.path.exists(path=path):
+    os.makedirs(path)
+if not os.path.exists(path=path+model_name):
+    os.makedirs(path+model_name)
 
 #best_total_loss = best_losses
 time2= time.time()
@@ -229,35 +234,30 @@ plt.yscale("log")
 plt.tight_layout()
 plt.show()
 
-#Modell und config speichern
-if not os.path.exists(path=path):
-    os.makedirs(path)
-if not os.path.exists(path=path+model_name):
-    os.makedirs(path+model_name)
 
 config = pd.DataFrame(hadronic_model.get_config(), index=[0])
 training_parameters = pd.DataFrame(
     {
         "learning_rate": learning_rate,
-        "epochs": epochs,
+        "epochs": training_epochs,
         "batch_size": batch_size,
         "scaling": scaling_bool,
         "logarithm": logarithm
     },
     index=[0]
 )
-print(config)
+
 #config.append(training_parameters)
 config = pd.concat([config, training_parameters], axis=1)
-print(config)
+
 config = config.transpose()
 config.to_csv(path + "config")
 
 hadronic_model.save(filepath=path + model_name)
 
 
-#script zum plotten erstellen
-plot_script = open("plot_scirpt.py", "w")
+#Skript zum plotten erstellen:
+plot_script = open(path + "plot_script.py", "w")
 plot_script.write(  "import tensorflow as tf\n"
                     "import pandas as pd\n"
                     "import numpy as np\n"
@@ -361,6 +361,4 @@ plot_script.write(  "import tensorflow as tf\n"
                     "plt.yscale(\"log\")\n"
                     "plt.tight_layout()\n"
                     "plt.show()")
-#Skript zum plotten erstellen:
-plot_script = open(path + "plot_script.py", "w")
 plot_script.close()
