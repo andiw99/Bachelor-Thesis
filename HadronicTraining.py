@@ -18,7 +18,7 @@ total_data = len(hadronic_WQ_data_raw["eta"])
 train_frac = 0.90
 batch_size = 64
 buffer_size = int(total_data * train_frac)
-training_epochs = 45
+training_epochs = 20
 nr_layers = 3
 units = 128
 learning_rate = 1.5e-5
@@ -26,7 +26,7 @@ l2_kernel = 0.00001
 l2_bias = 0.00001
 dropout = False
 dropout_rate = 0.1
-scaling_bool = True
+scaling_bool = False
 
 loss_function = keras.losses.MeanAbsoluteError()
 
@@ -67,35 +67,11 @@ if scaling_bool:
 print("min train_labels", tf.math.reduce_min(train_labels))
 print("max train_labels", tf.math.reduce_max(train_labels))
 
-"""
-print("test_labels:", test_labels, "test_labels[-1]:", test_labels[-1], "len(test_labels):", len(test_labels))
-#Das mit dem Logarithmus probieren, weil das ja irgendwie geholfen hatte
-#train_labels = train_labels+1
-#test_labels = test_labels+1
-print("test_labels:", test_labels, "test_labels[-1]:", test_labels[-1], "len(test_labels):", len(test_labels))
-train_labels = tf.math.log(train_labels)
-test_labels = tf.math.log(test_labels)
-print("test_labels:", test_labels, "test_labels[-1]:", test_labels[-1], "len(test_labels):", len(test_labels))
-"""
-
 training_data = tf.data.Dataset.from_tensor_slices((train_features, train_labels))
 
-"""
-print("training_data:", training_data)
-for step, (x,y) in enumerate(training_data):
-    if step % 150000 == 0:
-        print("step:", step, "x:", x , "y:", y)
-        if step % 200000 == 0 and step != 0:
-            break
-"""
 training_data = training_data.batch(batch_size=batch_size)
 #testing_data = tf.data.Dataset.from_tensor_slices((test_features, test_labels))
 #testing_data = testing_data.batch(batch_size=batch_size)
-"""
-for step, (x,y) in enumerate(training_data):
-    if step % 1000 == 0:
-        print("step:", step, "x:", x , "y:", y)
-"""
 
 time3 = time.time()
 print("train_features:", train_features)
@@ -103,22 +79,6 @@ print("train_labels:", train_labels)
 print("training_data:", training_data)
 
 print("Zeit, um Daten vorzubereiten:", time3-time1)
-
-"""
-#Plotten
-eta_list  = []
-WQ_list_eta = []
-for i, features in enumerate(train_features):
-    if features[0] == 0.2 and features[1] == 0.2:
-        eta_list.append(float(features[2]))
-        WQ_list_eta.append(float(train_labels[i]))
-
-print("eta_list:", eta_list)
-print("WQ_list_eta:", WQ_list_eta)
-plt.plot(eta_list, WQ_list_eta)
-plt.show()
-exit()
-"""
 
 #initialisiere Model
 hadronic_model = Layers.DNN(nr_hidden_layers=nr_layers, units=units, outputs=1,
@@ -228,9 +188,9 @@ plt.show()
 #Plot mit konstantem eta,x_2
 plt.plot(hadronic_data_eta_constant["x_1"], hadronic_data_eta_constant["WQ"])
 plt.plot(hadronic_data_eta_constant["x_1"], predictions_eta_constant)
-plt.ylim(0, 0.08)
 plt.xlabel(r"$x_1$")
 plt.ylabel("WQ")
+#plt.yscale("log")
 plt.legend(r"$x_2, \eta constant$")
 plt.tight_layout()
 plt.show()

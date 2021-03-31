@@ -22,10 +22,17 @@ x_total = int(25) #Anzahl an x Werten
 eta_total = int(200) # Anzahl an eta Werten
 x_lower_limit = 0.05
 x_upper_limit = 0.075
-eta_limit =  3
+eta_limit = 3
 
 name = "some_hadronic_data"
 #Test
+test = []
+for x_ in np.linspace(0,np.log10(100),50):
+    x = 10**(x_)
+    test.append(x)
+print(test)
+print(np.logspace(0,2,50))
+exit()
 print("Wir berechnen ", x_total**2 * eta_total, "Werte")
 """
 x_1_test = 0.99

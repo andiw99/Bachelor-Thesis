@@ -3,7 +3,7 @@ import pandas as pd
 import time
 
 time1 = time.time()
-
+"""
 # Daten einlesen
 hadronic_WQ_data = pd.read_csv("less_hadronic_WQ_data")
 
@@ -37,3 +37,8 @@ plt.show()
 time2 = time.time()
 
 print("Zeit, um Plot zu generieren:", time2 - time1)
+"""
+
+hadronic_data_x_constant = pd.read_csv("HadronicData/logarithmic_hadronic_data__x_constant__0.11")
+plt.plot(hadronic_data_x_constant["eta"], hadronic_data_x_constant["WQ"])
+plt.show()

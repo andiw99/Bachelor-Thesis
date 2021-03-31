@@ -169,17 +169,14 @@ class MeanSquaredLogarithmicError(tf.keras.losses.Loss):
         self.name = name
 
     def __call__(self, y_pred, y_true, sample_weight=None):
-        #y_pred und y_true sind tensoren
-        #print("y_true:", y_true)
-        #print("y_pred:", y_pred)
-        ln_y_pred = tf.math.log(tf.math.abs(y_pred+1))
-        ln_y_true = tf.math.log(y_true+1)
-        #print("ln_y_true:", ln_y_true)
-        #print("ln_y_pred:", ln_y_pred)
+
+        ln_y_pred = tf.math.log(tf.math.abs(y_pred))
+        ln_y_true = tf.math.log(y_true)
+
         diff = tf.math.subtract(x=ln_y_pred, y=ln_y_true)
-        #print("diff:", diff)
+
         loss = tf.reduce_mean(tf.square(diff))
-        #print("loss:", loss)
+
         return loss
 
 class MeanAbsoluteLogarithmicError(tf.keras.losses.Loss):
@@ -188,8 +185,8 @@ class MeanAbsoluteLogarithmicError(tf.keras.losses.Loss):
         self.name = name
 
     def __call__(self, y_pred, y_true, sample_weight=None):
-        ln_y_pred = tf.math.log(tf.math.abs(y_pred)+1)
-        ln_y_true = tf.math.log(y_true+1)
+        ln_y_pred = tf.math.log(tf.math.abs(y_pred))
+        ln_y_true = tf.math.log(y_true)
         diff = tf.math.subtract(x=ln_y_pred, y=ln_y_true)
         loss = tf.reduce_mean(tf.abs(diff))
         return loss

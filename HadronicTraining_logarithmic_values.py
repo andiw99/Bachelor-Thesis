@@ -18,12 +18,12 @@ total_data = len(hadronic_WQ_data_raw["eta"])
 train_frac = 0.99
 batch_size = 64
 buffer_size = int(total_data * train_frac)
-training_epochs = 5
-nr_layers = 8
+training_epochs = 2
+nr_layers = 3
 units = 128
 learning_rate = 1e-6
-l2_kernel = 0.00001
-l2_bias = 0.00001
+l2_kernel = 0
+l2_bias = 0
 dropout = False
 dropout_rate = 0.1
 
@@ -112,7 +112,7 @@ exit()
 hadronic_model = Layers.DNN(nr_hidden_layers=nr_layers, units=units, outputs=1,
                             kernel_regularization=keras.regularizers.l2(l2=l2_kernel), bias_regularization=keras.regularizers.l2(l2=l2_bias),
                             dropout=dropout, dropout_rate=dropout_rate)
-loss_fn = keras.losses.MeanSquaredError()
+loss_fn = keras.losses.MeanAbsoluteError()
 optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)
 
 
@@ -219,6 +219,7 @@ plt.xlim(0.0075, 0.2)
 plt.ylim(0, 0.08)
 plt.xlabel(r"$x_1$")
 plt.ylabel("WQ")
+plt.yscale("log")
 plt.tight_layout()
 plt.show()
 
