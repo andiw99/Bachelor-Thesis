@@ -1,7 +1,10 @@
 import tensorflow as tf
-from tensorflow import keras
+#from tensorflow import keras
 import pandas as pd
-
+from numpy import random
+from matplotlib import pyplot as plt
+import numpy as np
+"""
 (x_train, y_train), _ = tf.keras.datasets.mnist.load_data()
 dataset = tf.data.Dataset.from_tensor_slices(
     (x_train.reshape(60000, 784).astype("float32") / 255, y_train)
@@ -40,3 +43,34 @@ mse = tf.keras.losses.MeanSquaredError()
 
 print("mae:", mae(y_true, y_pred).numpy())
 print("mse:", mse(y_true, y_pred).numpy())
+
+print(tf.nn.relu.__name__)
+
+print(keras.initializers.RandomNormal.get_config())
+"""
+xRand = np.abs(random.normal(loc=0, scale=0.15, size=3600))
+xRand = xRand/(2*np.max(xRand))
+xRand2 = np.abs(random.normal(loc=0, scale=0.2, size=400))
+xRand2 = xRand2/(2*np.max(xRand2))+0.5
+plt.hist(xRand, bins=10, rwidth=0.8)
+plt.show()
+plt.hist(xRand2, bins=10, rwidth=0.8)
+plt.show()
+xRand = np.append(xRand, xRand2)
+print(xRand)
+
+plt.hist(xRand, bins=20, rwidth=0.8)
+plt.show()
+
+a = np.array([[1,2,3],[4,5,6]])
+b = np.array([[1,2,3]])
+print(a,b)
+
+print(np.append(a,b, axis=0))
+
+a = tf.constant([[1,2,3]], dtype="float32")
+b= tf.constant([[1,2,3]], dtype="float32")
+print(a)
+print(b)
+print(tf.experimental.numpy.append(a,b, axis=0))
+

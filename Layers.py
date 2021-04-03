@@ -13,12 +13,15 @@ from tensorflow.python.keras.utils import control_flow_util
 class Linear(keras.layers.Layer):
     """y = w.x + b"""
 
-    def __init__(self, units=32, name="Linear_layer", kernel_regularization=None, bias_regularization=None):
+    def __init__(self, units=32, name="Linear_layer", kernel_initializer=keras.initializers.HeNormal(), bias_initializer=keras.initializers.HeNormal(),
+                 kernel_regularization=None, bias_regularization=None):
         super(Linear, self).__init__()
         self.units = units
         self.weight_name = name
         self.kernel_regularization = kernel_regularization
         self.bias_regularization = bias_regularization
+        self.kernel_initializer = kernel_initializer
+        self.bias_initializer = bias_initializer
 
     def build(self, input_shape):
         #print("input shape in Layer:", self.weight_name, input_shape)
@@ -26,13 +29,13 @@ class Linear(keras.layers.Layer):
 
         self.w = self.add_weight(
             shape=(input_shape[-1], self.units),
-            initializer="HeNormal",
+            initializer=self.kernel_initializer,
             trainable=True,
             name= self.weight_name,
         )
         #print("weights von:", self.weight_name, self.w)
         self.b = self.add_weight(
-            shape=(self.units,), initializer=tf.keras.initializers.RandomUniform(minval=0, maxval=1), trainable=True,
+            shape=(self.units,), initializer=self.bias_initializer, trainable=True,
             name = self.weight_name,
         )
         #print("weights von", self.weight_name, ":", self.w)
@@ -171,7 +174,9 @@ class DNN(keras.Model):
         return cls(**config)
 
 class DNN2(keras.Model):
-    def __init__(self, nr_hidden_layers=3, units=64, loss_fn=keras.losses.MeanAbsoluteError(), optimizer=keras.optimizers.Adam(),  outputs=1, kernel_regularization=None, bias_regularization=None, dropout=False, dropout_rate=0):
+    def __init__(self, nr_hidden_layers=3, units=64, loss_fn=keras.losses.MeanAbsoluteError(), optimizer=keras.optimizers.Adam(),
+                 hidden_activation=tf.nn.sigmoid, output_activation=tf.nn.relu,  outputs=1, kernel_initializer=keras.initializers.HeNormal(), bias_initializer = keras.initializers.HeNormal(),
+                 kernel_regularization=None, bias_regularization=None, dropout=False, dropout_rate=0):
         super(DNN2, self).__init__()
         self.units = units
         self.nr_hidden_layers = nr_hidden_layers
@@ -183,6 +188,10 @@ class DNN2(keras.Model):
         self.dropout = dropout
         self.loss_fn = loss_fn
         self.optimizer = optimizer
+        self.hidden_actviation = hidden_activation
+        self.output_activation = output_activation
+        self.kernel_initializer = kernel_initializer
+        self.bias_initializer = bias_initializer
 
         for i in range(self.nr_hidden_layers):
             name = "Layer_" + str(i)
@@ -190,7 +199,8 @@ class DNN2(keras.Model):
             self.names.add(name)
             if dropout:
                 self.hidden_layers.append(Dropout(rate=self.dropout_rate, name=dropout_name))
-            self.hidden_layers.append(Linear(units=self.units, name=name, kernel_regularization=self.kernel_regularization, bias_regularization=self.bias_regularization))
+            self.hidden_layers.append(Linear(units=self.units, name=name, kernel_initializer = self.kernel_initializer, bias_initializer=self.bias_initializer,
+                                             kernel_regularization=self.kernel_regularization, bias_regularization=self.bias_regularization))
         #self.hidden_layers = [Linear(units=self.units, name="hidden_layer") in range(self.nr_hidden_layers)]
         self.linear_output = Linear(units=outputs, name="output_layer", kernel_regularization=self.kernel_regularization, bias_regularization=self.bias_regularization)
         #print("names:", self.names)
@@ -202,11 +212,11 @@ class DNN2(keras.Model):
             x = layer(x, training=training)
             if self.dropout:
                 if layer.weight_name in self.names:
-                    x = tf.nn.relu(x)
+                    x = self.hidden_actviation(x)
             else:
-                x = tf.nn.relu(x)
+                x = self.hidden_actviation(x)
         x = self.linear_output(x, training=training)
-        return tf.nn.relu(x)
+        return self.output_activation(x)
 
     def get_regularization(self):
         penalty = 0
@@ -236,6 +246,9 @@ class DNN2(keras.Model):
                 "nr_hidden_layers": self.nr_hidden_layers,
                 "loss_fn": self.loss_fn.name,
                 "optimizer": self.optimizer._name,
+                "hidden_activation": self.hidden_actviation.__name__,
+                "output_activation": self.output_activation.__name__,
+
                 "kernel_regularization": self.kernel_regularization,
                 "bias_regularization": self.bias_regularization,
                 "dropout": self.dropout,
@@ -247,14 +260,26 @@ class DNN2(keras.Model):
         return cls(**config)
 
 
+class MeanSquaredLogarithmicError1p(tf.keras.losses.Loss):
+    def __init__(self, name="mean_squared_logarithmic_error_1p"):
+        super(MeanSquaredLogarithmicError, self).__init__()
+        self.name = name
+
+    def __call__(self, y_pred, y_true, sample_weight=None):
+        ln_y_pred = tf.math.log1p(y_pred)
+        ln_y_true = tf.math.log1p(y_true)
+        diff = tf.math.subtract(x=ln_y_pred, y=ln_y_true)
+        loss = tf.reduce_mean(tf.square(diff))
+        return loss
+
 class MeanSquaredLogarithmicError(tf.keras.losses.Loss):
     def __init__(self, name="mean_squared_logarithmic_error"):
         super(MeanSquaredLogarithmicError, self).__init__()
         self.name = name
 
     def __call__(self, y_pred, y_true, sample_weight=None):
-        ln_y_pred = tf.math.log(y_pred+1)
-        ln_y_true = tf.math.log(y_true+1)
+        ln_y_pred = tf.math.log(y_pred)
+        ln_y_true = tf.math.log(y_true)
         diff = tf.math.subtract(x=ln_y_pred, y=ln_y_true)
         loss = tf.reduce_mean(tf.square(diff))
         return loss
@@ -298,6 +323,107 @@ class CustomError(tf.keras.losses.Loss):
         loss = tf.reduce_mean(tf.abs(diff))
         #print("loss:", loss)
         return loss
+
+class MeanAbsoluteError(tf.keras.losses.Loss):
+    def __init__(self, name="mean_absolute_error"):
+        super(MeanAbsoluteError, self).__init__()
+        self.name = name
+
+    def __call__(self, y_pred, y_true, sample_weight=None):
+        diff = tf.math.subtract(x=y_pred, y=y_true)
+        loss = tf.reduce_mean(tf.abs(diff))
+        return loss
+
+class MeanSquaredError(tf.keras.losses.Loss):
+    def __init__(self, name="mean_squared_error"):
+        super(MeanSquaredError, self).__init__()
+        self.name = name
+
+    def __call__(self, y_pred, y_true, sample_weight=None):
+        diff = tf.math.subtract(x=y_pred, y=y_true)
+        loss = tf.reduce_mean(tf.math.square(diff))
+        return loss
+
+class LinearActiavtion():
+    def __init__(self, name="linear"):
+        self.__name__ = name
+
+    def __call__(self, x):
+        return x
+
+class LabelTransformation():
+    def __init__(self, train_labels=None, scaling=False, logarithm=False, shift=False, label_normalization=False, config=None):
+        self.scaling = scaling
+        self.logarithm = logarithm
+        self.shift = shift
+        self.label_normalization = label_normalization
+        self.values = dict()
+        if train_labels is not None:
+            if self.scaling:
+                self.scale = 1/tf.math.reduce_min(train_labels)
+                self.values["scale"] = self.scale
+                train_labels = train_labels * self.scale
+            if logarithm:
+                train_labels = tf.math.log(train_labels)
+            if self.shift:
+                self.shift_value = tf.math.reduce_min(train_labels)
+                self.values["shift_value"] = self.shift_value
+                train_labels = train_labels - self.shift_value
+            if self.label_normalization:
+                self.normalization_value = tf.math.reduce_max(train_labels)
+                self.values["normalization_value"] = self.normalization_value
+
+        if config:
+            if config["scaling"]:
+                self.scale = config["scale"]
+                self.values["scale"] = self.scale
+                self.scaling = config["scaling"]
+            if config["logarithm"]:
+                self.logarithm = config["logarithm"]
+            if config["shift"]:
+                self.shift = config["shift"]
+                self.shift_value = config["shift_value"]
+                self.values["shift_value"] = self.shift_value
+            if config["label_normalization"]:
+                self.label_normalization = config["label_normalization"]
+                self.normalization_value = config["normalization_value"]
+                self.values["normalization_value"] = self.normalization_value
+
+
+
+    def transform(self, x):
+        if self.scaling:
+            x = self.scale * x
+        if self.logarithm:
+            x = tf.math.log(x)
+        if self.shift:
+            x = x - self.shift_value
+        if self.label_normalization:
+            x = x/self.normalization_value
+        return x
+
+    def retransform(self, x):
+        if self.label_normalization:
+            x = x * self.normalization_value
+        if self.shift:
+            x = x + self.shift_value
+        if self.logarithm:
+            x = tf.math.exp(x)
+        if self.scaling:
+            x = (1/self.scale) * x
+        return x
+
+    def get_config(self):
+        config = {
+            "scaling": self.scaling,
+            "logarithm": self.logarithm,
+            "shift": self.shift,
+            "label_normalization": self.label_normalization,
+
+        }
+        for transformation, value in self.values.items():
+            config[transformation] = float(value)
+        return config
 
 
 #Dropout class stammt aus der tensorflow doku

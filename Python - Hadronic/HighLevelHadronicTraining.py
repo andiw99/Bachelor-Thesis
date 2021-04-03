@@ -53,7 +53,7 @@ hadronic_model = keras.Sequential(
         layers.Dense(units=units, activation="relu", name="layer1", kernel_regularizer=None, bias_regularizer=None),
         layers.Dense(units=units, activation="relu", name="layer2", kernel_regularizer=None, bias_regularizer=None),
         layers.Dense(units=units, activation="relu", name="layer3", kernel_regularizer=None, bias_regularizer=None),
-        layers.Dense(units=1, activation="relu", name="output_layer", kernel_regularizer=None, bias_regularizer=None)
+        layers.Dense(units=1, activation="linear", name="output_layer", kernel_regularizer=None, bias_regularizer=None)
     ]
 )
 #Model compilen, optimizer und loss festlegen

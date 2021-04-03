@@ -21,8 +21,8 @@ e = 1.602e-19
 E = 10 #Strahlenergie in GeV, im Vornherein festgelegt?
 x_total = int(25) #Anzahl an x Werten
 eta_total = int(1500) # Anzahl an eta Werten
-x_lower_limit = 0
-x_upper_limit = 1
+x_lower_limit = 0.1
+x_upper_limit = 0.5
 eta_limit = 3
 
 set_name = "log_neg_3D/"
@@ -39,7 +39,7 @@ log_x_step = 10 ** x_step
 #Feste werte setzen
 x_constant = x_lower_limit + 20 * log_x_step
 eta_constant = 150 * eta_step
-x_constant = 0.10956947206784506
+x_constant = 0.14171186403792446
 print(x_constant)
 print(eta_constant)
 
@@ -57,7 +57,8 @@ eta_list_x_constant = []
 eta_list_3D = []
 x_list_eta_constant = []
 x_list_x_constant = []
-x_list_3D = []
+x_1_list_3D = []
+x_2_list_3D = []
 eta_list_eta_constant = []
 x_2_list_eta_constant = []
 step = 0
@@ -102,10 +103,12 @@ for x_1_raw in np.linspace(start=np.log10(x_lower_limit+1), stop=np.log10(x_uppe
                 x_list_eta_constant.append(x_1)
                 diff_WQ_list_eta_constant.append(diff_WQ)
                 eta_list_eta_constant.append(eta)
+                x_2_list_eta_constant.append(x_2)
 
             #Liste für den 3D-Plot erstellen
             if x_2 == x_constant:
-                x_list_3D.append(x_1)
+                x_1_list_3D.append(x_1)
+                x_2_list_3D.append(x_2)
                 eta_list_3D.append(eta)
                 diff_WQ_list_3D.append(diff_WQ)
 
@@ -135,7 +138,7 @@ hadronic_diff_WQ_data_x_constant = pd.DataFrame(
 hadronic_diff_WQ_data_eta_x_2_constant = pd.DataFrame(
     {
         "x_1": x_list_eta_constant,
-        "x_2": x_list_x_constant,
+        "x_2": x_2_list_eta_constant,
         "eta": eta_list_eta_constant,
         "WQ": diff_WQ_list_eta_constant
     }
@@ -143,7 +146,7 @@ hadronic_diff_WQ_data_eta_x_2_constant = pd.DataFrame(
 
 hadronic_diff_WQ_data_eta_x_1_constant = pd.DataFrame(
     {
-        "x_1": x_list_x_constant,
+        "x_1": x_2_list_eta_constant,
         "x_2": x_list_eta_constant,
         "eta": eta_list_eta_constant,
         "WQ": diff_WQ_list_eta_constant
@@ -152,8 +155,8 @@ hadronic_diff_WQ_data_eta_x_1_constant = pd.DataFrame(
 
 hadronic_diff_WQ_data_x_2_constant = pd.DataFrame(
     {
-        "x_1": x_list_3D,
-        "x_2": x_list_x_constant,
+        "x_1": x_1_list_3D,
+        "x_2": x_2_list_3D,
         "eta": eta_list_3D,
         "WQ": diff_WQ_list_3D
     }

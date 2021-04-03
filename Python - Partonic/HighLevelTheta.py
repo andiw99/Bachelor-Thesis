@@ -8,8 +8,8 @@ import Layers
 import time
 
 #Daten einlesem
-diff_WQ_theta_data_raw = pd.read_csv("diff_WQ_theta_data")
-best_losses_theta = pd.read_csv("best_losses_theta")
+diff_WQ_theta_data_raw = pd.read_csv("/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Partonic/PartonicData/diff_WQ_theta_data")
+#best_losses_theta = pd.read_csv("best_losses_theta")
 
 #Variablen
 total_data = len(diff_WQ_theta_data_raw["Theta"])
@@ -23,8 +23,8 @@ learning_rate  = 4e-4
 nr_hidden_layers = 3
 l2_kernel = 0.01
 l2_bias = 0.01
-best_total_loss = best_losses_theta["best_total_loss"]
-best_total_loss_squared = best_losses_theta["best_total_loss_squared"]
+#best_total_loss = best_losses_theta["best_total_loss"]
+#best_total_loss_squared = best_losses_theta["best_total_loss_squared"]
 
 #Daten vorbereiten
 dataset = diff_WQ_theta_data_raw.copy()
@@ -57,7 +57,7 @@ high_theta_model = keras.Sequential(
     ]
 )
 #Model compilen, optimizer und loss festlegen
-high_theta_model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=learning_rate), loss=Layers.MeanSquaredLogarithmicError())
+high_theta_model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=learning_rate), loss=Layers.MeanAbsoluteError())
 """
 #Debuggin, Summary und gewichte angucken
 print("Summary:", high_theta_model.summary())
@@ -97,3 +97,9 @@ plt.xlabel(r"$\theta$")
 plt.show()
 
 print("Summary nach Training:", high_theta_model.summary())
+
+#percentage error
+results = high_theta_model(test_features)
+percentage_loss = keras.losses.MeanAbsolutePercentageError()
+validation_loss = percentage_loss(y_true=test_labels, y_pred=results)
+print("percentage loss:", validation_loss)
