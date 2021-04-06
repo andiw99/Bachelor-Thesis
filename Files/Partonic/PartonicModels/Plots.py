@@ -4,11 +4,12 @@ import numpy as np
 from tensorflow import keras
 from matplotlib import pyplot as plt
 import Layers
+import ast
 
 #Pfade eingeben
 paths = dict()
-model_path="/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Partonic/PartonicModels/PartonicTheta/best_model"
-training_data_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Partonic/PartonicData/diff_WQ_theta_data"
+model_path="/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Partonic/PartonicModels/PartonicTheta/Logarithm+MSE/" + "model"
+training_data_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Partonic/PartonicData/ThetaData"
 #more data to plot?
 #plotting_data = ...
 
@@ -26,8 +27,10 @@ for key,path in paths.items():
 model = keras.models.load_model(filepath=model_path)
 
 show_3D_plots = False
-config = {'scaling': False, 'logarithm': False, 'shift': False, 'label_normalization': False}
-transformer = Layers.LabelTransformation(config=config)
+config = pd.read_csv(model_path + "/config")
+config = config.transpose()
+transformer_config = ast.literal_eval(config[8][1])
+transformer = Layers.LabelTransformation(config=transformer_config)
 loss_function = keras.losses.MeanAbsoluteError()
 
 #In Features und Labels unterteilen
@@ -82,6 +85,7 @@ for dataset in predictions:
     #losses plotten
     plt.plot(features[dataset], losses[dataset])
     plt.ylabel("Loss")
+    plt.yscale("Log")
     plt.title(dataset)
     plt.show()
 

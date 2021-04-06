@@ -4,6 +4,7 @@ import pandas as pd
 from numpy import random
 from matplotlib import pyplot as plt
 import numpy as np
+import math
 """
 (x_train, y_train), _ = tf.keras.datasets.mnist.load_data()
 dataset = tf.data.Dataset.from_tensor_slices(
@@ -74,3 +75,29 @@ print(a)
 print(b)
 print(tf.experimental.numpy.append(a,b, axis=0))
 
+dict = {
+    "hallo": 2,
+    "hello": 1
+}
+print(list(dict.keys()))
+print(list(dict.values()))
+
+
+learning_rate = 5
+
+config = pd.read_csv("/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Partonic/PartonicModels/PartonicTheta/Logarithm+MAE" + "/config")
+config = config.transpose()
+print("config[2][2]:", type(config[2][2]))
+i=0
+print(float("nan"), type(float("nan")))
+
+while pd.notna(config[2][i]):
+    i += 1
+print(i)
+exit()
+
+config[2][2] = learning_rate
+print(config[2])
+exit()
+config = config.transpose()
+print(config)

@@ -4,21 +4,34 @@ from matplotlib.ticker import LinearLocator
 from matplotlib import cm
 import numpy as np
 
+#Daten einlesen
+#set_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/HadronicData/log_neg_3D/"
+set_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/HadronicData/RandomSamples/"
 #eta constant
-hadronic_data_eta_constant = pd.read_csv("/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/HadronicData/hadronic__eta_constant__1.0133779264214047")
-plt.plot(hadronic_data_eta_constant["x_1"], hadronic_data_eta_constant["WQ"])
-plt.xlim(0.0075, 0.2)
-plt.ylim(0, 0.08)
+hadronic_data_eta_constant = pd.read_csv( set_path + "eta_x_2_constant")
+#x-constant beide x_1, x_2
+hadronic_data_x_constant = pd.read_csv(set_path + "x_constant")
+#3D-plot, x_2 constant
+hadronic_data_x_2_constant = pd.read_csv(set_path + "x_2_constant__3D")
+
+#eta constant
+order = np.argsort(hadronic_data_eta_constant["x_1"])
+x_list = np.array(hadronic_data_eta_constant["x_1"])[order]
+WQ_list = np.array(hadronic_data_eta_constant["WQ"])[order]
+plt.plot(x_list, WQ_list)
+plt.xlabel("x")
 plt.show()
 
 #x-constant
-hadronic_data_x_constant = pd.read_csv("/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/HadronicData/hadronic__x_constant__0.2")
-plt.plot(hadronic_data_x_constant["eta"], hadronic_data_x_constant["WQ"])
+order = np.argsort(hadronic_data_x_constant["eta"])
+eta_list = np.array(hadronic_data_x_constant["eta"])[order]
+WQ_list = np.array(hadronic_data_x_constant["WQ"])[order]
+plt.plot(eta_list, WQ_list)
+plt.xlabel("eta")
 plt.show()
 
 #3D plot
 fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
-hadronic_data_x_2_constant = pd.read_csv("/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/HadronicData/log_neg_3D/logarithmic_hadronic_data_no_negative__x_2_constant__3D")
 
 eta = hadronic_data_x_2_constant["eta"]
 x_1 = hadronic_data_x_2_constant["x_1"]
@@ -32,8 +45,8 @@ ax.set_xlabel("eta")
 ax.set_ylabel("x_1")
 ax.set_zlabel("WQ")
 ax.set_zscale("log")
-ax.set_ylim(0.1, 0.5)
 plt.tight_layout()
+ax.view_init(10, 50)
 plt.show()
 for angle in range(0,360):
     if angle % 60 ==0:
