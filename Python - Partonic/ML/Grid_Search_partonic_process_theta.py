@@ -4,7 +4,7 @@ from tensorflow.keras import layers
 import tensorflow as tf
 from tensorflow import keras
 from matplotlib import pyplot as plt
-import Layers
+import ml
 import time
 
 #Daten einlesen
@@ -57,9 +57,9 @@ for batch_size in batch_size_pool:
                         time0 = time.time()
 
                         #Initialisiere Model
-                        theta_model = Layers.DNN(nr_hidden_layers=nr_hidden_layers, units=units, outputs=1,
-                                                 kernel_regularization=keras.regularizers.l2(l2=l2_kernel),
-                                                 bias_regularization=keras.regularizers.l2(l2=l2_bias))
+                        theta_model = ml.DNN(nr_hidden_layers=nr_hidden_layers, units=units, outputs=1,
+                                             kernel_regularization=keras.regularizers.l2(l2=l2_kernel),
+                                             bias_regularization=keras.regularizers.l2(l2=l2_bias))
                         optimizer = optimizers
                         loss_fn = lossfunction
                         print("Wir initialisieren ein Model mit: nr_hidden_layers:", nr_hidden_layers, "batch_size:",

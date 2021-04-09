@@ -29,6 +29,8 @@ plt.show()
 order = np.argsort(theta_test_data["Theta"] )
 theta = np.array(theta_test_data["Theta"])[order]
 diff_WQ_theta= np.array(theta_test_data["WQ"])[order]
+print(theta_test_data["Theta"])
+print(theta)
 
 Graph_theta = plt.plot(theta, diff_WQ_theta)
 plt.ylabel(r"$\frac{d\sigma}{d\theta}$")

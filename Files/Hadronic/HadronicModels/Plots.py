@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 from tensorflow import keras
 from matplotlib import pyplot as plt
-import Layers
+import ml
 
 #Pfade eingeben
 paths = dict()
@@ -27,7 +27,7 @@ model = keras.models.load_model(filepath=model_path)
 
 show_3D_plots = False
 config = {'scaling': False, 'logarithm': False, 'shift': False, 'label_normalization': False}
-transformer = Layers.LabelTransformation(config=config)
+transformer = ml.LabelTransformation(config=config)
 loss_function = keras.losses.MeanAbsoluteError()
 
 #In Features und Labels unterteilen

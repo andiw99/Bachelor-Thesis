@@ -49,6 +49,7 @@ print(tf.nn.relu.__name__)
 
 print(keras.initializers.RandomNormal.get_config())
 """
+"""
 xRand = np.abs(random.normal(loc=0, scale=0.15, size=3600))
 xRand = xRand/(2*np.max(xRand))
 xRand2 = np.abs(random.normal(loc=0, scale=0.2, size=400))
@@ -82,11 +83,16 @@ dict = {
 print(list(dict.keys()))
 print(list(dict.values()))
 
-
+"""
 learning_rate = 5
 
-config = pd.read_csv("/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Partonic/PartonicModels/PartonicTheta/Logarithm+MAE" + "/config")
+
+config = pd.read_csv("/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/HadronicModels/Scaling+logarithm+MSE+leaky_relu/config")
+print(config)
+#print(config["learning_rate"])
 config = config.transpose()
+print(config)
+exit()
 print("config[2][2]:", type(config[2][2]))
 i=0
 print(float("nan"), type(float("nan")))

@@ -4,7 +4,7 @@ from tensorflow.keras import layers
 import tensorflow as tf
 from tensorflow import keras
 from matplotlib import pyplot as plt
-import Layers
+import ml
 import time
 
 #Daten einlesem
@@ -57,7 +57,7 @@ high_theta_model = keras.Sequential(
     ]
 )
 #Model compilen, optimizer und loss festlegen
-high_theta_model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=learning_rate), loss=Layers.MeanAbsoluteError())
+high_theta_model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=learning_rate), loss=ml.MeanAbsoluteError())
 """
 #Debuggin, Summary und gewichte angucken
 print("Summary:", high_theta_model.summary())

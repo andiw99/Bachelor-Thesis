@@ -4,7 +4,7 @@ from tensorflow.keras import layers
 import tensorflow as tf
 from tensorflow import keras
 from matplotlib import pyplot as plt
-import Layers
+import ml
 
 #Daten einlesen
 diff_WQ_eta_data_raw = pd.read_csv("diff_WQ_eta_data")
@@ -37,7 +37,7 @@ training_data = training_data.batch(batch_size=batch_size)
 print(training_data)
 
 #initialisiere Model
-eta_model = Layers.DNN(nr_hidden_layers=3, units=units, outputs=1)
+eta_model = ml.DNN(nr_hidden_layers=3, units=units, outputs=1)
 loss_fn = tf.keras.losses.MeanAbsoluteError()
 optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)
 

@@ -3,7 +3,7 @@ import numpy as np
 from tensorflow import keras
 import tensorflow as tf
 import pandas as pd
-import Layers
+import ml
 import time
 import ast
 
@@ -19,6 +19,7 @@ testing_data_path = project_path + "/" + project + "Data/" + "Test" + arg + "Dat
 model_paths = dict()
 model_paths["best model"] = project_path + "/" + project + "Models/" + project+arg + "/" + "best_model"
 model_paths["MSE"] = project_path + "/" + project + "Models/" + project+arg + "/" + "Logarithm+MSE"
+model_paths["MAE"] = project_path + "/" + project + "Models/" + project+arg + "/" + "Logarithm+MAE"
 #...model_paths["MSE"] =
 config_paths = dict()
 for model in model_paths:
@@ -33,7 +34,7 @@ for model in config_paths:
     config = pd.read_csv(config_paths[model])
     config = config.transpose()
     transformer_config = ast.literal_eval(config[8][1])
-    transformers[model] = Layers.LabelTransformation(config=transformer_config)
+    transformers[model] = ml.LabelTransformation(config=transformer_config)
 
 #Testdaten laden, vermutlich nur ein Set mit Testdaten?
 data_raw = pd.read_csv(testing_data_path)

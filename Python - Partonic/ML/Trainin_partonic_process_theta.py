@@ -4,7 +4,7 @@ from tensorflow.keras import layers
 import tensorflow as tf
 from tensorflow import keras
 from matplotlib import pyplot as plt
-import Layers
+import ml
 
 #Daten einlesen
 diff_WQ_theta_data_raw = pd.read_csv("ThetaData")
@@ -39,7 +39,7 @@ training_data = tf.data.Dataset.from_tensor_slices((training_data_theta, train_d
 training_data = training_data.batch(batch_size=batch_size)
 
 #initialisiere Model
-theta_model = Layers.DNN(nr_hidden_layers=nr_hidden_layers, units=units, outputs=1, kernel_regularization=keras.regularizers.l2(l2=l2_kernel), bias_regularization=keras.regularizers.l2(l2=l2_bias))
+theta_model = ml.DNN(nr_hidden_layers=nr_hidden_layers, units=units, outputs=1, kernel_regularization=keras.regularizers.l2(l2=l2_kernel), bias_regularization=keras.regularizers.l2(l2=l2_bias))
 loss_fn = tf.keras.losses.MeanSquaredError()
 optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)
 

@@ -3,21 +3,21 @@ import pandas as pd
 import numpy as np
 from tensorflow import keras
 from matplotlib import pyplot as plt 
-import Layers
+import ml
 #Modell laden 
 hadronic_model = keras.models.load_model(filepath="model")
 logarithm=True
 scaling=1.0
 show_3D_plots =False
 config ={'scaling': False, 'logarithm': True, 'shift': True, 'label_normalization': True, 'shift_value': -30.020137786865234, 'normalization_value': 33.692718505859375}
-transformer = Layers.LabelTransformation(config=config)
+transformer = ml.LabelTransformation(config=config)
 loss_function=keras.losses.mean_absolute_error
 loss_fn=mean_squared_error
 #Daten einlesen
-hadronic_data_x_constant = pd.read_csv("/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/HadronicData/log_neg_x12/logarithmic_hadronic_data_no_negative__x_2_constant__0.11")
-hadronic_data_eta_x_2_constant = pd.read_csv("/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/HadronicData/log_neg_x12/logarithmic_hadronic_data_no_negative__eta_x_2_constant__0.45")
-hadronic_data_eta_x_1_constant = pd.read_csv("/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/HadronicData/log_neg_x12/logarithmic_hadronic_data_no_negative__eta_x_1_constant__0.45")
-hadronic_data_x_2_constant = pd.read_csv("/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/HadronicData/log_neg_3D/logarithmic_hadronic_data_no_negative__x_2_constant__3D")
+hadronic_data_x_constant = pd.read_csv("/Files/Hadronic/HadronicData/log_neg_x12/x_constant")
+hadronic_data_eta_x_2_constant = pd.read_csv("/Files/Hadronic/HadronicData/log_neg_x12/eta_x_2_constant")
+hadronic_data_eta_x_1_constant = pd.read_csv("/Files/Hadronic/HadronicData/log_neg_x12/eta_x_1_constant")
+hadronic_data_x_2_constant = pd.read_csv("/Files/Hadronic/HadronicData/log_neg_3D/x_2_constant__3D")
 
 #predictions berechnen
 pred_feature_x_constant = tf.constant([hadronic_data_x_constant["x_1"], hadronic_data_x_constant["x_2"], hadronic_data_x_constant["eta"]], dtype="float32")

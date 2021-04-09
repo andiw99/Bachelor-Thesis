@@ -3,13 +3,13 @@ import pandas as pd
 import numpy as np
 from tensorflow import keras
 from matplotlib import pyplot as plt
-import Layers
+import ml
 import ast
 
 #Pfade eingeben
 paths = dict()
-model_path="/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Partonic/PartonicModels/PartonicTheta/Logarithm+MSE/" + "model"
-training_data_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Partonic/PartonicData/ThetaData"
+model_path="/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Partonic/PartonicModels/PartonicEta/best_model"
+training_data_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Partonic/PartonicData/diff_WQ_eta_data"
 #more data to plot?
 #plotting_data = ...
 
@@ -30,7 +30,7 @@ show_3D_plots = False
 config = pd.read_csv(model_path + "/config")
 config = config.transpose()
 transformer_config = ast.literal_eval(config[8][1])
-transformer = Layers.LabelTransformation(config=transformer_config)
+transformer = ml.LabelTransformation(config=transformer_config)
 loss_function = keras.losses.MeanAbsoluteError()
 
 #In Features und Labels unterteilen
@@ -67,6 +67,7 @@ for dataset in features:
     predictions[dataset] = transformer.retransform(model(features[dataset]))
 #losses
 losses = dict()
+
 for dataset in predictions:
     losses[dataset] = []
     for i,label in enumerate(predictions[dataset]):
@@ -75,15 +76,23 @@ for dataset in predictions:
 #Jetzt plotten irgendwie
 for dataset in predictions:
     print(features[dataset])
+
     #Fkt plotten
-    plt.plot(features[dataset], predictions[dataset])
-    plt.plot(features[dataset], labels[dataset])
+    order = np.argsort(features[dataset], axis=0)
+    plot_features = features[dataset].numpy()[order][:,0,0]
+    plot_predictions = np.array(predictions[dataset])[order][:,0,0]
+    plot_labels = np.array(labels[dataset])[order][:,0,0]
+    plt.plot(plot_features, plot_predictions, label="ML")
+    plt.plot(plot_features, plot_labels, label="analytic")
     plt.ylabel("WQ")
+    plt.xlabel("Theta")
     plt.title(dataset)
+    plt.legend()
     plt.show()
 
     #losses plotten
-    plt.plot(features[dataset], losses[dataset])
+    plot_losses = np.array(losses[dataset])[order][:,0]
+    plt.plot(plot_features, plot_losses)
     plt.ylabel("Loss")
     plt.yscale("Log")
     plt.title(dataset)

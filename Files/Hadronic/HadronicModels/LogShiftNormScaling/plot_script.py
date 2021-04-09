@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 from tensorflow import keras
 from matplotlib import pyplot as plt 
-import Layers
+import ml
 #Modell laden 
 hadronic_model = keras.models.load_model(filepath="LogShiftNormScaling/")
 logarithm=True
@@ -11,9 +11,9 @@ scaling=10903854514176.0
 loss_function=keras.losses.MeanAbsoluteError()
 loss_fn=loss_function
 #Daten einlesen
-hadronic_data_x_constant = pd.read_csv("/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/HadronicData/log_neg_x12/logarithmic_hadronic_data_no_negative__x_2_constant__0.11")
-hadronic_data_eta_x_2_constant = pd.read_csv("/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/HadronicData/log_neg_x12/logarithmic_hadronic_data_no_negative__eta_x_2_constant__0.45")
-hadronic_data_eta_x_1_constant = pd.read_csv("/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/HadronicData/log_neg_x12/logarithmic_hadronic_data_no_negative__eta_x_1_constant__0.45")
+hadronic_data_x_constant = pd.read_csv("/Files/Hadronic/HadronicData/log_neg_x12/x_constant")
+hadronic_data_eta_x_2_constant = pd.read_csv("/Files/Hadronic/HadronicData/log_neg_x12/eta_x_2_constant")
+hadronic_data_eta_x_1_constant = pd.read_csv("/Files/Hadronic/HadronicData/log_neg_x12/eta_x_1_constant")
 
 #predictions berechnen
 pred_feature_x_constant = tf.constant([hadronic_data_x_constant["x_1"], hadronic_data_x_constant["x_2"], hadronic_data_x_constant["eta"]], dtype="float32")

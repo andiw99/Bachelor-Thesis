@@ -5,7 +5,7 @@ import tensorflow as tf
 from tensorflow import keras
 from matplotlib import pyplot as plt
 from matplotlib import cm
-import Layers
+import ml
 import time
 import os
 
@@ -21,10 +21,10 @@ project_name = "PartonicTheta/"
 model_name = "NewTrainingSuitetransformerconfigtest/"
 path =project_path + project_name + model_name
 
-#data_name_x_constant = "log_neg_x12/logarithmic_hadronic_data_no_negative__x_2_constant__0.11"
-#data_name_eta_x_2_constant = "log_neg_x12/logarithmic_hadronic_data_no_negative__eta_x_2_constant__0.45"
-#data_name_eta_x_1_constant = "log_neg_x12/logarithmic_hadronic_data_no_negative__eta_x_1_constant__0.45"
-#data_name_x_2_constant = "log_neg_3D/logarithmic_hadronic_data_no_negative__x_2_constant__3D"
+#data_name_x_constant = "log_neg_x12/x_constant"
+#data_name_eta_x_2_constant = "log_neg_x12/eta_x_2_constant"
+#data_name_eta_x_1_constant = "log_neg_x12/eta_x_1_constant"
+#data_name_x_2_constant = "log_neg_3D/x_2_constant__3D"
 data_raw = pd.read_csv(data_path+data_name)
 #Überprüfen, ob es für das vorliegende Problem schon losses gibt und ggf einlesen
 best_losses = None
@@ -44,7 +44,7 @@ learning_rate = 1e-5
 loss_fn = keras.losses.MeanAbsoluteError()
 optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate, clipvalue=10)
 hidden_activation = tf.nn.leaky_relu
-output_activation = Layers.LinearActiavtion()
+output_activation = ml.LinearActiavtion()
 kernel_initializer = tf.keras.initializers.RandomNormal()
 bias_initializer =tf.keras.initializers.RandomNormal(mean=0.1, stddev=0.05)
 l2_kernel = 0
@@ -115,7 +115,7 @@ test_features = tf.transpose(test_features)
 train_labels = tf.math.abs(tf.transpose(tf.constant([train_labels_pd], dtype="float32")))
 test_labels = tf.math.abs(tf.transpose(tf.constant([test_labels_pd], dtype="float32")))
 
-transformer = Layers.LabelTransformation(train_labels, scaling=scaling_bool, logarithm=logarithm, shift=shift, label_normalization=label_normalization)
+transformer = ml.LabelTransformation(train_labels, scaling=scaling_bool, logarithm=logarithm, shift=shift, label_normalization=label_normalization)
 train_labels = transformer.transform(train_labels)
 test_labels = transformer.transform(test_labels)
 
@@ -129,7 +129,7 @@ print("Zeit, um Daten vorzubereiten:", time3-time1)
 #initialisiere Model
 if new_model:
     if custom:
-        model = Layers.DNN2(
+        model = ml.DNN2(
              nr_hidden_layers=nr_layers, units=units, outputs=1,
              loss_fn=loss_fn, optimizer=optimizer,
              hidden_activation=hidden_activation, output_activation=output_activation,

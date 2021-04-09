@@ -4,6 +4,9 @@ from scipy import integrate
 import tensorflow as tf
 from tensorflow import keras
 from matplotlib import pyplot as plt
+import pandas as pd
+import ml
+import ast
 #Zuerst naiv mit uniformer distribution
 
 def func(x):
@@ -12,7 +15,12 @@ def func(x):
 def Func(x):
     return -x - 2 * (1/np.tan(x))
 #Model laden
-model = keras.models.load_model(filepath="/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Partonic/PartonicModels/PartonicTheta/best_model")
+model_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Partonic/PartonicModels/PartonicTheta/best_model"
+model = keras.models.load_model(filepath=model_path)
+config = pd.read_csv(model_path + "/config")
+config = config.transpose()
+transformer_config = ast.literal_eval(config[8][1])
+transformer = ml.LabelTransformation(config=transformer_config)
 
 #Variablen
 N = 1000 #punkte
@@ -117,17 +125,17 @@ for sigma in np.linspace(0.10,0.60, 20):
             plt.show()
 
         #integral im unteren bereich berechnen und durch anzahl der segmente teilen!!!!
-        ML_integral_lower += 1/2 * tf.math.reduce_mean(model(xRand_lower)/lower_gauss(xRand_lower))
+        ML_integral_lower += 1/2 * tf.math.reduce_mean(transformer.retransform(model(xRand_lower))/lower_gauss(xRand_lower))
         analytic_integral_lower += 1/2 *  tf.math.reduce_mean(func(xRand_lower)/lower_gauss(xRand_lower))
         #integral des quadrats im unterren bereich berechnen
-        ML_integral_quad_lower += 1/2 * tf.math.reduce_mean(tf.math.square(model(xRand_lower)/lower_gauss(xRand_lower)))
+        ML_integral_quad_lower += 1/2 * tf.math.reduce_mean(tf.math.square(transformer.retransform(model(xRand_lower))/lower_gauss(xRand_lower)))
         analytic_integral_quad_lower += 1/2 * tf.math.reduce_mean(tf.math.square(func(xRand_lower)/lower_gauss(xRand_lower)))
 
         #integral im oberen bereich berechnen
-        ML_integral_upper += 1/2 * tf.math.reduce_mean(model(xRand_upper)/upper_gauss(xRand_upper))
+        ML_integral_upper += 1/2 * tf.math.reduce_mean(transformer.retransform(model(xRand_upper))/upper_gauss(xRand_upper))
         analytic_integral_upper += 1/2 * tf.math.reduce_mean(func(xRand_upper)/upper_gauss(xRand_upper))
         #integral des quadrats im oberen bereich berechnen
-        ML_integral_quad_upper += 1/2 * tf.math.reduce_mean(tf.math.square(model(xRand_upper)/upper_gauss(xRand_upper)))
+        ML_integral_quad_upper += 1/2 * tf.math.reduce_mean(tf.math.square(transformer.retransform(model(xRand_upper))/upper_gauss(xRand_upper)))
         analytic_integral_quad_upper += 1/2 * tf.math.reduce_mean(tf.math.square(func(xRand_upper)/upper_gauss(xRand_upper)))
 
     ML_integral = 1/n * (ML_integral_lower + ML_integral_upper)

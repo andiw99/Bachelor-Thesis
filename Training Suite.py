@@ -5,26 +5,31 @@ import tensorflow as tf
 from tensorflow import keras
 from matplotlib import pyplot as plt
 from matplotlib import cm
-import Layers
+import ml
 import time
 import os
-
+import ast
+#Neues Modell oder weitertrainieren?
+new_model = ast.literal_eval(input("new_model= "))
 
 time1 = time.time()
 #Daten einlesen
-data_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Partonic/PartonicData/"
-data_name = "ThetaData"
-project_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Partonic/PartonicModels/"
-loss_name = "partonic_loss_theta"
-project_name = "PartonicTheta/"
+data_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Reweight/Data/Uniform+Strange+middlex/"
+data_name = "all"
+project_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Reweight/Models/"
+loss_name = "reweight_loss"
+project_name = ""
 
-model_name = "Logarithm+MAE"
+model_name = "MSE+MoreNodes+MoreLayers"
+label_name = "reweight"
 path =project_path + project_name + model_name
 
-#data_name_x_constant = "log_neg_x12/logarithmic_hadronic_data_no_negative__x_2_constant__0.11"
-#data_name_eta_x_2_constant = "log_neg_x12/logarithmic_hadronic_data_no_negative__eta_x_2_constant__0.45"
-#data_name_eta_x_1_constant = "log_neg_x12/logarithmic_hadronic_data_no_negative__eta_x_1_constant__0.45"
-#data_name_x_2_constant = "log_neg_3D/logarithmic_hadronic_data_no_negative__x_2_constant__3D"
+
+
+#data_name_x_constant = "log_neg_x12/x_constant"
+#data_name_eta_x_2_constant = "log_neg_x12/eta_x_2_constant"
+#data_name_eta_x_1_constant = "log_neg_x12/eta_x_1_constant"
+#data_name_x_2_constant = "log_neg_3D/x_2_constant__3D"
 data_raw = pd.read_csv(data_path+data_name)
 #Überprüfen, ob es für das vorliegende Problem schon losses gibt und ggf einlesen
 best_losses = None
@@ -33,26 +38,26 @@ if os.path.exists(project_path+ project_name + loss_name):
 
 
 #Variablen...
-total_data = len(data_raw["WQ"])
+total_data = len(data_raw[label_name])
 train_frac = 0.85
 batch_size = 32
 buffer_size = int(total_data * train_frac)
-training_epochs = 50
-nr_layers = 2
-units = 128
-learning_rate = 1e-5
+training_epochs = 120
+nr_layers = 3
+units = 256
+learning_rate = 0.8e-8
 loss_fn = keras.losses.MeanSquaredError()
-optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate, clipvalue=10)
+optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate, clipvalue=1)
 hidden_activation = tf.nn.leaky_relu
-output_activation = Layers.LinearActiavtion()
-kernel_initializer = tf.keras.initializers.RandomNormal()
+output_activation = ml.LinearActiavtion()
+kernel_initializer = tf.keras.initializers.RandomNormal(mean=0, stddev=0.1)
 bias_initializer =tf.keras.initializers.RandomNormal(mean=0.1, stddev=0.05)
 l2_kernel = 0
 l2_bias = 0
 dropout = False
 dropout_rate = 0.1
 scaling_bool = False
-logarithm = True
+logarithm = False
 shift = False
 label_normalization = False
 
@@ -60,8 +65,7 @@ label_normalization = False
 if best_losses is not None:
     best_percentage_loss = best_losses["best_percentage_loss"]
 
-#Neues Modell oder weitertrainieren?
-new_model = False
+
 #Custom Layers oder Keras Layers?
 custom = False
 
@@ -89,8 +93,8 @@ test_dataset = data_raw.drop(train_dataset.index)
 train_features_pd = train_dataset.copy()
 test_features_pd = test_dataset.copy()
 
-train_labels_pd = train_features_pd.pop("WQ")
-test_labels_pd = test_features_pd.pop("WQ")
+train_labels_pd = train_features_pd.pop(label_name)
+test_labels_pd = test_features_pd.pop(label_name)
 
 #Aus den Pandas Dataframes tf-Tensoren machen
 for i,key in enumerate(train_features_pd):
@@ -115,7 +119,7 @@ test_features = tf.transpose(test_features)
 train_labels = tf.math.abs(tf.transpose(tf.constant([train_labels_pd], dtype="float32")))
 test_labels = tf.math.abs(tf.transpose(tf.constant([test_labels_pd], dtype="float32")))
 
-transformer = Layers.LabelTransformation(train_labels, scaling=scaling_bool, logarithm=logarithm, shift=shift, label_normalization=label_normalization)
+transformer = ml.LabelTransformation(train_labels, scaling=scaling_bool, logarithm=logarithm, shift=shift, label_normalization=label_normalization)
 train_labels = transformer.transform(train_labels)
 test_labels = transformer.transform(test_labels)
 
@@ -129,7 +133,7 @@ print("Zeit, um Daten vorzubereiten:", time3-time1)
 #initialisiere Model
 if new_model:
     if custom:
-        model = Layers.DNN2(
+        model = ml.DNN2(
              nr_hidden_layers=nr_layers, units=units, outputs=1,
              loss_fn=loss_fn, optimizer=optimizer,
              hidden_activation=hidden_activation, output_activation=output_activation,
@@ -200,8 +204,6 @@ if new_model and custom:
     plt.yscale("log")
     plt.ylabel("Losses")
     plt.xlabel("Epoch")
-    plt.savefig(path + "training_losses")
-    plt.show()
 
 else:
     plt.plot(history.history["loss"], label="loss")
@@ -209,8 +211,8 @@ else:
     plt.xlabel("Epoch")
     plt.yscale("log")
     plt.legend()
-    plt.show()
-
+plt.savefig(path + "/training_losses")
+plt.show()
 #Modell und config speichern
 model.save(filepath=path, save_format="tf")
 
@@ -221,19 +223,18 @@ if new_model:
             "learning_rate": learning_rate,
             "epochs": training_epochs,
             "batch_size": batch_size,
-            "validation loss": total_loss,
+            "validation loss": "{:.2f}".format(float(total_loss)),
             "scaling": scaling_bool,
             "logarithm": logarithm,
             "transformer_config": str(transformer.get_config()),
-            "training time:": "{:.2f}".format(training_time)
+            "training time:": "{:.2f}".format(training_time),
+            "Custom": custom
         },
         index=[0]
     )
-
     #config.append(training_parameters)
     config = pd.concat([config, training_parameters], axis=1)
-
-    config = config.transpose()
+    index=True
 if not new_model:
     config = pd.read_csv(path + "/config")
     config = config.transpose()
@@ -241,9 +242,11 @@ if not new_model:
     while pd.notna(config[2][i]):
         i += 1
     config[2][i] = learning_rate
-    config = config.transpose()
+    index= False
 
-config.to_csv(path + "/config", index=False)
+config = config.transpose()
+print(config)
+config.to_csv(path + "/config", index=index)
 
 
 
@@ -264,12 +267,13 @@ if best_losses is not None:
     if float(validation_loss) < float(best_losses["best_percentage_loss"]):
         model.save(filepath=project_path + project_name + "best_model", save_format="tf")
         losses_data.to_csv(project_path + project_name + loss_name, index=False)
-        config.to_csv(project_path + project_name + "best_config", index=False)
-        config.to_csv(project_path + project_name + "best_model/config", index=False)
+        config.to_csv(project_path + project_name + "best_config", index = index)
+        config.to_csv(project_path + project_name + "best_model/config", index = index)
         print("VERBESSERUNG ERREICHT!")
 
 elif best_losses == None:
     model.save(filepath=project_path + project_name + "best_model", save_format="tf")
     losses_data.to_csv(project_path + project_name + loss_name, index=False)
-    config.to_csv(project_path + project_name + "best_config")
+    config.to_csv(project_path + project_name + "best_model/config", index = index)
+    config.to_csv(project_path + project_name + "best_config", index= index)
     print("VERBESSERUNG ERREICHT!")
