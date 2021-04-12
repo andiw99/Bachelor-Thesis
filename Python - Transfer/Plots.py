@@ -11,11 +11,11 @@ paths = dict()
 #plotting_data = ...
 
 #Pfade in dict speichern
-paths["CT14_eta_x_1_constant"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Data/ComparableData/CT14nnlo/eta_x_1_constant"
-paths["CT14 x constant"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Data/ComparableData/CT14nnlo/x_constant"
-paths["MMHT eta, x_1 constant"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Data/ComparableData/MMHT2014/eta_x_1_constant"
-paths["MMHT x constant"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Data/ComparableData/MMHT2014/x_constant"
-paths["3D-Plot, MMHT"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Data/ComparableData/MMHT2014/x_2_constant__3D"
+paths["CT14_eta_x_1_constant"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Reweight/Data/Reweight_of_diff_WQ/CT14nnlo/eta_x_1_constant"
+paths["CT14 x constant"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Reweight/Data/Reweight_of_diff_WQ/CT14nnlo/x_constant"
+paths["MMHT eta, x_1 constant"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Reweight/Data/Reweight_of_diff_WQ/MMHT2014/eta_x_1_constant"
+paths["MMHT x constant"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Reweight/Data/Reweight_of_diff_WQ/MMHT2014/x_constant"
+paths["3D-Plot, MMHT"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Reweight/Data/Reweight_of_diff_WQ/MMHT2014/x_2_constant__3D"
 label_name = "WQ"
 
 #Daten einlesen

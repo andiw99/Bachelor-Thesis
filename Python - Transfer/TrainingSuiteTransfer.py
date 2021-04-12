@@ -26,7 +26,6 @@ else:
             freeze = ast.literal_eval((input("freeze= ")))
         input("auf die config geguckt?")
 
-
 time1 = time.time()
 #Daten einlesen
 data_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Reweight/Data/Uniform+Strange+middlex/"
@@ -35,7 +34,7 @@ project_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/F
 loss_name = "reweight_loss"
 project_name = ""
 
-read_name = "best_model"
+read_name = "test_model"
 label_name = "reweight"
 read_path =project_path + project_name + read_name
 if transfer:
@@ -45,26 +44,15 @@ else:
     save_path = read_path
 
 
-
-
-
-#data_name_x_constant = "log_neg_x12/x_constant"
-#data_name_eta_x_2_constant = "log_neg_x12/eta_x_2_constant"
-#data_name_eta_x_1_constant = "log_neg_x12/eta_x_1_constant"
-#data_name_x_2_constant = "log_neg_3D/x_2_constant__3D"
-data_raw = pd.read_csv(data_path+data_name)
-#Überprüfen, ob es für das vorliegende Problem schon losses gibt und ggf einlesen
 best_losses = None
 if os.path.exists(project_path+ project_name + loss_name):
     best_losses = pd.read_csv(project_path+ project_name + loss_name)
 
 
 #Variablen...
-total_data = len(data_raw[label_name])
 train_frac = 0.85
 batch_size = 32
-buffer_size = int(total_data * train_frac)
-training_epochs = 120
+training_epochs = 2
 nr_layers = 3
 units = 128
 learning_rate = 3e-6
@@ -92,8 +80,6 @@ if best_losses is not None:
 #Custom Layers oder Keras Layers?
 custom = False
 
-#3D-plots zeigen?
-show_3D_plots = False
 
 #Loss für validation loss festlegen
 loss_function = keras.losses.MeanAbsolutePercentageError()
@@ -106,144 +92,21 @@ if not os.path.exists(path=read_path):
 
 #best_total_loss = best_losses
 time2= time.time()
-print("Zeit nur zum Einlesen von ", total_data, "Punkten:", time2-time1,"s")
-
-#Daten vorbereiten
-train_dataset = data_raw.sample(frac=train_frac)
-test_dataset = data_raw.drop(train_dataset.index)
-
-#In Features und Labels unterteilen
-train_features_pd = train_dataset.copy()
-test_features_pd = test_dataset.copy()
-
-train_labels_pd = train_features_pd.pop(label_name)
-test_labels_pd = test_features_pd.pop(label_name)
-
-#Aus den Pandas Dataframes tf-Tensoren machen
-for i,key in enumerate(train_features_pd):
-    print(i)
-    if i == 0:
-        train_features = tf.constant([train_features_pd[key]], dtype="float32")
-    else:
-        more_features = tf.constant([train_features_pd[key]], dtype="float32")
-        train_features = tf.experimental.numpy.append(train_features, more_features, axis=0)
-
-for i,key in enumerate(test_features_pd):
-    if i == 0:
-        test_features = tf.constant([test_features_pd[key]], dtype="float32")
-    else:
-        more_features = tf.constant([test_features_pd[key]], dtype="float32")
-        test_features = tf.experimental.numpy.append(test_features, more_features, axis=0)
-
-#Dimensionen arrangieren
-train_features = tf.transpose(train_features)
-test_features = tf.transpose(test_features)
-
-train_labels = tf.math.abs(tf.transpose(tf.constant([train_labels_pd], dtype="float32")))
-test_labels = tf.math.abs(tf.transpose(tf.constant([test_labels_pd], dtype="float32")))
-
-transformer = ml.LabelTransformation(train_labels, scaling=scaling_bool, logarithm=logarithm, shift=shift, label_normalization=label_normalization)
-train_labels = transformer.transform(train_labels)
-test_labels = transformer.transform(test_labels)
-
-training_data = tf.data.Dataset.from_tensor_slices((train_features, train_labels))
-
-training_data = training_data.batch(batch_size=batch_size)
+(training_data, train_features, train_labels, test_features, test_labels, transformer) = ml.data_handling(data_path=data_path+data_name,
+                                                                                                          train_frac=train_frac,batch_size=batch_size,
+                                                                                                          label_name=label_name)
 time3 = time.time()
 
 print("Zeit, um Daten vorzubereiten:", time3-time1)
 
 #initialisiere Model
-if new_model:
-    if custom:
-        model = ml.DNN2(
-             nr_hidden_layers=nr_layers, units=units, outputs=1,
-             loss_fn=loss_fn, optimizer=optimizer,
-             hidden_activation=hidden_activation, output_activation=output_activation,
-             kernel_initializer=kernel_initializer,
-             bias_initializer=bias_initializer,
-             kernel_regularization=keras.regularizers.l2(l2=l2_kernel), bias_regularization=keras.regularizers.l2(l2=l2_bias),
-             dropout=dropout, dropout_rate=dropout_rate
-        )
-    if not custom:
-        model = keras.Sequential()
-        #Architektur aufbauen
-        for i in range(nr_layers):
-            if dropout:
-                model.add(keras.layers.Dropout(rate=dropout_rate))
-            model.add(keras.layers.Dense(units=units, activation=hidden_activation, name="Layer_" + str(i),
-                                                  kernel_initializer=kernel_initializer, bias_initializer=bias_initializer,
-                                                  kernel_regularizer=keras.regularizers.l2(l2=l2_kernel),
-                                                  bias_regularizer=keras.regularizers.l2(l2=l2_bias)))
-        #Output layer nicht vergessen
-        model.add(keras.layers.Dense(units=1, activation=output_activation, name="Output_layer",
-                                     kernel_initializer=kernel_initializer, bias_initializer=bias_initializer,
-                                     kernel_regularizer=keras.regularizers.l2(l2=l2_kernel),
-                                     bias_regularizer=keras.regularizers.l2(l2=l2_bias)
-                                     ))
-        #Model compilen
-        model.compile(optimizer=optimizer, loss=loss_fn)
-
-else:
-    if transfer:
-        inputs = keras.Input(shape=(2,1))
-        prev_model = keras.models.load_model(filepath=read_path)
-        for i in range(rm_layers):
-            prev_model.pop()
-        prev_model.trainable = False
-
-        model = prev_model
-        for i in range (rm_layers):
-            inp = model.input
-            if i == (rm_layers-1):
-                new_layer = keras.layers.Dense(units=1, activation=output_activation, name="New_Output_layer",
-                                     kernel_initializer=kernel_initializer, bias_initializer=bias_initializer,
-                                     kernel_regularizer=keras.regularizers.l2(l2=l2_kernel),
-                                     bias_regularizer=keras.regularizers.l2(l2=l2_bias))
-
-            else:
-                new_layer = keras.layers.Dense(units=units, activation=hidden_activation, name="New_Layer_" + str(i),
-                                                  kernel_initializer=kernel_initializer, bias_initializer=bias_initializer,
-                                                  kernel_regularizer=keras.regularizers.l2(l2=l2_kernel),
-                                                  bias_regularizer=keras.regularizers.l2(l2=l2_bias))
-
-            out = new_layer(prev_model.output)
-            model = keras.Model(inp, out)
-        print(model.summary())
-
-    else:
-        model = keras.models.load_model(filepath=read_path)
-        if freeze:
-            for layer in model.layers:
-                layer.trainable = False
-            model.layers[-1].trainable = True
-        print(model.summary())
-    model.compile(optimizer=optimizer, loss=loss_fn)
+model = ml.initialize_model(nr_layers=nr_layers, units=units, loss_fn=loss_fn, optimizer=optimizer, hidden_activation=hidden_activation, output_activation=output_activation,
+                            kernel_initializer=kernel_initializer, bias_initializer=bias_initializer, l2_kernel=l2_kernel, l2_bias=l2_bias, dropout=dropout, dropout_rate=dropout_rate,
+                            new_model=new_model, custom=custom, transfer=transfer, rm_layers=1, read_path=read_path, freeze=freeze)
 
 #Training starten
-losses = []
-steps =[]
-epochs = []
-total_steps = 0
 time4 = time.time()
-if new_model and custom:
-    for epoch in range(training_epochs):
-        epochs.append(epoch)
-        results = []
-        loss = 0
-        #Evaluation in every epoch
-        results = tf.math.abs(model(test_features, training=False))
-        total_loss = loss_function(transformer.retransform(results), transformer.retransform(test_labels))
-        print("total loss:", float(total_loss))
-        for step, (x,y) in enumerate(training_data.as_numpy_iterator()):
-            loss = model.train_on_batch(x=x, y=y)
-            total_steps += 1
-            if step % (int(total_data/(8*batch_size))) == 0:
-                print("Epoch:", epoch+1, "Step:", step, "Loss:", float(loss))
-                steps.append(total_steps)
-        losses.append(loss)
-else:
-    history = model.fit(x=train_features, y=train_labels, batch_size=batch_size, epochs=training_epochs, verbose=2, shuffle=True)
+history = model.fit(x=train_features, y=train_labels, batch_size=batch_size, epochs=training_epochs, verbose=2, shuffle=True)
 time5 = time.time()
 training_time = time5 - time4
 
@@ -253,83 +116,18 @@ total_loss = loss_function(transformer.retransform(results), transformer.retrans
 print("total loss:", float(total_loss))
 
 #Losses plotten
-if new_model and custom:
-    plt.plot(epochs, losses)
-    plt.yscale("log")
-    plt.ylabel("Losses")
-    plt.xlabel("Epoch")
-
-else:
-    plt.plot(history.history["loss"], label="loss")
-    plt.ylabel("Losses")
-    plt.xlabel("Epoch")
-    plt.yscale("log")
-    plt.legend()
-
+ml.make_losses_plot(history=history, custom=custom, new_model=new_model)
 plt.savefig(save_path + "/training_losses")
 plt.show()
+
 #Modell und config speichern
 model.save(filepath=save_path, save_format="tf")
-print("new_model:", new_model)
-if new_model:
-    config = pd.DataFrame(model.get_config())
-    training_parameters = pd.DataFrame(
-        {
-            "learning_rate": learning_rate,
-            "epochs": training_epochs,
-            "batch_size": batch_size,
-            "validation loss": "{:.2f}".format(float(total_loss)),
-            "scaling": scaling_bool,
-            "logarithm": logarithm,
-            "transformer_config": str(transformer.get_config()),
-            "training time:": "{:.2f}".format(training_time),
-            "Custom": custom,
-            "loss_fn": loss_fn.name
-        },
-        index=[0]
-    )
-    #config.append(training_parameters)
-    config = pd.concat([config, training_parameters], axis=1)
-    index=True
-if not new_model:
-    config = pd.read_csv(read_path + "/config")
-    config = config.transpose()
-    i = 0
-    while pd.notna(config["learning_rate"][i]):
-        i += 1
-    config["learning_rate"][i] = learning_rate
-    index= False
-
-config = config.transpose()
-print(config)
-config.to_csv(save_path + "/config", index=index)
+(config, index) = ml.save_config(new_model=new_model, model=model, learning_rate=learning_rate, training_epochs=training_epochs,
+               batch_size=batch_size, total_loss=total_loss, scaling_bool=scaling_bool, logarithm=logarithm, transformer=transformer,
+               training_time=training_time, custom=custom, loss_fn=loss_fn, read_path=read_path, save_path=save_path)
 
 
 
 #Überprüfen, ob Fortschritt gemacht wurde
-results = transformer.retransform(model(test_features))
-percentage_loss = keras.losses.MeanAbsolutePercentageError()
-validation_loss = percentage_loss(y_true=transformer.retransform(test_labels), y_pred=results)
-print("percentage loss:", float(validation_loss))
-
-losses_data = pd.DataFrame(
-    {
-        "best_percentage_loss": [float(validation_loss)]
-    }
-)
-
-
-if best_losses is not None:
-    if float(validation_loss) < float(best_losses["best_percentage_loss"]):
-        model.save(filepath=project_path + project_name + "best_model", save_format="tf")
-        losses_data.to_csv(project_path + project_name + loss_name, index=False)
-        config.to_csv(project_path + project_name + "best_config", index = index)
-        config.to_csv(project_path + project_name + "best_model/config", index = index)
-        print("VERBESSERUNG ERREICHT!")
-
-elif best_losses == None:
-    model.save(filepath=project_path + project_name + "best_model", save_format="tf")
-    losses_data.to_csv(project_path + project_name + loss_name, index=False)
-    config.to_csv(project_path + project_name + "best_model/config", index = index)
-    config.to_csv(project_path + project_name + "best_config", index= index)
-    print("VERBESSERUNG ERREICHT!")
+ml.check_progress(model=model, transformer=transformer, test_features=test_features, test_labels=test_labels, best_losses=best_losses,
+                  project_path=project_path, project_name=project_name, index=index, config=config, loss_name=loss_name)

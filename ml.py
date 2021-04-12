@@ -1,7 +1,12 @@
+import ast
+
 from tensorflow.keras import layers
 import tensorflow as tf
 from tensorflow import keras
 import pandas as pd
+from matplotlib import pyplot as plt
+from matplotlib import cm
+import numpy as np
 
 from tensorflow.python.ops import array_ops
 from tensorflow.python.ops import nn
@@ -229,6 +234,17 @@ class DNN2(keras.Model):
             penalty += self.linear_output.get_regularization()
         return penalty
 
+    def compile(self,
+              optimizer='rmsprop',
+              loss=None,
+              metrics=None,
+              loss_weights=None,
+              weighted_metrics=None,
+              run_eagerly=None,
+              steps_per_execution=None,
+              **kwargs):
+        self.loss_fn = loss
+        self.optimizer = optimizer
 
     @tf.function
     def train_on_batch(self,
@@ -242,6 +258,45 @@ class DNN2(keras.Model):
             #print("gradienten:", gradients)
         self.optimizer.apply_gradients(zip(gradients, self.trainable_weights))
         return loss
+
+    def fit(self,
+          x=None,
+          y=None,
+          batch_size=None,
+          epochs=1,
+          verbose=1,
+          callbacks=None,
+          validation_split=0.,
+          validation_data=None,
+          shuffle=True,
+          class_weight=None,
+          sample_weight=None,
+          initial_epoch=0,
+          steps_per_epoch=None,
+          validation_steps=None,
+          validation_batch_size=None,
+          validation_freq=1,
+          max_queue_size=10,
+          workers=1,
+          use_multiprocessing=False):
+
+        if shuffle:
+            print("In Custom models hast du shuffle noch nicht implementiert.")
+
+        training_data = tf.data.Dataset.from_tensor_slices((x, y))
+        training_data = training_data.batch(batch_size=batch_size)
+        total = tf.size(y)
+        history = []
+        for epoch in range(epochs):
+            print("Epoch ",epoch,"/",epochs)
+            loss = 0
+            for step, (x, y) in enumerate(training_data.as_numpy_iterator()):
+                loss += self.train_on_batch(x=x, y=y)
+            loss = loss/total
+            if verbose:
+                print("loss: ", loss)
+            history.append(loss)
+        return history
 
 
     def get_config(self):
@@ -483,11 +538,366 @@ class Dropout(keras.layers.Layer):
       return 0
 
 
-def data_handling(data_path, transformer, train_frac):
+def data_handling(data_path, label_name, scaling_bool=False, logarithm=False, shift=False,
+                  label_normalization=False, train_frac=1 , batch_size=64, return_pd = False):
+    #Daten einlesen
     data = pd.read_csv(data_path)
-    train_dataset = data.sample(frac=train_frac)
+    #in test und trainingsdaten untertaeilen
+    if not train_frac == 1:
+        train_dataset = data.sample(frac=train_frac)
+    else:
+        train_dataset = data.copy()
+    test_dataset = data.drop(train_dataset.index)
+    #In features und labels unterteilen
+    train_features_pd = train_dataset.copy()
+    test_features_pd = test_dataset.copy()
+
+    train_labels_pd = train_features_pd.pop(label_name)
+    test_labels_pd = test_features_pd.pop(label_name)
+
+    # Aus den Pandas Dataframes tf-Tensoren machen
+    for i, key in enumerate(train_features_pd):
+        if i == 0:
+            train_features = tf.constant([train_features_pd[key]], dtype="float32")
+        else:
+            more_features = tf.constant([train_features_pd[key]], dtype="float32")
+            train_features = tf.experimental.numpy.append(train_features, more_features, axis=0)
+
+    for i, key in enumerate(test_features_pd):
+        if i == 0:
+            test_features = tf.constant([test_features_pd[key]], dtype="float32")
+        else:
+            more_features = tf.constant([test_features_pd[key]], dtype="float32")
+            test_features = tf.experimental.numpy.append(test_features, more_features, axis=0)
+
+    # Dimensionen arrangieren
+    train_features = tf.transpose(train_features)
+    test_features = tf.transpose(test_features)
+
+    train_labels = tf.math.abs(tf.transpose(tf.constant([train_labels_pd], dtype="float32")))
+    test_labels = tf.math.abs(tf.transpose(tf.constant([test_labels_pd], dtype="float32")))
+
+    # Labels transformieren
+    # Transformer initialisieren
+    transformer = LabelTransformation(train_labels, scaling=scaling_bool, logarithm=logarithm, shift=shift,
+                                         label_normalization=label_normalization)
+    train_labels = transformer.transform(train_labels)
+    test_labels = transformer.transform(test_labels)
+
+    training_data = tf.data.Dataset.from_tensor_slices((train_features, train_labels))
+
+    training_data = training_data.batch(batch_size=batch_size)
+    if return_pd:
+        re = (training_data, train_features, train_labels, test_features, test_labels, train_features_pd, train_labels_pd, transformer)
+    else:
+        re = (training_data, train_features, train_labels, test_features, test_labels, transformer)
+    return re
 
 
+def initialize_model(nr_layers, units, loss_fn, optimizer, hidden_activation,
+                     output_activation, kernel_initializer, bias_initializer,
+                     l2_kernel, l2_bias, dropout, dropout_rate,
+                     learning_rate = None, momentum = 0, nesterov=False,
+                     new_model=True, custom=False, transfer=False, rm_layers=1,
+                     read_path=None, freeze=False):
+    if new_model:
+        if custom:
+            model = DNN2(
+                nr_hidden_layers=nr_layers, units=units, outputs=1,
+                loss_fn=loss_fn, optimizer=optimizer,
+                hidden_activation=hidden_activation, output_activation=output_activation,
+                kernel_initializer=kernel_initializer,
+                bias_initializer=bias_initializer,
+                kernel_regularization=keras.regularizers.l2(l2=l2_kernel),
+                bias_regularization=keras.regularizers.l2(l2=l2_bias),
+                dropout=dropout, dropout_rate=dropout_rate
+            )
+        if not custom:
+            model = keras.Sequential()
+            # Architektur aufbauen
+            for i in range(nr_layers):
+                if dropout:
+                    model.add(keras.layers.Dropout(rate=dropout_rate))
+                model.add(keras.layers.Dense(units=units, activation=hidden_activation, name="Layer_" + str(i),
+                                             kernel_initializer=kernel_initializer, bias_initializer=bias_initializer,
+                                             kernel_regularizer=keras.regularizers.l2(l2=l2_kernel),
+                                             bias_regularizer=keras.regularizers.l2(l2=l2_bias)))
+            # Output layer nicht vergessen
+            model.add(keras.layers.Dense(units=1, activation=output_activation, name="Output_layer",
+                                         kernel_initializer=kernel_initializer, bias_initializer=bias_initializer,
+                                         kernel_regularizer=keras.regularizers.l2(l2=l2_kernel),
+                                         bias_regularizer=keras.regularizers.l2(l2=l2_bias)
+                                         ))
+
+    else:
+        if transfer:
+            inputs = keras.Input(shape=(2, 1))
+            prev_model = keras.models.load_model(filepath=read_path)
+            for i in range(rm_layers):
+                prev_model.pop()
+            prev_model.trainable = False
+
+            model = prev_model
+            for i in range(rm_layers):
+                inp = model.input
+                if i == (rm_layers - 1):
+                    new_layer = keras.layers.Dense(units=1, activation=output_activation, name="New_Output_layer",
+                                                   kernel_initializer=kernel_initializer,
+                                                   bias_initializer=bias_initializer,
+                                                   kernel_regularizer=keras.regularizers.l2(l2=l2_kernel),
+                                                   bias_regularizer=keras.regularizers.l2(l2=l2_bias))
+
+                else:
+                    new_layer = keras.layers.Dense(units=units, activation=hidden_activation,
+                                                   name="New_Layer_" + str(i),
+                                                   kernel_initializer=kernel_initializer,
+                                                   bias_initializer=bias_initializer,
+                                                   kernel_regularizer=keras.regularizers.l2(l2=l2_kernel),
+                                                   bias_regularizer=keras.regularizers.l2(l2=l2_bias))
+
+                out = new_layer(prev_model.output)
+                model = keras.Model(inp, out)
+            print(model.summary())
+
+        else:
+            model = keras.models.load_model(filepath=read_path)
+            if freeze:
+                for layer in model.layers:
+                    layer.trainable = False
+                model.layers[-1].trainable = True
+            print(model.summary())
+    #optimizer instanz erstellen
+    optimizer = construct_optimizer(optimizer=optimizer, learning_rate=learning_rate, momentum=momentum, nesterov=nesterov)
+    model.compile(optimizer=optimizer, loss=loss_fn)
+    return model
+
+def make_losses_plot(history, custom, new_model):
+    if new_model and custom:
+        plt.plot(history, label="loss")
+    else:
+        plt.plot(history.history["loss"], label="loss")
+    plt.ylabel("Losses")
+    plt.xlabel("Epoch")
+    plt.yscale("log")
+    plt.legend()
+    plt.tight_layout()
+
+def save_config(new_model, model, learning_rate, training_epochs, batch_size, total_loss,
+                transformer, training_time, custom, loss_fn, save_path, read_path=None ):
+    if new_model:
+        config = pd.DataFrame(model.get_config())
+        training_parameters = pd.DataFrame(
+            {
+                "learning_rate": learning_rate,
+                "epochs": training_epochs,
+                "batch_size": batch_size,
+                "validation loss": "{:.2f}".format(float(total_loss)),
+                "transformer_config": str(transformer.get_config()),
+                "training time:": "{:.2f}".format(training_time),
+                "Custom": custom,
+                "loss_fn": loss_fn.name
+            },
+            index=[0]
+        )
+        # config.append(training_parameters)
+        config = pd.concat([config, training_parameters], axis=1)
+        index = True
+    if not new_model:
+        config = pd.read_csv(read_path + "/config", index_col="property")
+        config = config.transpose()
+        i = 0
+        while pd.notna(config["learning_rate"][i]):
+            i += 1
+        config["learning_rate"][i] = learning_rate
+        index = True
+
+    config = config.transpose()
+    config.to_csv(save_path + "/config", index=index, index_label="property" )
+
+    return (config, index)
+
+def check_progress(model, transformer, test_features, test_labels, best_losses, project_path, project_name, index, config, loss_name):
+    results = transformer.retransform(model(test_features))
+    percentage_loss = keras.losses.MeanAbsolutePercentageError()
+    validation_loss = percentage_loss(y_true=transformer.retransform(test_labels), y_pred=results)
+    print("percentage loss:", float(validation_loss))
+
+    losses_data = pd.DataFrame(
+        {
+            "best_percentage_loss": [float(validation_loss)]
+        }
+    )
+
+    if best_losses is not None:
+        if float(validation_loss) < float(best_losses["best_percentage_loss"]):
+            model.save(filepath=project_path + project_name + "best_model", save_format="tf")
+            losses_data.to_csv(project_path + project_name + loss_name, index=False)
+            config.to_csv(project_path + project_name + "best_config", index=index)
+            config.to_csv(project_path + project_name + "best_model/config", index=index)
+            print("VERBESSERUNG ERREICHT!")
+
+    elif best_losses == None:
+        model.save(filepath=project_path + project_name + "best_model", save_format="tf")
+        losses_data.to_csv(project_path + project_name + loss_name, index=False)
+        config.to_csv(project_path + project_name + "best_model/config", index=index)
+        config.to_csv(project_path + project_name + "best_config", index=index)
+        print("VERBESSERUNG ERREICHT!")
+
+
+def calc_diff_WQ(PDF, quarks, x_1, x_2, eta, E):
+    for i, q in enumerate(quarks["quark"]):
+        if i==0:
+            diff_WQ = (((quarks["charge"][q - 1]) ** 4) / (192 * np.pi * x_1 * x_2 * E ** 2)) * \
+                   ((np.maximum(np.array(PDF.xfxQ2(q, x_1, 2 * x_1 * x_2 * (E ** 2))) * np.array(PDF.xfxQ2(-q, x_2, 2 * x_1 * x_2 * (E ** 2))), 0) + np.maximum(
+                       np.array(PDF.xfxQ2(-q, x_1, 2 * x_1 * x_2 * (E ** 2))) * np.array(PDF.xfxQ2(q, x_2, 2 * x_1 * x_2 * (E ** 2))), 0)) / (x_1 * x_2)) * \
+                   (1 + (np.tanh(eta + 1 / 2 * np.log(x_2 / x_1))) ** 2)
+        else:
+            diff_WQ += (((quarks["charge"][q - 1]) ** 4) / (192 * np.pi * x_1 * x_2 * E ** 2)) * \
+                   ((np.maximum(np.array(PDF.xfxQ2(q, x_1, 2 * x_1 * x_2 * (E ** 2))) * np.array(PDF.xfxQ2(-q, x_2, 2 * x_1 * x_2 * (E ** 2))), 0) + np.maximum(
+                       np.array(PDF.xfxQ2(-q, x_1, 2 * x_1 * x_2 * (E ** 2))) * np.array(PDF.xfxQ2(q, x_2, 2 * x_1 * x_2 * (E ** 2))), 0)) / (x_1 * x_2)) * \
+                   (1 + (np.tanh(eta + 1 / 2 * np.log(x_2 / x_1))) ** 2)
+
+    if diff_WQ.size == 1:
+        diff_WQ = float(diff_WQ)
+    return diff_WQ
+
+def import_model_transformer(model_path):
+    model = keras.models.load_model(filepath=model_path)
+    config = pd.read_csv(model_path + "/config")
+    config = config.transpose()
+    transformer_config = ast.literal_eval(config["transformer_config"][0])
+    transformer = LabelTransformation(config=transformer_config)
+
+    return (model, transformer)
+
+def pd_dataframe_to_tf_tensor(value):
+    tensor = value.to_numpy()
+    tensor = tf.convert_to_tensor(value=tensor)
+    return tensor
+
+def create_param_configs(pools, size):
+    checked_configs = list()
+    while len(checked_configs) <= size:
+        config = []
+        for param in pools:
+            config.append(np.random.choice(pools[param]))
+        config = tuple(config)
+        checked_configs.append(config)
+        checked_configs = list(set(checked_configs))
+    return checked_configs
+
+def construct_name(config_as_dict, names_set):
+    save_path = str()
+    for param in config_as_dict:
+        if param in names_set:
+            if type(config_as_dict[param]) == np.float64 or type(config_as_dict[param]) == np.int64:
+                save_path += str(param) + "_" + str(config_as_dict[param]) + "_"
+            else:
+                try:
+                    save_path += config_as_dict[param].name + "_"
+                except AttributeError:
+                    try:
+                        save_path += config_as_dict[param].__name__ + "_"
+                    except AttributeError:
+                        try:
+                            save_path += config_as_dict[param]._name + "_"
+                        except AttributeError:
+                            print("kein Attribut hat funktioniert")
+                        finally:
+                            print("progressing anyway...")
+    return save_path
+
+def construct_optimizer(optimizer, learning_rate=None, momentum=None, nesterov=None):
+    try:
+        optimizer = optimizer(learning_rate=learning_rate, momentum=momentum, nesterov=nesterov)
+    except:
+        try:
+            optimizer = optimizer(learning_rate=learning_rate)
+        except:
+            optimizer = optimizer
+    return optimizer
+
+def load_model_and_transormer(model_path):
+    model = keras.models.load_model(filepath=model_path)
+
+    config = pd.read_csv(model_path + "/config")
+    config = config.transpose()
+    transformer_config = ast.literal_eval(config["transformer_config"][0])
+    transformer = LabelTransformation(config=transformer_config)
+
+    return (model, transformer)
+
+def get_varying_value(features_pd):
+    #überprüfen, ob es sich um 3d-data handelt
+    plotting_data = 0
+    keys = []
+    for key in features_pd:
+        value = features_pd[key][0]
+        if not all(values == value for values in features_pd[key]):
+            plotting_data += 1
+            keys.append(key)
+    return keys
+
+def plot_model(features_pd, labels, predictions, losses, keys, title, label_name):
+
+    if len(keys) == 2:
+        fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
+        # plot the surface
+        plot_labels = labels[:, 0]
+        surf = ax.plot_trisurf(features_pd[keys[0]], features_pd[keys[1]], plot_labels,
+                               cmap=cm.coolwarm,
+                               linewidth=0, antialiased=False)
+        ax.set_xlabel(keys[0])
+        ax.set_ylabel(keys[1])
+        ax.set_zlabel("rewait")
+        ax.set_zscale("linear")
+        plt.tight_layout()
+        ax.view_init(10, 50)
+        plt.show()
+
+        # losses plotten
+        plot_losses = losses
+        fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
+        # plot the surface
+        surf = ax.plot_trisurf(features_pd[keys[0]], features_pd[keys[1]], losses,
+                               cmap=cm.coolwarm,
+                               linewidth=0, antialiased=False)
+        ax.set_xlabel(keys[0])
+        ax.set_ylabel(keys[1])
+        ax.set_zlabel("reweight")
+        ax.set_zscale("linear")
+        plt.tight_layout()
+        ax.view_init(10, 50)
+        plt.show()
+
+        # Überprüfen, ob das feature konstant ist:
+    if len(keys) == 1:
+        for key in features_pd:
+            value = features_pd[key][0]
+            if not all(values == value for values in features_pd[key]):
+                # Fkt plotten
+                order = np.argsort(features_pd[key], axis=0)
+                plot_features = np.array(features_pd[key])[order]
+                plot_predictions = np.array(predictions)[order]
+                plot_labels = np.array(labels)[order]
+                plt.plot(plot_features, plot_predictions, label="ML")
+                plt.plot(plot_features, plot_labels, label="analytic")
+                if key == "x_1" or key == "x_2":
+                    plt.yscale("log")
+                plt.ylabel(label_name)
+                plt.xlabel(str(key))
+                plt.title(title)
+                plt.legend()
+                plt.show()
+
+                # losses plotten
+                plot_losses = np.array(losses)[order]
+                plt.plot(plot_features, plot_losses)
+                plt.ylabel("Loss")
+                plt.xlabel(str(key))
+                plt.yscale("Log")
+                plt.title(title)
+                plt.show()
 
 
 

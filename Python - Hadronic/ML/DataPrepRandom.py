@@ -9,6 +9,8 @@ from scipy import stats
 #quarks = {"quark": [1, 2, 3, 4],
 #          "charge": [-1/3,2/3,-1/3,2/3]}
 #PID = {1: "d", 2: "u", 3: "s", 4: "c"}
+import ml
+
 quarks = {"quark": [1, 2, 3, 4],
           "charge": [-1/3,2/3, -1/3, 2/3]}
 PID = {1: "d", 2: "u", 3: "s", 4: "c"}
@@ -23,22 +25,23 @@ PDF = pdf.mkPDF("CT14nnlo", 0)
 #Variablen
 e = 1.602e-19
 E = 6500 #Strahlenergie in GeV, im Vornherein festgelegt?
-x_total = int(20) #Anzahl an x Werten
+x_total = int(200) #Anzahl an x Werten
 eta_total = int(200) # Anzahl an eta Werten
 x_lower_limit = 0
-x_upper_limit = 1
+x_upper_limit = 0.65
 eta_limit = 3
 loguni_param=0.005
 stddev = 1.5
-#np.random.seed(10)
+xMin = PDF.xMin
+np.random.seed(10)
 
-set_name = "MC/"
-path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/HadronicData/" + set_name
+set_name = "TestData/"
+path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Data/" + set_name
 
 #Test
 total_data = x_total**2 * eta_total
+total_data = x_total**2 * eta_total
 print("Wir berechnen ", total_data, "Werte")
-
 
 
 #Listen mit Funktionswerten anlegen
@@ -70,12 +73,12 @@ step = 0
 #diff WQ berechnen und Listen füllen
 
 x_1_Rand = (stats.loguniform.rvs(a=loguni_param, b=1+loguni_param, size=x_total) - loguni_param) * (x_upper_limit - x_lower_limit) + x_lower_limit
-x_1_Rand = x_1_Rand[x_1_Rand >= PDF.xMin]
+x_1_Rand = x_1_Rand[x_1_Rand >= xMin]
 plt.hist(x_1_Rand, bins=20, rwidth=0.8)
 plt.yscale("linear")
 plt.show()
 x_2_Rand = (stats.loguniform.rvs(a=loguni_param, b=1+loguni_param, size=x_total) - loguni_param) * (x_upper_limit - x_lower_limit) + x_lower_limit
-x_2_Rand = x_2_Rand[x_2_Rand >= PDF.xMin]
+x_2_Rand = x_2_Rand[x_2_Rand >= xMin]
 eta_Rand_upper=np.array([])
 eta_Rand_lower = np.array([])
 eta_Rand = np.array([])
@@ -123,14 +126,15 @@ print(x_1_constant)
 print(x_2_constant)
 print(eta_constant)
 print(np.min(x_1_Rand))
-print(PDF.xMin)
+print(xMin)
+
 
 for x_1 in x_1_Rand:
-    if x_1 < PDF.xMin:
-        x_1 = PDF.xMin
+    if x_1 < xMin:
+        x_1 = xMin
     for x_2 in x_2_Rand:
-        if x_2 < PDF.xMin:
-            x_2 = PDF.xMin
+        if x_2 < xMin:
+            x_2 = xMin
         for eta in eta_Rand:
             diff_WQ = 0
             # Viererimpuls initialisieren
@@ -141,10 +145,7 @@ for x_1 in x_1_Rand:
             x_2_list.append(x_2)
             eta_list.append(eta)
             # WQ berechnen, Summe über Quarks:
-            for q in quarks["quark"]:
-                diff_WQ += (((quarks["charge"][q-1])**4)/(192* np.pi * x_1 * x_2 * E**2)) * \
-                           ((np.maximum(PDF.xfxQ2(q, x_1, Q2) * PDF.xfxQ2(-q, x_2, Q2), 0) + np.maximum(PDF.xfxQ2(-q, x_1, Q2) * PDF.xfxQ2(q, x_2, Q2), 0)) / (x_1 * x_2)) * \
-                           (1 + (np.tanh(eta + 1 / 2 * np.log(x_2 / x_1))) ** 2)
+            diff_WQ = ml.calc_diff_WQ(PDF=PDF, quarks=quarks, x_1=x_1, x_2=x_2, eta=eta, E=E)
             # diff WQ in Liste einfügen:
             diff_WQ_list.append(diff_WQ)
 
@@ -176,7 +177,6 @@ for x_1 in x_1_Rand:
                 eta_list_3D.append(eta)
                 diff_WQ_list_3D.append(diff_WQ)
 
-            diff_WQ = 0
             step += 1
             if step % 50000 == 0:
                 print("x_1:", x_1, "x_2:", x_2, "eta:", eta, "diff_WQ:", diff_WQ)

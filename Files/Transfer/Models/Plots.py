@@ -9,7 +9,7 @@ from matplotlib import cm
 
 #Pfade eingeben
 paths = dict()
-model_path= "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Models/best_model"
+model_path= "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Models/SourceModel7"
 
 #more data to plot?
 #plotting_data = ...
@@ -30,7 +30,7 @@ for key,path in paths.items():
 model = keras.models.load_model(filepath=model_path)
 
 show_3D_plots = False
-config = pd.read_csv(model_path + "/config")
+config = pd.read_csv(model_path + "/config", index_col="property")
 print(config)
 config = config.transpose()
 print(config)
