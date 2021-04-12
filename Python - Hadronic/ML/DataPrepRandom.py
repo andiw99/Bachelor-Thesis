@@ -25,13 +25,13 @@ PDF = pdf.mkPDF("CT14nnlo", 0)
 #Variablen
 e = 1.602e-19
 E = 6500 #Strahlenergie in GeV, im Vornherein festgelegt?
-x_total = int(200) #Anzahl an x Werten
-eta_total = int(200) # Anzahl an eta Werten
+x_total = int(150) #Anzahl an x Werten
+eta_total = int(300) # Anzahl an eta Werten
 x_lower_limit = 0
-x_upper_limit = 0.65
+x_upper_limit = 0.9
 eta_limit = 3
 loguni_param=0.005
-stddev = 1.5
+stddev = 2
 xMin = PDF.xMin
 np.random.seed(10)
 

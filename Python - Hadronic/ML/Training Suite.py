@@ -36,7 +36,7 @@ project_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/F
 loss_name = "Source_loss"
 project_name = ""
 
-read_name = "SourceModel7"
+read_name = "SourceModel8"
 label_name = "WQ"
 read_path =project_path + project_name + read_name
 if transfer:
@@ -56,10 +56,10 @@ if os.path.exists(project_path+ project_name + loss_name):
 #Variablen...
 train_frac = 0.95
 batch_size = 64
-training_epochs = 30
-nr_layers = 2
+training_epochs = 20
+nr_layers = 3
 units = 512
-learning_rate = 2e-3
+learning_rate = 5e-5
 rm_layers = 1
 loss_fn = keras.losses.MeanAbsoluteError()
 optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)
@@ -75,6 +75,7 @@ scaling_bool = True
 logarithm = True
 shift = False
 label_normalization = False
+feature_normalization = True
 
 #ggf Losses einlesen
 if best_losses is not None:
@@ -109,7 +110,7 @@ print("Zeit, um Daten vorzubereiten:", time3-time1)
 #initialisiere Model
 model = ml.initialize_model(nr_layers=nr_layers, units=units, loss_fn=loss_fn, optimizer=optimizer, hidden_activation=hidden_activation, output_activation=output_activation,
                             kernel_initializer=kernel_initializer, bias_initializer=bias_initializer, l2_kernel=l2_kernel, l2_bias=l2_bias, dropout=dropout, dropout_rate=dropout_rate,
-                            new_model=new_model, custom=custom, transfer=transfer, rm_layers=1, read_path=read_path, freeze=freeze)
+                            new_model=new_model, custom=custom, transfer=transfer, rm_layers=1, read_path=read_path, freeze=freeze, feature_normalization=feature_normalization)
 
 #Training starten
 time4 = time.time()

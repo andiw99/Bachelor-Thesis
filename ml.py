@@ -598,6 +598,7 @@ def initialize_model(nr_layers, units, loss_fn, optimizer, hidden_activation,
                      output_activation, kernel_initializer, bias_initializer,
                      l2_kernel, l2_bias, dropout, dropout_rate,
                      learning_rate = None, momentum = 0, nesterov=False,
+                     feature_normalization = False,
                      new_model=True, custom=False, transfer=False, rm_layers=1,
                      read_path=None, freeze=False):
     if new_model:
@@ -615,6 +616,8 @@ def initialize_model(nr_layers, units, loss_fn, optimizer, hidden_activation,
         if not custom:
             model = keras.Sequential()
             # Architektur aufbauen
+            if feature_normalization:
+                model.add(keras.layers.experimental.preprocessing.Normalization())
             for i in range(nr_layers):
                 if dropout:
                     model.add(keras.layers.Dropout(rate=dropout_rate))
