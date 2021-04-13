@@ -125,16 +125,13 @@ loss = loss_fn(y_true=y_true, y_pred=y_pred)
 loss2 = loss_fn2(y_true=y_true, y_pred=y_pred)
 
 print(loss, loss2)
-"""
+
 
 #read_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Models/SourceModel6/config"
 read_path = "config"
 learning_rate = 5
 config = pd.read_csv(read_path, index_col="property")
-"""
-config = config.transpose()
-config = config.transpose()
-"""
+
 print(config)
 config = config.transpose()
 print(config.keys())
@@ -142,3 +139,21 @@ print(config["transformer_config"][0])
 config = config.transpose()
 
 config.to_csv("config", index=True, header=True, index_label="property")
+"""
+
+a = tf.constant([[1,-2], [3,4], [5,6]], dtype="float32")
+print(a)
+print(np.min(a[:,0]), np.max(a[:,1]))
+print(tf.reduce_min(a))
+print(a.shape)
+
+b = np.array([[1,-2], [3,4], [5,6]], dtype="float32")
+print(b)
+for i in range(b.shape[1]):
+    b[:, i] = b[:, i] - np.min(b[:, i])
+    b[:, i] = b[:, i] / np.max(b[:, i])
+b = tf.constant(b, dtype="float32")
+print(b)
+
+a[0][0] = a[0][0] - 1.0
+print(a)

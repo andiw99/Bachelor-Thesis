@@ -1,34 +1,43 @@
 import pandas as pd
-import numpy as np
-from tensorflow.keras import layers
 import tensorflow as tf
 from tensorflow import keras
 from matplotlib import pyplot as plt
-from matplotlib import cm
 import ml
 import time
 import os
-import ast
 
 
 #Grid erstellen
 pools = dict()
-pools["batch_size"] = [32, 128, 512]
-pools["units"] = [128, 256, 512]
-pools["nr_layers"] =  [2, 3]
-pools["learning_rate"]=[1e-2, 1e-3, 1e-4]
+pools["batch_size"] = [32, 512, 2048, 8192]
+pools["units"] = [128, 256, 512, 1024]
+pools["nr_layers"] =  [2, 4, 6]
+pools["learning_rate"]=[1e-1, 1e-2, 1e-3, 1e-4, 1e-5]
 pools["l2_kernel"] = [0, 0.0001]
+pools["l2_bias"] = [0.0]
 pools["loss_fn"] = [keras.losses.MeanSquaredError(), keras.losses.MeanAbsoluteError()]
 pools["optimizer"] = [keras.optimizers.Adam, keras.optimizers.SGD]
+pools["momentum"] = [0.1, 0.01, 1]
+pools["dropout"] = [False]
+pools["dropout_rate"] = [0]
 pools["kernel_initializer"] = [tf.keras.initializers.HeNormal(), tf.keras.initializers.RandomNormal()]
+pools["bias_initializer"] = [tf.keras.initializers.Zeros()]
 pools["hidden_activation"] = [tf.nn.leaky_relu, tf.nn.sigmoid, tf.nn.relu]
+pools["output_activation"] = [ml.LinearActiavtion()]
+pools["feature_normalization"] = ["rescaling", "normalization", None]
 
+#Festlegen, welche Hyperparameter in der Bezeichnung stehen solen
+names = {"batch_size", "units", "nr_layers", "learning_rate", "loss_fn", "optimizer", "hidden_activation", }
 
 time1 = time.time()
 #Daten einlesen
-data_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Data/CT14nnlo/"
+location = input("Auf welchem Rechner?")
+root_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/"
+if location == "Taurus" or location == "taurus":
+    root_path = "/home/s1388135/Bachelor-Thesis/"
+data_path = root_path + "/Files/Transfer/Data/NewRandom/"
 data_name = "all"
-project_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/HadronicModels/RandomSearch/"
+project_path = root_path + "Files/Hadronic/HadronicModels/BigRandomSearch/"
 loss_name = "best_loss"
 project_name = ""
 
@@ -37,7 +46,7 @@ label_name = "WQ"
 #Variablen...
 train_frac = 0.95
 training_epochs = 30
-size = 60
+size = 150
 output_activation = ml.LinearActiavtion()
 bias_initializer =tf.keras.initializers.Zeros()
 l2_bias = 0
@@ -50,15 +59,12 @@ scaling_bool = True
 logarithm = True
 shift = False
 label_normalization = False
+feature_normalization = False
+feature_rescaling = False
 
 custom = False
 new_model=True
 
-#Daten einlsen
-# Daten einlesen:
-(training_data, train_features, train_labels, test_features, test_labels, transformer) = ml.data_handling(
-    data_path=data_path + data_name, label_name=label_name, scaling_bool=scaling_bool, logarithm=logarithm, shift=shift, label_normalization=label_normalization,
-    train_frac=train_frac)
 
 #Menge mit bereits gesehen konfigurationen
 checked_configs = ml.create_param_configs(pools=pools, size=size)
@@ -70,8 +76,22 @@ for config in checked_configs:
     for i,param in enumerate(pools):
         params[param] = config[i]
 
+    if params["feature_normalization"] == "rescaling":
+        feature_rescaling = True
+    elif params["feature_normalization"] == "normalization":
+        feature_normalization = True
+
+    training_epochs = int(1/200 * params["batch_size"]) + 10
+
+    # Daten einlsen
+    # Daten einlesen:
+    (training_data, train_features, train_labels, test_features, test_labels, transformer) = ml.data_handling(
+        data_path=data_path + data_name, label_name=label_name, scaling_bool=scaling_bool, logarithm=logarithm,
+        shift=shift, label_normalization=label_normalization, feature_rescaling=feature_rescaling,
+        train_frac=train_frac)
+
     #Create path to save model
-    model_name = ml.construct_name(params)
+    model_name = ml.construct_name(params, names_set=names)
     save_path = project_path + model_name
     print("Wir initialisieren Modell ", model_name)
 
@@ -90,7 +110,7 @@ for config in checked_configs:
                                         kernel_initializer=params["kernel_initializer"], bias_initializer=bias_initializer, l2_kernel=params["l2_kernel"],
                                         learning_rate=params["learning_rate"], momentum=momentum, nesterov=nesterov,
                                         l2_bias=l2_bias, dropout=dropout, dropout_rate=dropout_rate,
-                                        new_model=new_model, custom=custom)
+                                        new_model=new_model, custom=custom, feature_normalization=feature_normalization)
 
     # Training starten
     time4 = time.time()
@@ -124,12 +144,12 @@ for config in checked_configs:
     #Ergebnis im dict festhalten
     results_list[model_name] = "{:.2f}".format(float(total_loss))
 
-#Ergebnisse speichern
-results_list_pd = pd.DataFrame(
-    results_list,
-    index = [0]
-)
-results_list_pd = results_list_pd.transpose()
-results_list_pd.to_csv(project_path + "results")
+    #Ergebnisse speichern
+    results_list_pd = pd.DataFrame(
+        results_list,
+        index = [0]
+    )
+    results_list_pd = results_list_pd.transpose()
+    results_list_pd.to_csv(project_path + "results")
 
 

@@ -1,6 +1,5 @@
 import ast
 
-from tensorflow.keras import layers
 import tensorflow as tf
 from tensorflow import keras
 import pandas as pd
@@ -11,8 +10,6 @@ import numpy as np
 from tensorflow.python.ops import array_ops
 from tensorflow.python.ops import nn
 from tensorflow.python.framework import ops
-from tensorflow.python.eager import monitoring
-from tensorflow.python.util.tf_export import keras_export
 from tensorflow.python.keras import backend as K
 from tensorflow.python.keras.utils import control_flow_util
 
@@ -539,7 +536,7 @@ class Dropout(keras.layers.Layer):
 
 
 def data_handling(data_path, label_name, scaling_bool=False, logarithm=False, shift=False,
-                  label_normalization=False, train_frac=1 , batch_size=64, return_pd = False):
+                  label_normalization=False, feature_rescaling=False, train_frac=1 , batch_size=64, return_pd = False):
     #Daten einlesen
     data = pd.read_csv(data_path)
     #in test und trainingsdaten untertaeilen
@@ -558,17 +555,28 @@ def data_handling(data_path, label_name, scaling_bool=False, logarithm=False, sh
     # Aus den Pandas Dataframes tf-Tensoren machen
     for i, key in enumerate(train_features_pd):
         if i == 0:
-            train_features = tf.constant([train_features_pd[key]], dtype="float32")
+            train_features = np.array([train_features_pd[key]], dtype="float32")
         else:
-            more_features = tf.constant([train_features_pd[key]], dtype="float32")
-            train_features = tf.experimental.numpy.append(train_features, more_features, axis=0)
+            more_features = np.array([train_features_pd[key]], dtype="float32")
+            train_features = np.append(train_features, more_features, axis=0)
 
     for i, key in enumerate(test_features_pd):
         if i == 0:
-            test_features = tf.constant([test_features_pd[key]], dtype="float32")
+            test_features = np.array([test_features_pd[key]], dtype="float32")
         else:
-            more_features = tf.constant([test_features_pd[key]], dtype="float32")
-            test_features = tf.experimental.numpy.append(test_features, more_features, axis=0)
+            more_features = np.array([test_features_pd[key]], dtype="float32")
+            test_features = np.append(test_features, more_features, axis=0)
+    #Gegebenfalls die Features auf [0.1] rescalen
+    if feature_rescaling == "rescaling":
+        for i in range(train_features.shape[1]):
+            train_features[:, i] = train_features[:, i] - np.min(train_features[:, i])
+            train_features[:, i] = train_features[:, i] / np.max(train_features[:, i])
+            test_features[:, i] = test_features[:, i] - np.min(test_features[:, i])
+            test_features[:, i] = test_features[:, i] / np.max(test_features[:, i])
+
+    #numpy arrays zu tensorflow-tensoren machen, wegen schneller verarbeitung
+    train_features = tf.constant(train_features, dtype="float32")
+    test_features = tf.constant(test_features, dtype="float32")
 
     # Dimensionen arrangieren
     train_features = tf.transpose(train_features)
@@ -795,6 +803,8 @@ def construct_name(config_as_dict, names_set):
         if param in names_set:
             if type(config_as_dict[param]) == np.float64 or type(config_as_dict[param]) == np.int64:
                 save_path += str(param) + "_" + str(config_as_dict[param]) + "_"
+            elif type(config_as_dict[param]) == str:
+                save_path  += str(param) + "_" + str(config_as_dict[param]) + "_"
             else:
                 try:
                     save_path += config_as_dict[param].name + "_"

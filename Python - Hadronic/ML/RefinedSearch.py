@@ -135,12 +135,12 @@ for config in checked_configs:
     #Ergebnis im dict festhalten
     results_list[model_name] = "{:.2f}".format(float(total_loss))
 
-#Ergebnisse speichern
-results_list_pd = pd.DataFrame(
-    results_list,
-    index = [0]
-)
-results_list_pd = results_list_pd.transpose()
-results_list_pd.to_csv(project_path + "results")
+    #Ergebnisse speichern
+    results_list_pd = pd.DataFrame(
+        results_list,
+        index = [0]
+    )
+    results_list_pd = results_list_pd.transpose()
+    results_list_pd.to_csv(project_path + "results")
 
 
