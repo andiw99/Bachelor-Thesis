@@ -34,7 +34,7 @@ for model in config_paths:
     config = pd.read_csv(config_paths[model])
     config = config.transpose()
     transformer_config = ast.literal_eval(config[8][1])
-    transformers[model] = ml.LabelTransformation(config=transformer_config)
+    transformers[model] = ml.label_transformation(config=transformer_config)
 
 #Testdaten laden, vermutlich nur ein Set mit Testdaten?
 data_raw = pd.read_csv(testing_data_path)

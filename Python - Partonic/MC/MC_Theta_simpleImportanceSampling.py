@@ -20,7 +20,7 @@ model = keras.models.load_model(filepath=model_path)
 config = pd.read_csv(model_path + "/config")
 config = config.transpose()
 transformer_config = ast.literal_eval(config[8][1])
-transformer = ml.LabelTransformation(config=transformer_config)
+transformer = ml.label_transformation(config=transformer_config)
 
 #Variablen
 N = 1000 #punkte

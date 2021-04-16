@@ -127,7 +127,7 @@ if label_normalization:
 
 #Labels transformieren
 """
-transformer = ml.LabelTransformation(train_labels, scaling=scaling_bool, logarithm=logarithm, shift=shift, label_normalization=label_normalization)
+transformer = ml.label_transformation(train_labels, scaling=scaling_bool, logarithm=logarithm, shift=shift, label_normalization=label_normalization)
 train_labels = transformer.transform(train_labels)
 test_labels = transformer.transform(test_labels)
 
@@ -145,7 +145,7 @@ print("max rücktrafo train_lables:", float(tf.math.reduce_max(backtrafo_labels)
 config = transformer.get_config()
 print(config)
 
-transformer2 = ml.LabelTransformation(config=config)
+transformer2 = ml.label_transformation(config=config)
 config2 = transformer2.get_config()
 print(config2)
 

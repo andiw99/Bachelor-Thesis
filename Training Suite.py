@@ -119,7 +119,7 @@ test_features = tf.transpose(test_features)
 train_labels = tf.math.abs(tf.transpose(tf.constant([train_labels_pd], dtype="float32")))
 test_labels = tf.math.abs(tf.transpose(tf.constant([test_labels_pd], dtype="float32")))
 
-transformer = ml.LabelTransformation(train_labels, scaling=scaling_bool, logarithm=logarithm, shift=shift, label_normalization=label_normalization)
+transformer = ml.label_transformation(train_labels, scaling=scaling_bool, logarithm=logarithm, shift=shift, label_normalization=label_normalization)
 train_labels = transformer.transform(train_labels)
 test_labels = transformer.transform(test_labels)
 

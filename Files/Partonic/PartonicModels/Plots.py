@@ -30,7 +30,7 @@ show_3D_plots = False
 config = pd.read_csv(model_path + "/config")
 config = config.transpose()
 transformer_config = ast.literal_eval(config[8][1])
-transformer = ml.LabelTransformation(config=transformer_config)
+transformer = ml.label_transformation(config=transformer_config)
 loss_function = keras.losses.MeanAbsoluteError()
 
 #In Features und Labels unterteilen

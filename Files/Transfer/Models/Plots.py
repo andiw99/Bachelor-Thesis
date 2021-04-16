@@ -9,7 +9,7 @@ from matplotlib import cm
 
 #Pfade eingeben
 paths = dict()
-model_path= "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Models/SourceModel7"
+model_path= "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Models/SourceModel9"
 
 #more data to plot?
 #plotting_data = ...
@@ -35,7 +35,7 @@ print(config)
 config = config.transpose()
 print(config)
 transformer_config = ast.literal_eval(config["transformer_config"][0])
-transformer = ml.LabelTransformation(config=transformer_config)
+transformer = ml.label_transformation(config=transformer_config)
 loss_function = keras.losses.MeanAbsoluteError()
 
 #In Features und Labels unterteilen
