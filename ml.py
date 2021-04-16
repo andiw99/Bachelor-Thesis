@@ -566,8 +566,12 @@ def data_handling(data_path, label_name, scaling_bool=False, logarithm=False, sh
         else:
             more_features = np.array([test_features_pd[key]], dtype="float32")
             test_features = np.append(test_features, more_features, axis=0)
+    # Dimensionen arrangieren
+    train_features = np.transpose(train_features)
+    test_features = np.transpose(test_features)
+
     #Gegebenfalls die Features auf [0.1] rescalen
-    if feature_rescaling == "rescaling":
+    if feature_rescaling:
         for i in range(train_features.shape[1]):
             train_features[:, i] = train_features[:, i] - np.min(train_features[:, i])
             train_features[:, i] = train_features[:, i] / np.max(train_features[:, i])
@@ -577,10 +581,6 @@ def data_handling(data_path, label_name, scaling_bool=False, logarithm=False, sh
     #numpy arrays zu tensorflow-tensoren machen, wegen schneller verarbeitung
     train_features = tf.constant(train_features, dtype="float32")
     test_features = tf.constant(test_features, dtype="float32")
-
-    # Dimensionen arrangieren
-    train_features = tf.transpose(train_features)
-    test_features = tf.transpose(test_features)
 
     train_labels = tf.math.abs(tf.transpose(tf.constant([train_labels_pd], dtype="float32")))
     test_labels = tf.math.abs(tf.transpose(tf.constant([test_labels_pd], dtype="float32")))

@@ -25,8 +25,8 @@ PDF = pdf.mkPDF("CT14nnlo", 0)
 #Variablen
 e = 1.602e-19
 E = 6500 #Strahlenergie in GeV, im Vornherein festgelegt?
-x_total = int(500000) #Anzahl an x Werten
-eta_total = int(500000) # Anzahl an eta Werten
+x_total = int(5000000) #Anzahl an x Werten
+eta_total = int(5000000) # Anzahl an eta Werten
 x_lower_limit = 0
 x_upper_limit = 0.8
 eta_limit = 3
@@ -36,7 +36,11 @@ xMin = PDF.xMin
 np.random.seed(10)
 
 set_name = "NewRandom/"
-path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Data/" + set_name
+root_name ="/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject" 
+location = input("Welcher Rechner?")
+if location == "Taurus" or location == "taurus":
+    root_name = "/home/s1388135/Bachelor-Thesis"
+path = root_name + "/Files/Transfer/Data/" + set_name
 
 #Test
 total_data = x_total**2 * eta_total
