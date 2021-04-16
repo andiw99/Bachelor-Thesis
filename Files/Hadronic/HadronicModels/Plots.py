@@ -9,7 +9,7 @@ from matplotlib import cm
 
 #Pfade eingeben
 paths = dict()
-model_path= "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/HadronicModels/RandomSearch/best_model"
+model_path= "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Models/Feature-Normalization+MAE+Nesterov"
 
 #more data to plot?
 #plotting_data = ...
@@ -43,7 +43,7 @@ for dataset, path in paths.items():
 predictions = dict()
 losses = dict()
 for dataset in features:
-    predictions[dataset] = transformer.retransform(model(features[dataset]))
+    predictions[dataset] = transformer.retransform(model(transformer.rescale(features[dataset])))
     losses[dataset] = loss_function(y_true=labels[dataset], y_pred=predictions[dataset])
 
 

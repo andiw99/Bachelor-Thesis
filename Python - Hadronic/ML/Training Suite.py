@@ -30,13 +30,13 @@ else:
 
 time1 = time.time()
 #Daten einlesen
-data_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Data/NewRandom/"
+data_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/HadronicData/NewRandom/"
 data_name = "all"
 project_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Models/"
 loss_name = "Source_loss"
 project_name = ""
 
-read_name = "SourceModel8"
+read_name = "Feature-Normalization+MAE+SmallBatch"
 label_name = "WQ"
 read_path =project_path + project_name + read_name
 if transfer:
@@ -56,10 +56,10 @@ if os.path.exists(project_path+ project_name + loss_name):
 #Variablen...
 train_frac = 0.95
 batch_size = 64
-training_epochs = 20
-nr_layers = 3
+training_epochs = 100
+nr_layers = 2
 units = 512
-learning_rate = 5e-5
+learning_rate = 1e-2
 rm_layers = 1
 loss_fn = keras.losses.MeanAbsoluteError()
 optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)
@@ -69,13 +69,23 @@ kernel_initializer = tf.keras.initializers.HeNormal()
 bias_initializer = tf.keras.initializers.Zeros()
 l2_kernel = 0
 l2_bias = 0
+lr_patience = 1
+stopping_patience = 3 * lr_patience
+min_delta= 3e-6
+reduce_lr_on_plateau = keras.callbacks.ReduceLROnPlateau(monitor="loss", factor=0.5, patience=lr_patience,
+                                                         min_delta=min_delta, min_lr=1e-7)
+early_stopping = keras.callbacks.EarlyStopping(monitor="loss", min_delta=1e-1 * min_delta, patience=stopping_patience)
+lr_schedule = keras.callbacks.LearningRateScheduler(ml.class_scheduler(reduction=0.05, min_lr=1e-7))
+callbacks = [reduce_lr_on_plateau, early_stopping, lr_schedule]
 dropout = False
 dropout_rate = 0.1
 scaling_bool = True
 logarithm = True
+base10 = True
 shift = False
-label_normalization = False
+label_normalization = True
 feature_normalization = True
+feature_rescaling= False
 
 #ggf Losses einlesen
 if best_losses is not None:
@@ -99,11 +109,26 @@ if not os.path.exists(path=save_path):
 
 #best_total_loss = best_losses
 time2= time.time()
-(training_data, train_features, train_labels, test_features, test_labels, transformer) = ml.data_handling(data_path=data_path+data_name,
-                                                                                                          train_frac=train_frac,batch_size=batch_size,
-                                                                                                          label_name=label_name, scaling_bool=scaling_bool, logarithm=logarithm,
-                                                                                                          shift=shift, label_normalization=label_normalization)
+(training_data, train_features, train_labels, test_features, test_labels, transformer) =\
+        ml.data_handling(data_path=data_path+data_name,
+        train_frac=train_frac,batch_size=batch_size,
+        label_name=label_name, scaling_bool=scaling_bool, logarithm=logarithm,
+        shift=shift, label_normalization=label_normalization, feature_rescaling=feature_rescaling)
 time3 = time.time()
+
+print("min ", tf.reduce_min(train_labels))
+print("max ", tf.reduce_max(train_labels))
+print("mean ", tf.reduce_mean(train_labels))
+print("stddev ", tf.math.reduce_std(train_labels))
+
+
+for i in range(train_features.shape[1]):
+    print("min ", tf.reduce_min(train_features[:,i]))
+    print("max ", tf.reduce_max(train_features[:,i]))
+    print("mean ", tf.reduce_mean(train_features[:,i]))
+    print("stddev ", tf.math.reduce_std(train_features[:,i]))
+
+
 
 print("Zeit, um Daten vorzubereiten:", time3-time1)
 
@@ -114,7 +139,8 @@ model = ml.initialize_model(nr_layers=nr_layers, units=units, loss_fn=loss_fn, o
 
 #Training starten
 time4 = time.time()
-history = model.fit(x=train_features, y=train_labels, batch_size=batch_size, epochs=training_epochs, verbose=2, shuffle=True)
+history = model.fit(x=train_features, y=train_labels, batch_size=batch_size, epochs=training_epochs, verbose=2,
+                    callbacks=callbacks, shuffle=True)
 time5 = time.time()
 training_time = time5 - time4
 
@@ -132,7 +158,7 @@ plt.show()
 model.save(filepath=save_path, save_format="tf")
 (config, index) = ml.save_config(new_model=new_model, model=model, learning_rate=learning_rate, training_epochs=training_epochs,
                batch_size=batch_size, total_loss=total_loss, transformer=transformer,
-               training_time=training_time, custom=custom, loss_fn=loss_fn, read_path=read_path, save_path=save_path)
+               training_time=training_time, custom=custom, loss_fn=loss_fn, feature_rescaling=feature_rescaling, read_path=read_path, save_path=save_path)
 
 
 

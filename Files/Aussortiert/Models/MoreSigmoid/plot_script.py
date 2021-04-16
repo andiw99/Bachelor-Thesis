@@ -10,7 +10,7 @@ logarithm=True
 scaling=1.0
 show_3D_plots =False
 config ={'scaling': False, 'logarithm': True, 'shift': True, 'label_normalization': True, 'shift_value': -30.020137786865234, 'normalization_value': 33.692718505859375}
-transformer = ml.LabelTransformation(config=config)
+transformer = ml.label_transformation(config=config)
 loss_function=keras.losses.mean_absolute_error
 loss_fn=mean_squared_error
 #Daten einlesen

@@ -139,9 +139,12 @@ print(config["transformer_config"][0])
 config = config.transpose()
 
 config.to_csv("config", index=True, header=True, index_label="property")
-"""
 
-a = tf.constant([[1,-2], [3,4], [5,6]], dtype="float32")
+a = tf.constant([[1,-2], [2,4], [5,4]], dtype="float32")
+print(a)
+print(a[a[:,1] == 4])
+exit()
+
 print(a)
 print(np.min(a[:,0]), np.max(a[:,1]))
 print(tf.reduce_min(a))
@@ -156,4 +159,9 @@ b = tf.constant(b, dtype="float32")
 print(b)
 
 a[0][0] = a[0][0] - 1.0
+print(a)
+"""
+a = np.array([3, -2, 0, 2, -5])
+order = np.argsort(a)
+a = a[order]
 print(a)

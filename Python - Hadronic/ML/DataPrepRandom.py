@@ -28,12 +28,12 @@ E = 6500 #Strahlenergie in GeV, im Vornherein festgelegt?
 x_total = int(150) #Anzahl an x Werten
 eta_total = int(300) # Anzahl an eta Werten
 x_lower_limit = 0
-x_upper_limit = 0.9
+x_upper_limit = 0.8
 eta_limit = 3
 loguni_param=0.005
 stddev = 2
 xMin = PDF.xMin
-np.random.seed(10)
+np.random.seed(20)
 
 set_name = "TestData/"
 path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Data/" + set_name

@@ -406,26 +406,31 @@ class LinearActiavtion():
     def __call__(self, x):
         return x
 
-class LabelTransformation():
-    def __init__(self, train_labels=None, scaling=False, logarithm=False, shift=False, label_normalization=False, config=None):
+class label_transformation():
+    def __init__(self, train_labels=None, scaling=False, logarithm=False, shift=False, label_normalization=False, config=None, base10=False, feature_rescaling=False):
         self.scaling = scaling
         self.logarithm = logarithm
         self.shift = shift
         self.label_normalization = label_normalization
         self.values = dict()
+        self.base10 = base10
+        self.feature_rescaling = feature_rescaling
         if train_labels is not None:
             if self.scaling:
-                self.scale = 1/tf.math.reduce_min(train_labels)
+                self.scale = 1/np.min(train_labels)
                 self.values["scale"] = self.scale
                 train_labels = train_labels * self.scale
             if logarithm:
-                train_labels = tf.math.log(train_labels)
+                if self.base10:
+                    train_labels = np.log10(train_labels)
+                else:
+                    train_labels = np.log(train_labels)
             if self.shift:
-                self.shift_value = tf.math.reduce_min(train_labels)
+                self.shift_value = np.min(train_labels)
                 self.values["shift_value"] = self.shift_value
                 train_labels = train_labels - self.shift_value
             if self.label_normalization:
-                self.normalization_value = tf.math.reduce_max(train_labels)
+                self.normalization_value = np.max(train_labels)
                 self.values["normalization_value"] = self.normalization_value
 
         if config:
@@ -443,38 +448,56 @@ class LabelTransformation():
                 self.label_normalization = config["label_normalization"]
                 self.normalization_value = config["normalization_value"]
                 self.values["normalization_value"] = self.normalization_value
-
+            if config["feature_rescaling"]:
+                self.feature_rescaling = config["feature_rescaling"]
 
 
     def transform(self, x):
         if self.scaling:
             x = self.scale * x
         if self.logarithm:
-            x = tf.math.log(x)
+            if self.base10:
+                x = np.log10(x)
+            else:
+                x = np.log(x)
         if self.shift:
             x = x - self.shift_value
         if self.label_normalization:
-            x = x/self.normalization_value
+            x = x/(1/2* self.normalization_value) - 1
         return x
 
     def retransform(self, x):
         if self.label_normalization:
-            x = x * self.normalization_value
+            x = (x + 1) * 1/2 * self.normalization_value
         if self.shift:
             x = x + self.shift_value
         if self.logarithm:
-            x = tf.math.exp(x)
+            if self.base10:
+                x = 10 ** x
+            else:
+                x = np.exp(x)
         if self.scaling:
             x = (1/self.scale) * x
+        return x
+
+    def rescale(self, x):
+        x = np.array(x)
+        if self.feature_rescaling:
+            for i in range(x.shape[1]):
+                print(np.max(x[:,i]))
+                x[:, i] = x[:, i] - np.min(x[:, i])
+                x[:, i] = x[:, i] / ((1 / 2) * np.max(x[:, i])) - 1
+        x = tf.constant(x)
         return x
 
     def get_config(self):
         config = {
             "scaling": self.scaling,
             "logarithm": self.logarithm,
+            "base10": self.base10,
             "shift": self.shift,
             "label_normalization": self.label_normalization,
-
+            "feature_rescaling": self.feature_rescaling
         }
         for transformation, value in self.values.items():
             config[transformation] = float(value)
@@ -535,7 +558,7 @@ class Dropout(keras.layers.Layer):
       return 0
 
 
-def data_handling(data_path, label_name, scaling_bool=False, logarithm=False, shift=False,
+def data_handling(data_path, label_name, scaling_bool=False, logarithm=False, base10 = False, shift=False,
                   label_normalization=False, feature_rescaling=False, train_frac=1 , batch_size=64, return_pd = False):
     #Daten einlesen
     data = pd.read_csv(data_path)
@@ -566,31 +589,31 @@ def data_handling(data_path, label_name, scaling_bool=False, logarithm=False, sh
         else:
             more_features = np.array([test_features_pd[key]], dtype="float32")
             test_features = np.append(test_features, more_features, axis=0)
-    #Gegebenfalls die Features auf [0.1] rescalen
-    if feature_rescaling == "rescaling":
-        for i in range(train_features.shape[1]):
-            train_features[:, i] = train_features[:, i] - np.min(train_features[:, i])
-            train_features[:, i] = train_features[:, i] / np.max(train_features[:, i])
-            test_features[:, i] = test_features[:, i] - np.min(test_features[:, i])
-            test_features[:, i] = test_features[:, i] / np.max(test_features[:, i])
+
+    # Dimensionen arrangieren
+    train_features = np.transpose(train_features)
+    test_features = np.transpose(test_features)
+
+    train_labels =np.transpose(np.array([train_labels_pd], dtype="float32"))
+    test_labels = np.transpose(np.array([test_labels_pd], dtype="float32"))
+
+    # Labels transformieren
+    # Transformer initialisieren
+    transformer = label_transformation(train_labels, scaling=scaling_bool, logarithm=logarithm, base10=base10, shift=shift,
+                                       label_normalization=label_normalization, feature_rescaling=feature_rescaling)
+    train_labels = transformer.transform(train_labels)
+    test_labels = transformer.transform(test_labels)
+
+    #Gegebenfalls die Features auf [-1.1] rescalen
+    train_features = transformer.rescale(train_features)
+    test_features = transformer.rescale(test_features)
 
     #numpy arrays zu tensorflow-tensoren machen, wegen schneller verarbeitung
     train_features = tf.constant(train_features, dtype="float32")
     test_features = tf.constant(test_features, dtype="float32")
+    train_labels = tf.constant(train_labels, dtype="float32")
+    test_labels = tf.constant(test_labels, dtype="float32")
 
-    # Dimensionen arrangieren
-    train_features = tf.transpose(train_features)
-    test_features = tf.transpose(test_features)
-
-    train_labels = tf.math.abs(tf.transpose(tf.constant([train_labels_pd], dtype="float32")))
-    test_labels = tf.math.abs(tf.transpose(tf.constant([test_labels_pd], dtype="float32")))
-
-    # Labels transformieren
-    # Transformer initialisieren
-    transformer = LabelTransformation(train_labels, scaling=scaling_bool, logarithm=logarithm, shift=shift,
-                                         label_normalization=label_normalization)
-    train_labels = transformer.transform(train_labels)
-    test_labels = transformer.transform(test_labels)
 
     training_data = tf.data.Dataset.from_tensor_slices((train_features, train_labels))
 
@@ -608,7 +631,7 @@ def initialize_model(nr_layers, units, loss_fn, optimizer, hidden_activation,
                      learning_rate = None, momentum = 0, nesterov=False,
                      feature_normalization = False,
                      new_model=True, custom=False, transfer=False, rm_layers=1,
-                     read_path=None, freeze=False):
+                     read_path=None, freeze=False, metrics = None):
     if new_model:
         if custom:
             model = DNN2(
@@ -679,7 +702,7 @@ def initialize_model(nr_layers, units, loss_fn, optimizer, hidden_activation,
             print(model.summary())
     #optimizer instanz erstellen
     optimizer = construct_optimizer(optimizer=optimizer, learning_rate=learning_rate, momentum=momentum, nesterov=nesterov)
-    model.compile(optimizer=optimizer, loss=loss_fn)
+    model.compile(optimizer=optimizer, loss=loss_fn, metrics = metrics)
     return model
 
 def make_losses_plot(history, custom, new_model):
@@ -694,7 +717,7 @@ def make_losses_plot(history, custom, new_model):
     plt.tight_layout()
 
 def save_config(new_model, model, learning_rate, training_epochs, batch_size, total_loss,
-                transformer, training_time, custom, loss_fn, save_path, read_path=None ):
+                transformer, training_time, custom, loss_fn, feature_rescaling, save_path, read_path=None ):
     if new_model:
         config = pd.DataFrame(model.get_config())
         training_parameters = pd.DataFrame(
@@ -706,7 +729,8 @@ def save_config(new_model, model, learning_rate, training_epochs, batch_size, to
                 "transformer_config": str(transformer.get_config()),
                 "training time:": "{:.2f}".format(training_time),
                 "Custom": custom,
-                "loss_fn": loss_fn.name
+                "loss_fn": loss_fn.name,
+                "feature_rescaling": feature_rescaling
             },
             index=[0]
         )
@@ -774,10 +798,10 @@ def calc_diff_WQ(PDF, quarks, x_1, x_2, eta, E):
 
 def import_model_transformer(model_path):
     model = keras.models.load_model(filepath=model_path)
-    config = pd.read_csv(model_path + "/config")
+    config = pd.read_csv(model_path + "/config", index_col="property")
     config = config.transpose()
     transformer_config = ast.literal_eval(config["transformer_config"][0])
-    transformer = LabelTransformation(config=transformer_config)
+    transformer = label_transformation(config=transformer_config)
 
     return (model, transformer)
 
@@ -788,7 +812,7 @@ def pd_dataframe_to_tf_tensor(value):
 
 def create_param_configs(pools, size):
     checked_configs = list()
-    while len(checked_configs) <= size:
+    while len(checked_configs) < size:
         config = []
         for param in pools:
             config.append(np.random.choice(pools[param]))
@@ -833,10 +857,10 @@ def construct_optimizer(optimizer, learning_rate=None, momentum=None, nesterov=N
 def load_model_and_transormer(model_path):
     model = keras.models.load_model(filepath=model_path)
 
-    config = pd.read_csv(model_path + "/config")
+    config = pd.read_csv(model_path + "/config", index_col="property")
     config = config.transpose()
     transformer_config = ast.literal_eval(config["transformer_config"][0])
-    transformer = LabelTransformation(config=transformer_config)
+    transformer = label_transformation(config=transformer_config)
 
     return (model, transformer)
 
@@ -912,7 +936,26 @@ def plot_model(features_pd, labels, predictions, losses, keys, title, label_name
                 plt.title(title)
                 plt.show()
 
+def scheduler(epoch, learning_rate, reduction = 0.1):
+    if epoch < 10:
+        return learning_rate
+    else:
+        return learning_rate * (1-reduction)
 
+class class_scheduler():
+    def __init__(self, reduction, offset=10, min_lr=0):
+        self.reduction = reduction
+        self.offset = offset
+        self.min_lr = min_lr
+
+    def __call__(self, epoch, learning_rate):
+        print("learning rate: ", learning_rate)
+        if epoch < self.offset:
+            return learning_rate
+        elif learning_rate <= self.min_lr:
+            return self.min_lr
+        else:
+            return learning_rate * (1-self.reduction)
 
 if __name__ == "__main__":
     print("Achtung, dieses Skript ist geschrieben um importiert zu werden")

@@ -21,7 +21,7 @@ model = keras.models.load_model(filepath=model_path)
 model_config = pd.read_csv(model_path + "/config")
 model_config = model_config.transpose()
 transformer_config = ast.literal_eval(model_config["transformer_config"][0])
-transformer = ml.LabelTransformation(config=transformer_config)
+transformer = ml.label_transformation(config=transformer_config)
 
 #Variablen initialisieren:
 variables = dict()
