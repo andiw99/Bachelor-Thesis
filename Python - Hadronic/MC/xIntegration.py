@@ -10,12 +10,23 @@ import ml
 import ast
 import time
 import MC
+import lhapdf as pdf
 
+quarks = {"quark": [1, 2, 3, 4],
+          "charge": [-1/3,2/3, -1/3, 2/3]}
+PID = {1: "d", 2: "u", 3: "s", 4: "c"}
+
+#PDF initialisieren
+PDF = pdf.mkPDF("CT14nnlo", 0)
 
 #Random Samples einlesen:
-dataset_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/HadronicData/MC_xIntegration/"
+dataset_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/HadronicData/MC_xIntegrationMore/"
 label_name = "WQ"
 (data, features, labels, _, _, features_pd, labels_pd, _) = ml.data_handling(data_path=dataset_path + "all", label_name=label_name, return_pd=True)
+#Grid einelsen zur Trapez-Integration
+testdata_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/HadronicData/MC_xIntegrationTrapez/"
+(_, test_features, test_labels, _, _, test_features_pd, test_labels_pd, _) = ml.data_handling(data_path=testdata_path + "all", label_name=label_name, return_pd=True)
+
 #Config der RandomSample generierung einlesen
 config = pd.read_csv(dataset_path + "config")
 #model einlesen
@@ -29,20 +40,47 @@ for key in config:
 
 #verschiedene eta Werte isolieren
 eta_values = list(set(features_pd["eta"]))
+x_2_values = list(set(test_features_pd["x_2"]))
 features_eta_constant = dict()
 labels_eta_constant = dict()
+test_features_eta_constant = dict()
+test_labels_eta_constant = dict()
+x_1_integration = np.array([])
 for eta_value in eta_values:
     features_eta_constant["{:.2f}".format(eta_value)] = features[features[:,2] == eta_value]
     labels_eta_constant["{:.2f}".format(eta_value)] = labels[features[:,2] == eta_value]
-    print(features_eta_constant["{:.2f}".format(eta_value)])
-    print(labels_eta_constant["{:.2f}".format(eta_value)])
-    exit()
+    test_features_eta_constant["{:.2f}".format(eta_value)] = test_features[test_features[:,2] == eta_value]
+    test_labels_eta_constant["{:.2f}".format(eta_value)] = test_labels[test_features[:,2] == eta_value]
+    for i,x_2_value in enumerate(x_2_values):
+        print(x_2_value)
+        print(test_features_eta_constant["{:.2f}".format(eta_value)])
+        print(test_features_eta_constant["{:.2f}".format(eta_value)][:,1])
+        print([test_features_eta_constant["{:.2f}".format(eta_value)][:,1] == x_2_value])
+        x_1_integration =
+        test_features_eta_constant["{:.2f}".format(eta_value)][:,:,i] = \
+            test_features_eta_constant["{:.2f}".format(eta_value)][test_features_eta_constant["{:.2f}".format(eta_value)]
+                                                                   == x_2_value]
+        print(test_features_eta_constant["{:.2f}".format(eta_value)][:,:,i])
+        exit()
+
+#WQ für Ereignisse mit pt < 20 GeV auf 0 setzen
+for eta_value in features_eta_constant:
+    cut = MC.pt_cut(features_eta_constant[eta_value]) #cut liefert bool an jeder stelle ob pt<20 GeV ist und setzt dann WQ auf 0
+    test_cut = MC.pt_cut(test_features_eta_constant[eta_value])
+    #TODO: kurz in np.array umwandeln denn tf.constant unterstützt kein item assignment
+    labels_eta_constant[eta_value] = np.array(labels_eta_constant[eta_value])
+    test_labels_eta_constant[eta_value] = np.array(test_labels_eta_constant[eta_value])
+    test_labels_eta_constant[eta_value][test_cut] = 0
+    labels_eta_constant[eta_value][cut] = 0
+    test_labels_eta_constant[eta_value] = tf.constant(test_labels_eta_constant[eta_value])
+    labels_eta_constant[eta_value] = tf.constant(labels_eta_constant[eta_value])
 
 er_fc = MC.erf(mu=3, sigma=variables["stddev"])
 
 scaling_loguni = 1/((stats.loguniform.cdf(x=variables["x_upper_limit"], a = variables["loguni_param"], b =1+ variables["loguni_param"]) - \
                        stats.loguniform.cdf(x=variables["x_lower_limit"], a = variables["loguni_param"], b =1+ variables["loguni_param"])))
-
+scaling_loguni = 1/(variables["x_upper_limit"]-variables["x_lower_limit"])
+print("scaling_loguni:", scaling_loguni)
 loguni = MC.class_loguni(loguni_param=variables["loguni_param"], x_lower_limit=variables["x_lower_limit"], x_upper_limit=variables["x_upper_limit"],scaling=scaling_loguni)
 
 probabilities_x = loguni(features_pd["x_1"])
@@ -58,24 +96,22 @@ I2 = integrate.quad(loguni, a=variables["x_lower_limit"], b=variables["x_upper_l
 print("I2", I2)
 
 analytic_integral = list()
+dblquad_integral = list()
+trapezoid_integral = list()
 eta = list()
 time1 = time.time()
 for i,eta_value in enumerate(features_eta_constant.keys()):
-    """
-    print(labels_eta_constant[eta_value][:,0])
-    print((loguni(features_eta_constant[eta_value][:,0]) * loguni(features_eta_constant[eta_value][:,1])))
-    print(loguni(features_eta_constant[eta_value][:,0]).shape)
-    time2 = time.time()
-    time = time2 - time1
-    a = labels_eta_constant[eta_value][:,0] / (loguni(features_eta_constant[eta_value][:,0]) * loguni(features_eta_constant[eta_value][:,1]))
-    print("a", a, "shape a", a.shape)
-    print(time)
-    exit()
-    """
     analytic_integral.append(tf.math.reduce_mean(labels_eta_constant[eta_value][:,0] /
                                                  (loguni(features_eta_constant[eta_value][:,0]) * loguni(features_eta_constant[eta_value][:,1]))))
+
+    #calc_WQ = MC.calc_diff_WQ(PDF=PDF, quarks=quarks, eta=float(eta_value))
+    #dblquad_integral.append(integrate.nquad(calc_WQ, ranges=[[0,1],[0,1]]))
+    print(integrate.trapezoid(test_labels_eta_constant[eta_value][:,0], test_features_eta_constant[eta_value][:,1]))
+    trapezoid_integral.append(integrate.trapezoid(
+        integrate.trapezoid(test_labels_eta_constant[eta_value][:,0], test_features_eta_constant[eta_value][:,1]),
+        test_features_eta_constant[eta_value][:,0]))
     eta.append(float(eta_value))
-    if i % 25 == 0:
+    if i % 5 == 0:
         print(i, "/", len(eta_values))
 
 
@@ -83,6 +119,7 @@ order = np.argsort(eta)
 eta = np.array(eta)[order]
 analytic_integral = np.array(analytic_integral)[order]
 plt.plot(eta, analytic_integral)
+plt.plot(eta, trapezoid_integral)
 plt.xlabel(r"$\eta$")
 plt.ylabel(r"$\frac{d\sigma}{d\eta}$")
 plt.tight_layout()

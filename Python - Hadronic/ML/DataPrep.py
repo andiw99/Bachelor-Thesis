@@ -25,38 +25,55 @@ PDF = pdf.mkPDF("CT14nnlo", 0)
 #Variablen
 e = 1.602e-19
 E = 6500 #Strahlenergie in GeV, im Vornherein festgelegt?
-x_total = int(750000) #Anzahl an x Werten
-eta_total = int(750000) # Anzahl an eta Werten
+x_total = int(100) #Anzahl an x Werten
+eta_total = int(100) # Anzahl an eta Werten
 x_lower_limit = 0.01
 x_upper_limit = 0.8
 eta_limit = 3
 loguni_param=0.01
 stddev = 1.5
 xMin = PDF.xMin
-eta_constant = False
-eta_values = 200
+eta_constant = True
+x_Grid = True
+eta_values = 150
 
-set_name = "NewRandom/"
+set_name = "MC_xIntegrationTrapez/"
 path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/HadronicData/" + set_name
 
 
 #Werte erzeugen
-x_1 = (stats.loguniform.rvs(a=loguni_param, b=1+loguni_param, size=x_total) - loguni_param) * (x_upper_limit - x_lower_limit) + x_lower_limit
-x_1 = x_1[x_1 >= xMin]
+if x_Grid:
+    x = np.linspace(start=x_lower_limit, stop=x_upper_limit, num=x_total)
+    x_2 = np.array([])
+    x_1 = np.array([])
+    for x_1_value in x:
+        x_2_frac = np.zeros(shape=(int(len(x)), ), dtype="float32")
+        x_2_frac += x_1_value
+        x_2 = np.concatenate((x_2, x_2_frac))
+        x_1 = np.concatenate((x_1, x))
+else:
+    x_1 = (stats.loguniform.rvs(a=loguni_param, b=1+loguni_param, size=x_total) - loguni_param) * (x_upper_limit - x_lower_limit) + x_lower_limit
+    x_1 = x_1[x_1 >= xMin]
+    x_2 = (stats.loguniform.rvs(a=loguni_param, b=1+loguni_param, size=x_total) - loguni_param) * (x_upper_limit - x_lower_limit) + x_lower_limit
+    x_2 = x_2[x_2 >= xMin]
+
 plt.hist(x_1, bins=20, rwidth=0.8)
 plt.yscale("linear")
 plt.show()
-x_2 = (stats.loguniform.rvs(a=loguni_param, b=1+loguni_param, size=x_total) - loguni_param) * (x_upper_limit - x_lower_limit) + x_lower_limit
-x_2 = x_2[x_2 >= xMin]
 
 eta = np.array([], dtype="float32")
 if eta_constant:
     x_1_Rand = x_1
     x_2_Rand = x_2
+    print(x_2_Rand)
+    print(x_1_Rand)
+    print(x_2_Rand.size)
+    print(x_1_Rand.size)
+
     x_1 = np.array([], dtype="float32")
     x_2 = np.array([], dtype="float32")
     for eta_value in np.linspace(-eta_limit, eta_limit, num=eta_values):
-        eta_frac = np.zeros(shape=(int(eta_total), ), dtype="float32")
+        eta_frac = np.zeros(shape=(int(len(x_1_Rand)), ), dtype="float32")
         eta_frac += eta_value
         eta = np.concatenate((eta, eta_frac))
         x_1 = np.concatenate((x_1, x_1_Rand))
@@ -74,17 +91,20 @@ else:
     plt.hist(eta, bins=20, rwidth=0.8)
     plt.show()
 
-print(x_1.size)
-print(eta.size)
-print(x_1.shape)
-print(eta.shape)
-print(x_1)
 print(eta)
-print(type(eta))
-print(type(x_1))
-
+print(x_1)
+print(x_2)
+print(eta.size)
+print(x_1.size)
+print(x_2.size)
 
 diff_WQ = ml.calc_diff_WQ(PDF=PDF, quarks=quarks, x_1=x_1, x_2=x_2, eta=eta, E=E)
+print(eta)
+print(x_1)
+print(x_2)
+print(eta.size)
+print(x_1.size)
+print(x_2.size)
 
 
 hadronic_diff_WQ_data = pd.DataFrame(

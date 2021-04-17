@@ -25,7 +25,6 @@ else:
         transfer = ast.literal_eval(input("transfer= "))
         if not transfer:
             freeze = ast.literal_eval((input("freeze= ")))
-        input("auf die config geguckt?")
 
 
 time1 = time.time()
@@ -36,7 +35,7 @@ project_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/F
 loss_name = "Source_loss"
 project_name = ""
 
-read_name = "Feature-Normalization+MAE+SmallBatch"
+read_name = "Junge"
 label_name = "WQ"
 read_path =project_path + project_name + read_name
 if transfer:
@@ -55,9 +54,9 @@ if os.path.exists(project_path+ project_name + loss_name):
 
 #Variablen...
 train_frac = 0.95
-batch_size = 64
+batch_size = 512
 training_epochs = 100
-nr_layers = 2
+nr_layers = 3
 units = 512
 learning_rate = 1e-2
 rm_layers = 1
@@ -81,7 +80,7 @@ dropout = False
 dropout_rate = 0.1
 scaling_bool = True
 logarithm = True
-base10 = True
+base10 = False
 shift = False
 label_normalization = True
 feature_normalization = True
@@ -112,7 +111,7 @@ time2= time.time()
 (training_data, train_features, train_labels, test_features, test_labels, transformer) =\
         ml.data_handling(data_path=data_path+data_name,
         train_frac=train_frac,batch_size=batch_size,
-        label_name=label_name, scaling_bool=scaling_bool, logarithm=logarithm,
+        label_name=label_name, scaling_bool=scaling_bool, logarithm=logarithm, base10=base10,
         shift=shift, label_normalization=label_normalization, feature_rescaling=feature_rescaling)
 time3 = time.time()
 

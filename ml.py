@@ -558,7 +558,7 @@ class Dropout(keras.layers.Layer):
       return 0
 
 
-def data_handling(data_path, label_name, scaling_bool=False, logarithm=False, base10 = False, shift=False,
+def data_handling(data_path, label_name, scaling_bool=False, logarithm=False, base10=False, shift=False,
                   label_normalization=False, feature_rescaling=False, train_frac=1 , batch_size=64, return_pd = False):
     #Daten einlesen
     data = pd.read_csv(data_path)
@@ -716,8 +716,9 @@ def make_losses_plot(history, custom, new_model):
     plt.legend()
     plt.tight_layout()
 
-def save_config(new_model, model, learning_rate, training_epochs, batch_size, total_loss,
-                transformer, training_time, custom, loss_fn, feature_rescaling, save_path, read_path=None ):
+def save_config(new_model,  save_path, model, learning_rate, training_epochs, batch_size, total_loss,
+                transformer, training_time, custom, loss_fn, feature_handling=None, min_delta = None, nr_hidden_layers=None,
+                lr_reduction=None, lr_factor=None, read_path=None ):
     if new_model:
         config = pd.DataFrame(model.get_config())
         training_parameters = pd.DataFrame(
@@ -730,7 +731,11 @@ def save_config(new_model, model, learning_rate, training_epochs, batch_size, to
                 "training time:": "{:.2f}".format(training_time),
                 "Custom": custom,
                 "loss_fn": loss_fn.name,
-                "feature_rescaling": feature_rescaling
+                "feature_rescaling": feature_handling,
+                "min_delta": min_delta,
+                "nr_hidden_layers": nr_hidden_layers,
+                "lr_reduction": lr_reduction,
+                "lr_factor": lr_factor
             },
             index=[0]
         )
@@ -846,10 +851,10 @@ def construct_name(config_as_dict, names_set):
 
 def construct_optimizer(optimizer, learning_rate=None, momentum=None, nesterov=None):
     try:
-        optimizer = optimizer(learning_rate=learning_rate, momentum=momentum, nesterov=nesterov)
+        optimizer = optimizer(learning_rate=learning_rate, momentum=momentum, nesterov=nesterov, clipvalue=2)
     except:
         try:
-            optimizer = optimizer(learning_rate=learning_rate)
+            optimizer = optimizer(learning_rate=learning_rate, clipvalue=2)
         except:
             optimizer = optimizer
     return optimizer

@@ -5,6 +5,8 @@ from numpy import random
 from matplotlib import pyplot as plt
 import numpy as np
 import math
+import scipy as sc
+from scipy import integrate
 """
 (x_train, y_train), _ = tf.keras.datasets.mnist.load_data()
 dataset = tf.data.Dataset.from_tensor_slices(
@@ -161,7 +163,20 @@ print(b)
 a[0][0] = a[0][0] - 1.0
 print(a)
 """
-a = np.array([3, -2, 0, 2, -5])
-order = np.argsort(a)
-a = a[order]
-print(a)
+
+
+def func(x,y):
+    z = x * y
+    return z
+from scipy.integrate import simps
+import numpy as np
+x = np.linspace(0, 1, 20)
+y = np.linspace(0, 1, 30)
+z = np.cos(x[:,None])**4 + np.sin(y)**2
+print(x)
+print(x[:,None])
+print(np.sin(y)**2)
+print(z)
+print(x)
+print(simps(z,y))
+print(simps(simps(z, y), x))

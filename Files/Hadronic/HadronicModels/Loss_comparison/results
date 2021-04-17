@@ -1,4 +1,4 @@
 ,0
-mean_squared_logarithmic_error_,8.10
-mean_squared_error_,4.23
-mean_absolute_error_,2.56
+mean_squared_error_,1.65
+mean_absolute_error_,0.49
+mean_squared_logarithmic_error_,24.70
