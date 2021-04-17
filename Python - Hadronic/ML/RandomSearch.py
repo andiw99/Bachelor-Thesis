@@ -5,39 +5,40 @@ from matplotlib import pyplot as plt
 import ml
 import time
 import os
+import numpy as np
 
 
 #Grid erstellen
 pools = dict()
-pools["batch_size"] = [32, 512, 2048, 8192]
-pools["units"] = [128, 256, 512, 1024]
-pools["nr_layers"] =  [2, 4, 6]
-pools["learning_rate"]=[1e-1, 1e-2, 1e-3, 1e-4, 1e-5]
+pools["batch_size"] = [16, 256, 2048, 8192, 16384, 32768]
+pools["units"] = [128, 256, 512]
+pools["nr_layers"] =  [1,2,3]
+pools["learning_rate"]= np.linspace(1e-1, 1e-5, 20)
 pools["l2_kernel"] = [0, 0.0001]
 pools["l2_bias"] = [0.0]
-pools["loss_fn"] = [keras.losses.MeanSquaredError(), keras.losses.MeanAbsoluteError()]
-pools["optimizer"] = [keras.optimizers.Adam, keras.optimizers.SGD]
+pools["loss_fn"] = [keras.losses.MeanSquaredError(), keras.losses.MeanAbsoluteError(), keras.losses.MeanSquaredLogarithmicError()]
+pools["optimizer"] = [keras.optimizers.Adam, keras.optimizers.SGD, keras.optimizers.RMSprop]
 pools["momentum"] = [0.1, 0.01, 1]
 pools["dropout"] = [False]
 pools["dropout_rate"] = [0]
 pools["kernel_initializer"] = [tf.keras.initializers.HeNormal(), tf.keras.initializers.RandomNormal()]
 pools["bias_initializer"] = [tf.keras.initializers.Zeros()]
-pools["hidden_activation"] = [tf.nn.leaky_relu, tf.nn.sigmoid, tf.nn.relu]
+pools["hidden_activation"] = [tf.nn.leaky_relu, tf.nn.sigmoid, tf.nn.relu, tf.nn.elu]
 pools["output_activation"] = [ml.LinearActiavtion()]
 pools["feature_normalization"] = ["rescaling", "normalization", None]
 
 #Festlegen, welche Hyperparameter in der Bezeichnung stehen solen
-names = {"batch_size", "units", "nr_layers", "learning_rate", "loss_fn", "optimizer", "hidden_activation", }
+names = {"batch_size", "units", "nr_layers", "learning_rate", "loss_fn", "optimizer", "hidden_activation","feature_normalization"}
 
 time1 = time.time()
 #Daten einlesen
 location = input("Auf welchem Rechner?")
-root_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/"
+root_path = "/home/s1388135/Bachelor-Thesis"
 if location == "Taurus" or location == "taurus":
-    root_path = "/home/s1388135/Bachelor-Thesis/"
+    root_path = "/home/s1388135/Bachelor-Thesis"
 data_path = root_path + "/Files/Transfer/Data/NewRandom/"
 data_name = "all"
-project_path = root_path + "Files/Hadronic/HadronicModels/BigRandomSearch/"
+project_path = root_path + "/Files/Hadronic/HadronicModels/BigRandomSearch/"
 loss_name = "best_loss"
 project_name = ""
 
@@ -81,7 +82,7 @@ for config in checked_configs:
     elif params["feature_normalization"] == "normalization":
         feature_normalization = True
 
-    training_epochs = int(1/200 * params["batch_size"]) + 10
+    training_epochs = int(1/25 * params["batch_size"]) + 30
 
     # Daten einlsen
     # Daten einlesen:

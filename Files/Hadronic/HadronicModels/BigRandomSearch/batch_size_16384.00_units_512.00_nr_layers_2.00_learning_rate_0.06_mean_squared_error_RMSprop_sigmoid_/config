@@ -1,0 +1,11 @@
+property,0,1,2,3,4
+name,sequential_33,sequential_33,sequential_33,sequential_33,sequential_33
+layers,"{'class_name': 'InputLayer', 'config': {'batch_input_shape': (None, 3), 'dtype': 'float32', 'sparse': False, 'ragged': False, 'name': 'normalization_32_input'}}","{'class_name': 'Normalization', 'config': {'name': 'normalization_32', 'trainable': True, 'dtype': 'float32', 'axis': (-1,)}}","{'class_name': 'Dense', 'config': {'name': 'Layer_0', 'trainable': True, 'dtype': 'float32', 'units': 512, 'activation': 'sigmoid', 'use_bias': True, 'kernel_initializer': {'class_name': 'HeNormal', 'config': {'seed': None}}, 'bias_initializer': {'class_name': 'Zeros', 'config': {}}, 'kernel_regularizer': {'class_name': 'L2', 'config': {'l2': 9.999999747378752e-05}}, 'bias_regularizer': {'class_name': 'L2', 'config': {'l2': 0.0}}, 'activity_regularizer': None, 'kernel_constraint': None, 'bias_constraint': None}}","{'class_name': 'Dense', 'config': {'name': 'Layer_1', 'trainable': True, 'dtype': 'float32', 'units': 512, 'activation': 'sigmoid', 'use_bias': True, 'kernel_initializer': {'class_name': 'HeNormal', 'config': {'seed': None}}, 'bias_initializer': {'class_name': 'Zeros', 'config': {}}, 'kernel_regularizer': {'class_name': 'L2', 'config': {'l2': 9.999999747378752e-05}}, 'bias_regularizer': {'class_name': 'L2', 'config': {'l2': 0.0}}, 'activity_regularizer': None, 'kernel_constraint': None, 'bias_constraint': None}}","{'class_name': 'Dense', 'config': {'name': 'Output_layer', 'trainable': True, 'dtype': 'float32', 'units': 1, 'activation': 'linear', 'use_bias': True, 'kernel_initializer': {'class_name': 'HeNormal', 'config': {'seed': None}}, 'bias_initializer': {'class_name': 'Zeros', 'config': {}}, 'kernel_regularizer': {'class_name': 'L2', 'config': {'l2': 9.999999747378752e-05}}, 'bias_regularizer': {'class_name': 'L2', 'config': {'l2': 0.0}}, 'activity_regularizer': None, 'kernel_constraint': None, 'bias_constraint': None}}"
+learning_rate,0.06316157894736843,,,,
+epochs,685.0,,,,
+batch_size,16384.0,,,,
+validation loss,51.66,,,,
+transformer_config,"{'scaling': True, 'logarithm': True, 'shift': False, 'label_normalization': False, 'scale': 6.318531805405459e+19}",,,,
+training time:,209.67,,,,
+Custom,False,,,,
+loss_fn,mean_squared_error,,,,

@@ -39,6 +39,13 @@ eta_values = 150
 
 set_name = "MC_xIntegrationTrapez/"
 path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/HadronicData/" + set_name
+root_name ="/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject" 
+location = input("Welcher Rechner?")
+if location == "Taurus" or location == "taurus":
+    root_name = "/home/s1388135/Bachelor-Thesis"
+path = root_name + "/Files/Transfer/Data/" + set_name
+
+
 
 
 #Werte erzeugen
@@ -58,6 +65,7 @@ else:
     x_2 = x_2[x_2 >= xMin]
 
 plt.hist(x_1, bins=20, rwidth=0.8)
+>>>>>>> ca3a8dff4e562631d6d62aefc65d3242f65effce
 plt.yscale("linear")
 plt.show()
 
