@@ -11,8 +11,8 @@ import os
 import ast
 
 
-set_name = "NewRandom/"
-path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/HadronicData/" + set_name
+set_name = "TrainingDataMidRange/"
+path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Data/" + set_name
 (data, features, labels, _, _, _) = ml.data_handling(data_path=path + "all", label_name="WQ")
 print("min ", tf.reduce_min(labels))
 print("max ", tf.reduce_max(labels))

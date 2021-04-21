@@ -5,32 +5,39 @@ import ast
 from matplotlib import cm
 
 #Pfade eingeben
+import ml
+
 paths = dict()
 
 #more data to plot?
 #plotting_data = ...
 
 #Pfade in dict speichern
-paths["CT14_eta_x_1_constant"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Reweight/Data/Reweight_of_diff_WQ/CT14nnlo/eta_x_1_constant"
-paths["CT14 x constant"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Reweight/Data/Reweight_of_diff_WQ/CT14nnlo/x_constant"
-paths["MMHT eta, x_1 constant"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Reweight/Data/Reweight_of_diff_WQ/MMHT2014/eta_x_1_constant"
+paths["$\eta, x_1$ constant"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Reweight/Data/Reweight_of_diff_WQ/CT14nnlo/eta_x_1_constant"
+paths["x constant"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Reweight/Data/Reweight_of_diff_WQ/CT14nnlo/x_constant"
+paths["MMHT $\eta, x_1$ constant"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Reweight/Data/Reweight_of_diff_WQ/MMHT2014/eta_x_1_constant"
 paths["MMHT x constant"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Reweight/Data/Reweight_of_diff_WQ/MMHT2014/x_constant"
 paths["3D-Plot, MMHT"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Reweight/Data/Reweight_of_diff_WQ/MMHT2014/x_2_constant__3D"
+paths["CT14-model"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Models/best_guess_important_range"
+paths["MMHT-model"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Models/transferred_model"
+model_keys = {"model", "CT14-model", "MMHT-model"}
 label_name = "WQ"
 
 #Daten einlesen
 data = dict()
-for key,path in paths.items():
-    if key != "model":
-        data[key] = pd.read_csv(path)
-
-show_3D_plots = False
-#Features und labels unterteilen
+models = dict()
+transformers = dict()
 features_pd = dict()
 labels_pd = dict()
-for dataset in data:
-    features_pd[dataset] = data[dataset]
-    labels_pd[dataset] = features_pd[dataset].pop(label_name)
+features = dict()
+labels = dict()
+for key,path in paths.items():
+    if key not in model_keys:
+        (_, features[key], labels[key], _, _, features_pd[key], labels_pd[key], _) = ml.data_handling(data_path=path, label_name="WQ")
+    if key in model_keys:
+        (models[key], transformers[key]) = ml.load_model_and_transormer(model_path=path)
+
+show_3D_plots = False
 
 #Dictionary mit den Werten anlegen, die jeweils variabel sind im jeweiligen Dataset
 variabel = dict()

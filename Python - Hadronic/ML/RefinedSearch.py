@@ -34,7 +34,7 @@ time1 = time.time()
 #Daten einlesen
 data_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Data/CT14nnlo/"
 data_name = "all"
-project_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/HadronicModels/RefinedSearch/"
+project_path = "/Files/Hadronic/Models/RefinedSearch/"
 loss_name = "best_loss"
 project_name = ""
 

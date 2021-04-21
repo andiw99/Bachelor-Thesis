@@ -12,7 +12,7 @@ import os
 
 time1 = time.time()
 #Daten einlesen
-data_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/HadronicData/"
+data_path = "/Files/Hadronic/Data/"
 data_name = "log_neg_x12/all"
 data_name_x_constant = "log_neg_x12/x_constant"
 data_name_eta_x_2_constant = "log_neg_x12/eta_x_2_constant"
@@ -40,7 +40,7 @@ logarithm = False
 show_3D_plots = False
 
 model_name = "LessDeep/"
-path ="/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/HadronicModels/" + model_name
+path ="/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Models/" + model_name
 
 
 loss_function = keras.losses.MeanAbsoluteError()

@@ -30,7 +30,7 @@ eta_limit = 3
 loguni_param=0.005
 
 set_name = "RandomSamples/"
-path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/HadronicData/" + set_name
+path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Data/" + set_name
 
 name = "Loguniform+Gauss+Linear"
 #Test

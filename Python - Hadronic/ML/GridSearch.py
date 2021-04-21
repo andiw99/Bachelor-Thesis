@@ -2,9 +2,19 @@ import pandas as pd
 import tensorflow as tf
 from tensorflow import keras
 from matplotlib import pyplot as plt
-import ml
 import time
 import os
+import numpy as np
+import sys
+
+time1 = time.time()
+#Daten einlesen
+location = input("Auf welchem Rechner?")
+root_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/"
+if location == "Taurus" or location == "taurus":
+    root_path = "/home/s1388135/Bachelor-Thesis/"
+sys.path.insert(0, root_path)
+import ml
 
 
 #Grid erstellen, pool für jeden Hyperparameter, so kann man dynamische einstellen in welchen Dimensionen das Grid liegt
@@ -12,10 +22,10 @@ pools = dict()
 pools["batch_size"] = [512]
 pools["units"] = [512]
 pools["nr_layers"] =  [3]
-pools["learning_rate"]= [1e-2]
+pools["learning_rate"]= [1e-3]
 pools["l2_kernel"] = [0.0]
 pools["l2_bias"] = [0.0]
-pools["loss_fn"] = [keras.losses.MeanAbsoluteError(), keras.losses.MeanSquaredError(), keras.losses.MeanSquaredLogarithmicError()]
+pools["loss_fn"] = [keras.losses.MeanAbsoluteError()]
 pools["optimizer"] = [keras.optimizers.Adam]
 pools["momentum"] = [0.1]
 pools["dropout"] = [False]
@@ -25,22 +35,11 @@ pools["bias_initializer"] = [tf.keras.initializers.Zeros()]
 pools["hidden_activation"] = [tf.nn.relu]
 pools["output_activation"] = [ml.LinearActiavtion()]
 pools["feature_normalization"] = ["normalization"]
+pools["dataset"] =["TrainingDataMidRange", "MuchTrainingDataMidRange", "LessTrainingDataMidRange"]
 #Festlegen, welche Hyperparameter in der Bezeichnung stehen sollen:
-names = {"loss_fn"}
+names = {"dataset"}
 
-time1 = time.time()
-#Daten einlesen
-location = input("Auf welchem Rechner?")
-root_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/"
-if location == "Taurus" or location == "taurus":
-    root_path = "/home/s1388135/Bachelor-Thesis/"
-data_path = root_path + "/Files/Hadronic/HadronicData/NewRandom/"
-data_name = "all"
-project_path = root_path + "Files/Hadronic/HadronicModels/Loss_comparison/"
-loss_name = "best_loss"
-project_name = ""
 
-label_name = "WQ"
 
 #Variablen...
 train_frac = 0.95
@@ -59,7 +58,7 @@ dropout = False
 dropout_rate = 0.1
 scaling_bool = True
 logarithm = True
-base10 = False
+base10 = True
 shift = False
 label_normalization = True
 feature_normalization = True
@@ -70,7 +69,7 @@ new_model=True
 
 lr_patience = 1
 stopping_patience = 3
-repeat = 2
+repeat = 3
 
 
 #Menge mit bereits gesehen konfigurationen
@@ -82,6 +81,14 @@ for config in checked_configs:
     params = dict()
     for i,param in enumerate(pools):
         params[param] = config[i]
+
+    data_path = root_path + "/Files/Hadronic/Data/" + params["dataset"] +  "/"
+    data_name = "all"
+    project_path = root_path + "Files/Hadronic/Models/optimizers_comparison/"
+    loss_name = "best_loss"
+    project_name = ""
+
+    label_name = "WQ"
 
     if params["feature_normalization"] == "rescaling":
         feature_rescaling = True
@@ -139,17 +146,18 @@ for config in checked_configs:
     #zweimal initialisiern um statistische Schwankungen zu verkleinern
     #trainin_time und total loss über die initialisierungen mitteln
     training_time = 0
-    total_loss = 0
+    total_losses = []
+    models = []
     for i in range(repeat):
         #Modell initialisieren
-        model = ml.initialize_model(nr_layers=params["nr_layers"], units=params["units"], loss_fn=params["loss_fn"], optimizer=params["optimizer"],
+        models.append(ml.initialize_model(nr_layers=params["nr_layers"], units=params["units"], loss_fn=params["loss_fn"], optimizer=params["optimizer"],
                                             hidden_activation=params["hidden_activation"], output_activation=output_activation,
                                             kernel_initializer=params["kernel_initializer"], bias_initializer=bias_initializer, l2_kernel=params["l2_kernel"],
                                             learning_rate=params["learning_rate"], momentum=momentum, nesterov=nesterov,
                                             l2_bias=l2_bias, dropout=dropout, dropout_rate=dropout_rate,
-                                            new_model=new_model, custom=custom, feature_normalization=feature_normalization)
-
-        # Training starten
+                                            new_model=new_model, custom=custom, feature_normalization=feature_normalization))
+    for i,model in enumerate(models):
+    # Training starten
         time4 = time.time()
         history = model.fit(x=train_features, y=train_labels, batch_size=params["batch_size"], epochs=training_epochs,
                             callbacks = callbacks, verbose=2, shuffle=True)
@@ -163,14 +171,18 @@ for config in checked_configs:
 
         # Überprüfen wie gut es war
         results = model(test_features)
-        total_loss += loss_function(y_pred=transformer.retransform(results), y_true=transformer.retransform(test_labels))
+        loss = float(loss_function(y_pred=transformer.retransform(results), y_true=transformer.retransform(test_labels)))
+        print("Loss von Durchgang Nummer ", i, " : ", loss)
+        total_losses.append(loss)
 
     #training_time und total loss mitteln:
-    training_time = 1/repeat * training_time
-    total_loss = 1/repeat * total_loss
-    print("total loss:", float(total_loss))
-
+    total_loss = total_losses[np.argmin(total_losses)]
+    training_time = 1 / repeat * training_time
+    print("Losses of the specific cycle:", total_losses)
+    print("average Loss over ", repeat, "cycles:", np.mean(total_losses))
+    print("Das beste Modell (Modell Nr.", np.argmin(total_losses), ") wird gespeichert")
     # Modell und config speichern
+    model = models[np.argmin(total_losses)]
     model.save(filepath=save_path, save_format="tf")
     (config, index) = ml.save_config(new_model=new_model, save_path=save_path, model=model, learning_rate=params["learning_rate"],
                                      training_epochs=training_epochs, batch_size=params["batch_size"],
@@ -179,7 +191,7 @@ for config in checked_configs:
                                      min_delta = min_delta, nr_hidden_layers=params["nr_layers"])
 
     #Überprüfen ob Fortschritt gemacht wurde
-    ml.check_progress(model=model, transformer=transformer, test_features=test_features, test_labels=test_labels,
+    ml.check_progress(model=models[np.argmin(total_losses)], transformer=transformer, test_features=test_features, test_labels=test_labels,
                       best_losses=best_losses, project_path=project_path, project_name=project_name,
                       index=index, config=config, loss_name=loss_name)
 

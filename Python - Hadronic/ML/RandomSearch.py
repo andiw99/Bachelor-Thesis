@@ -36,7 +36,7 @@ location = input("Auf welchem Rechner?")
 root_path = "/home/s1388135/Bachelor-Thesis"
 if location == "Taurus" or location == "taurus":
     root_path = "/home/s1388135/Bachelor-Thesis"
-data_path = root_path + "/Files/Transfer/Data/NewRandom/"
+data_path = root_path + "/Files/Transfer/Data/TrainingDataMidRange/"
 data_name = "all"
 project_path = root_path + "/Files/Hadronic/HadronicModels/BigRandomSearch/"
 loss_name = "best_loss"

@@ -8,7 +8,7 @@ import ml
 import time
 
 #Daten einlesem
-hadronic_WQ_data_raw = pd.read_csv("HadronicData/some_hadronic_data")
+hadronic_WQ_data_raw = pd.read_csv("Data/some_hadronic_data")
 
 #Variablen
 units = 64
@@ -83,8 +83,8 @@ plt.show()
 print(test_results)
 
 #Daten einlesen
-hadronic_data_x_constant = pd.read_csv("HadronicData/some_hadronic_data__x_constant__0.07083333333333333")
-hadronic_data_eta_constant = pd.read_csv("HadronicData/some_hadronic_data__eta_constant__1.5226130653266328")
+hadronic_data_x_constant = pd.read_csv("Data/some_hadronic_data__x_constant__0.07083333333333333")
+hadronic_data_eta_constant = pd.read_csv("Data/some_hadronic_data__eta_constant__1.5226130653266328")
 
 #predictions berechnen
 pred_feature_x_constant = tf.constant([hadronic_data_x_constant["x_1"], hadronic_data_x_constant["x_2"], hadronic_data_x_constant["eta"]], dtype="float32")

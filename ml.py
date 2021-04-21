@@ -450,6 +450,8 @@ class label_transformation():
                 self.values["normalization_value"] = self.normalization_value
             if config["feature_rescaling"]:
                 self.feature_rescaling = config["feature_rescaling"]
+            if config["base10"]:
+                self.base10 = config["base10"]
 
 
     def transform(self, x):
@@ -559,7 +561,8 @@ class Dropout(keras.layers.Layer):
 
 
 def data_handling(data_path, label_name, scaling_bool=False, logarithm=False, base10=False, shift=False,
-                  label_normalization=False, feature_rescaling=False, train_frac=1 , batch_size=64, return_pd = False):
+                  label_normalization=False, feature_rescaling=False, train_frac=1 , batch_size=64, return_pd = False,
+                  lower_cutoff = 1e-20, upper_cutoff = 1e+3, transformer = None):
     #Daten einlesen
     data = pd.read_csv(data_path)
     #in test und trainingsdaten untertaeilen
@@ -575,7 +578,7 @@ def data_handling(data_path, label_name, scaling_bool=False, logarithm=False, ba
     train_labels_pd = train_features_pd.pop(label_name)
     test_labels_pd = test_features_pd.pop(label_name)
 
-    # Aus den Pandas Dataframes tf-Tensoren machen
+    # Aus den Pandas Dataframes np-arrays machen
     for i, key in enumerate(train_features_pd):
         if i == 0:
             train_features = np.array([train_features_pd[key]], dtype="float32")
@@ -597,9 +600,21 @@ def data_handling(data_path, label_name, scaling_bool=False, logarithm=False, ba
     train_labels =np.transpose(np.array([train_labels_pd], dtype="float32"))
     test_labels = np.transpose(np.array([test_labels_pd], dtype="float32"))
 
+    #Ggf. Punkte mit WQ 0 entfernen
+    print("size train_labels bevor WQ cutoff:", train_labels.size)
+    train_features = train_features[(train_labels[:,0] > lower_cutoff) & (train_labels[:,0] < upper_cutoff)]
+    test_features = test_features[(test_labels[:,0] > lower_cutoff) & (test_labels[:,0] < upper_cutoff)]
+
+    train_labels = train_labels[(train_labels[:,0] > lower_cutoff) & (train_labels[:,0] < upper_cutoff)]
+    test_labels = test_labels[(test_labels[:,0] > lower_cutoff) & (test_labels[:,0] < upper_cutoff)]
+    print("size train_lables nach WQ cutoff:", train_labels.size)
+
     # Labels transformieren
     # Transformer initialisieren
-    transformer = label_transformation(train_labels, scaling=scaling_bool, logarithm=logarithm, base10=base10, shift=shift,
+    if transformer:
+        transformer = transformer
+    else:
+        transformer = label_transformation(train_labels, scaling=scaling_bool, logarithm=logarithm, base10=base10, shift=shift,
                                        label_normalization=label_normalization, feature_rescaling=feature_rescaling)
     train_labels = transformer.transform(train_labels)
     test_labels = transformer.transform(test_labels)
@@ -752,7 +767,7 @@ def save_config(new_model,  save_path, model, learning_rate, training_epochs, ba
         index = True
 
     config = config.transpose()
-    config.to_csv(save_path + "/config", index=index, index_label="property" )
+    config.to_csv(save_path + "/config", index=index, index_label="property")
 
     return (config, index)
 
@@ -772,27 +787,28 @@ def check_progress(model, transformer, test_features, test_labels, best_losses, 
         if float(validation_loss) < float(best_losses["best_percentage_loss"]):
             model.save(filepath=project_path + project_name + "best_model", save_format="tf")
             losses_data.to_csv(project_path + project_name + loss_name, index=False)
-            config.to_csv(project_path + project_name + "best_config", index=index)
-            config.to_csv(project_path + project_name + "best_model/config", index=index)
+            config.to_csv(project_path + project_name + "best_config", index=index, index_label="property")
+            config.to_csv(project_path + project_name + "best_model/config", index=index, index_label="property")
             print("VERBESSERUNG ERREICHT!")
 
     elif best_losses == None:
         model.save(filepath=project_path + project_name + "best_model", save_format="tf")
         losses_data.to_csv(project_path + project_name + loss_name, index=False)
-        config.to_csv(project_path + project_name + "best_model/config", index=index)
-        config.to_csv(project_path + project_name + "best_config", index=index)
+        config.to_csv(project_path + project_name + "best_model/config", index=index, index_label="property")
+        config.to_csv(project_path + project_name + "best_config", index=index, index_label="property")
         print("VERBESSERUNG ERREICHT!")
 
 
 def calc_diff_WQ(PDF, quarks, x_1, x_2, eta, E):
+    e = 0.30282212
     for i, q in enumerate(quarks["quark"]):
         if i==0:
-            diff_WQ = (((quarks["charge"][q - 1]) ** 4) / (192 * np.pi * x_1 * x_2 * E ** 2)) * \
+            diff_WQ = (((quarks["charge"][q - 1]) ** 4 * e**4) / (192 * np.pi * x_1 * x_2 * E ** 2)) * \
                    ((np.maximum(np.array(PDF.xfxQ2(q, x_1, 2 * x_1 * x_2 * (E ** 2))) * np.array(PDF.xfxQ2(-q, x_2, 2 * x_1 * x_2 * (E ** 2))), 0) + np.maximum(
                        np.array(PDF.xfxQ2(-q, x_1, 2 * x_1 * x_2 * (E ** 2))) * np.array(PDF.xfxQ2(q, x_2, 2 * x_1 * x_2 * (E ** 2))), 0)) / (x_1 * x_2)) * \
                    (1 + (np.tanh(eta + 1 / 2 * np.log(x_2 / x_1))) ** 2)
         else:
-            diff_WQ += (((quarks["charge"][q - 1]) ** 4) / (192 * np.pi * x_1 * x_2 * E ** 2)) * \
+            diff_WQ += (((quarks["charge"][q - 1]) ** 4 * e**4) / (192 * np.pi * x_1 * x_2 * E ** 2)) * \
                    ((np.maximum(np.array(PDF.xfxQ2(q, x_1, 2 * x_1 * x_2 * (E ** 2))) * np.array(PDF.xfxQ2(-q, x_2, 2 * x_1 * x_2 * (E ** 2))), 0) + np.maximum(
                        np.array(PDF.xfxQ2(-q, x_1, 2 * x_1 * x_2 * (E ** 2))) * np.array(PDF.xfxQ2(q, x_2, 2 * x_1 * x_2 * (E ** 2))), 0)) / (x_1 * x_2)) * \
                    (1 + (np.tanh(eta + 1 / 2 * np.log(x_2 / x_1))) ** 2)
@@ -830,9 +846,10 @@ def construct_name(config_as_dict, names_set):
     save_path = str()
     for param in config_as_dict:
         if param in names_set:
-            if type(config_as_dict[param]) == np.float64 or type(config_as_dict[param]) == np.int64:
+            if type(config_as_dict[param]) == np.float64 or type(config_as_dict[param]) == np.int64\
+                    or type(config_as_dict[param]) == float or type(config_as_dict[param]) == int:
                 save_path += str(param) + "_" + str(config_as_dict[param]) + "_"
-            elif type(config_as_dict[param]) == str:
+            elif type(config_as_dict[param]) == str or type(config_as_dict[param]) == np.str_:
                 save_path  += str(param) + "_" + str(config_as_dict[param]) + "_"
             else:
                 try:
@@ -854,9 +871,12 @@ def construct_optimizer(optimizer, learning_rate=None, momentum=None, nesterov=N
         optimizer = optimizer(learning_rate=learning_rate, momentum=momentum, nesterov=nesterov, clipvalue=2)
     except:
         try:
-            optimizer = optimizer(learning_rate=learning_rate, clipvalue=2)
+            optimizer = optimizer(learning_rate=learning_rate, momentum=momentum)
         except:
-            optimizer = optimizer
+            try:
+                optimizer = optimizer(learning_rate=learning_rate, clipvalue=2)
+            except:
+                optimizer = optimizer
     return optimizer
 
 def load_model_and_transormer(model_path):
@@ -880,8 +900,7 @@ def get_varying_value(features_pd):
             keys.append(key)
     return keys
 
-def plot_model(features_pd, labels, predictions, losses, keys, title, label_name):
-
+def plot_model(features_pd, labels, predictions, losses, keys, title, label_name, save_path = None):
     if len(keys) == 2:
         fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
         # plot the surface
@@ -910,6 +929,8 @@ def plot_model(features_pd, labels, predictions, losses, keys, title, label_name
         ax.set_zscale("linear")
         plt.tight_layout()
         ax.view_init(10, 50)
+        if save_path:
+            plt.savefig(save_path + "_" + str(keys[0]) + "_" + str(keys[1]) + "_3d")
         plt.show()
 
         # Überprüfen, ob das feature konstant ist:
@@ -930,6 +951,8 @@ def plot_model(features_pd, labels, predictions, losses, keys, title, label_name
                 plt.xlabel(str(key))
                 plt.title(title)
                 plt.legend()
+                if save_path:
+                    plt.savefig(save_path + "_" + str(key))
                 plt.show()
 
                 # losses plotten
@@ -939,6 +962,8 @@ def plot_model(features_pd, labels, predictions, losses, keys, title, label_name
                 plt.xlabel(str(key))
                 plt.yscale("Log")
                 plt.title(title)
+                if save_path:
+                    plt.savefig(save_path + "_" + str(key) + "_loss")
                 plt.show()
 
 def scheduler(epoch, learning_rate, reduction = 0.1):

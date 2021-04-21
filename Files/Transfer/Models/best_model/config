@@ -5,7 +5,7 @@ learning_rate,0.0011,3e-05,5e-06,1e-05
 epochs,35.0,,,
 batch_size,64.0,,,
 validation loss,0.83,,,
-transformer_config,"{'scaling': True, 'logarithm': True, 'shift': False, 'label_normalization': False, 'feature_rescaling': False, 'scale': 3.8232260598568574e+25}",,,
+transformer_config,"{'scaling': True, 'logarithm': True, 'base10': False, 'shift': False, 'label_normalization': False, 'feature_rescaling': False, 'scale': 3.8232260598568574e+25}",,,
 training time:,731.46,,,
 Custom,False,,,
 loss_fn,mean_absolute_error,,,

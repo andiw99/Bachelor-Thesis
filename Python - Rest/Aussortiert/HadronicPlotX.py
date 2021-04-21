@@ -2,7 +2,7 @@ from matplotlib import pyplot as plt
 import pandas as pd
 
 #Daten einlesen
-hadronic_WQ_data = pd.read_csv("/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/HadronicData/RandomSamples/all")
+hadronic_WQ_data = pd.read_csv("/Files/Hadronic/Data/RandomSamples/all")
 
 #Listen erzeugen
 x_1 = hadronic_WQ_data["x_1"]
@@ -32,7 +32,7 @@ plt.ylabel(r"$\frac{d³\sigma}{d\eta dx_1 dx_2}$")
 plt.text(0.7, 0.055, r"$x_2 = 0.2, \eta=1$")
 plt.show()
 """
-hadronic_data_eta_constant = pd.read_csv("HadronicData/hadronic__eta_constant__1.0133779264214047")
+hadronic_data_eta_constant = pd.read_csv("Data/hadronic__eta_constant__1.0133779264214047")
 plt.plot(hadronic_data_eta_constant["x_1"], hadronic_data_eta_constant["WQ"])
 plt.xlim(0.0075, 0.2)
 plt.ylim(0, 0.08)

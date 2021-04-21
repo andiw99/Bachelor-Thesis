@@ -16,8 +16,8 @@ quarks = {"quark": [1, 2, 3, 4],
 PID = {1: "d", 2: "u", 3: "s", 4: "c"}
 
 #PDF initialisieren
-PDF = pdf.mkPDF("CT14nnlo", 0)
-#PDF = pdf.mkPDF("MMHT2014nnlo68cl", 0)
+#PDF = pdf.mkPDF("CT14nnlo", 0)
+PDF = pdf.mkPDF("MMHT2014nnlo68cl", 0)
 
 #for q in quarks["quark"]:
     #print("Quark ", PID[q], "hat Ladung ", quarks["charge"][q-1])
@@ -25,17 +25,17 @@ PDF = pdf.mkPDF("CT14nnlo", 0)
 #Variablen
 e = 1.602e-19
 E = 6500 #Strahlenergie in GeV, im Vornherein festgelegt?
-x_total = int(150) #Anzahl an x Werten
-eta_total = int(300) # Anzahl an eta Werten
+x_total = int(100) #Anzahl an x Werten
+eta_total = int(200) # Anzahl an eta Werten
 x_lower_limit = 0
-x_upper_limit = 0.8
+x_upper_limit = 1
 eta_limit = 3
 loguni_param=0.005
 stddev = 2
 xMin = PDF.xMin
 np.random.seed(20)
 
-set_name = "TestData/"
+set_name = "MMHT2014/"
 path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Data/" + set_name
 
 #Test

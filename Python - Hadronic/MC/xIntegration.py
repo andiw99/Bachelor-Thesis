@@ -20,12 +20,12 @@ PID = {1: "d", 2: "u", 3: "s", 4: "c"}
 PDF = pdf.mkPDF("CT14nnlo", 0)
 
 #Random Samples einlesen:
-dataset_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/HadronicData/MC_xIntegrationMore/"
+dataset_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Data/MCx20k/"
 label_name = "WQ"
 (data, features, labels, _, _, features_pd, labels_pd, _) = ml.data_handling(data_path=dataset_path + "all", label_name=label_name, return_pd=True)
 #Grid einelsen zur Trapez-Integration
-testdata_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/HadronicData/MC_xIntegrationTrapez/"
-(_, test_features, test_labels, _, _, test_features_pd, test_labels_pd, _) = ml.data_handling(data_path=testdata_path + "all", label_name=label_name, return_pd=True)
+#testdata_path = "/Files/Hadronic/Data/MC_xIntegrationTrapez/"
+#(_, test_features, test_labels, _, _, test_features_pd, test_labels_pd, _) = ml.data_handling(data_path=testdata_path + "all", label_name=label_name, return_pd=True)
 
 #Config der RandomSample generierung einlesen
 config = pd.read_csv(dataset_path + "config")
@@ -33,39 +33,53 @@ config = pd.read_csv(dataset_path + "config")
 model_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Models/best_model"
 (model, transformer) = ml.import_model_transformer(model_path=model_path)
 
-#Variablen initialisieren(der Verteilungen):
+#Variablen initialisieren (der Verteilungen):
 variables = dict()
 for key in config:
     variables[key] = float(config[key][0])
 
 #verschiedene eta Werte isolieren
 eta_values = list(set(features_pd["eta"]))
-x_2_values = list(set(test_features_pd["x_2"]))
+#x_2_values = list(set(test_features_pd["x_2"]))
+#x_order = np.argsort(x_2_values)
+#x_2_values = np.array(x_2_values)[x_order]
 features_eta_constant = dict()
 labels_eta_constant = dict()
 test_features_eta_constant = dict()
 test_labels_eta_constant = dict()
 x_1_integration = np.array([])
+x_1_integration_WQ = np.array([])
 for eta_value in eta_values:
+    print(features)
+    print(features[:,2] == eta_value)
+    exit()
     features_eta_constant["{:.2f}".format(eta_value)] = features[features[:,2] == eta_value]
     labels_eta_constant["{:.2f}".format(eta_value)] = labels[features[:,2] == eta_value]
-    test_features_eta_constant["{:.2f}".format(eta_value)] = test_features[test_features[:,2] == eta_value]
-    test_labels_eta_constant["{:.2f}".format(eta_value)] = test_labels[test_features[:,2] == eta_value]
+    #test_features_eta_constant["{:.2f}".format(eta_value)] = test_features[test_features[:,2] == eta_value]
+    #test_labels_eta_constant["{:.2f}".format(eta_value)] = test_labels[test_features[:,2] == eta_value]
+    #Trapez integration vorbereiten zur Überprüfung von MC-Integration
+    """
     for i,x_2_value in enumerate(x_2_values):
-        print(x_2_value)
-        print(test_features_eta_constant["{:.2f}".format(eta_value)])
-        print(test_features_eta_constant["{:.2f}".format(eta_value)][:,1])
-        print([test_features_eta_constant["{:.2f}".format(eta_value)][:,1] == x_2_value])
-        x_1_integration =
-        test_features_eta_constant["{:.2f}".format(eta_value)][:,:,i] = \
-            test_features_eta_constant["{:.2f}".format(eta_value)][test_features_eta_constant["{:.2f}".format(eta_value)]
-                                                                   == x_2_value]
-        print(test_features_eta_constant["{:.2f}".format(eta_value)][:,:,i])
-        exit()
+        if i == 0:
+            x_1_integration = np.array(test_features_eta_constant["{:.2f}".format(eta_value)][:,0][test_features_eta_constant["{:.2f}".format(eta_value)][:,1] == x_2_value])
+            x_1_integration_WQ = np.array(test_labels_eta_constant["{:.2f}".format(eta_value)][:,0][test_features_eta_constant["{:.2f}".format(eta_value)][:,1] == x_2_value])
+        else:
+            x_1_integration = np.stack((x_1_integration,
+                                   test_features_eta_constant["{:.2f}".format(eta_value)][:,0][test_features_eta_constant["{:.2f}".format(eta_value)][:,1] == x_2_value]))
+            x_1_integration_WQ = np.stack((x_1_integration_WQ, np.array(test_labels_eta_constant["{:.2f}".format(eta_value)][:, 0][
+                                              test_features_eta_constant["{:.2f}".format(eta_value)][:,
+                                              1] == x_2_value])))
+    """
+
+#TODO testing...
+I = sc.integrate.trapezoid(y = x_1_integration_WQ, x = x_1_integration)
+print(I)
 
 #WQ für Ereignisse mit pt < 20 GeV auf 0 setzen
 for eta_value in features_eta_constant:
     cut = MC.pt_cut(features_eta_constant[eta_value]) #cut liefert bool an jeder stelle ob pt<20 GeV ist und setzt dann WQ auf 0
+    print(cut)
+    exit()
     test_cut = MC.pt_cut(test_features_eta_constant[eta_value])
     #TODO: kurz in np.array umwandeln denn tf.constant unterstützt kein item assignment
     labels_eta_constant[eta_value] = np.array(labels_eta_constant[eta_value])
@@ -77,10 +91,9 @@ for eta_value in features_eta_constant:
 
 er_fc = MC.erf(mu=3, sigma=variables["stddev"])
 
-scaling_loguni = 1/((stats.loguniform.cdf(x=variables["x_upper_limit"], a = variables["loguni_param"], b =1+ variables["loguni_param"]) - \
-                       stats.loguniform.cdf(x=variables["x_lower_limit"], a = variables["loguni_param"], b =1+ variables["loguni_param"])))
 scaling_loguni = 1/(variables["x_upper_limit"]-variables["x_lower_limit"])
 print("scaling_loguni:", scaling_loguni)
+
 loguni = MC.class_loguni(loguni_param=variables["loguni_param"], x_lower_limit=variables["x_lower_limit"], x_upper_limit=variables["x_upper_limit"],scaling=scaling_loguni)
 
 probabilities_x = loguni(features_pd["x_1"])

@@ -11,9 +11,9 @@ scaling=10903854514176.0
 loss_function=keras.losses.MeanAbsoluteError()
 loss_fn=ml.MeanSquaredLogarithmicError()
 #Daten einlesen
-hadronic_data_x_constant = pd.read_csv("/Files/Hadronic/HadronicData/log_neg_x12/x_constant")
-hadronic_data_eta_x_2_constant = pd.read_csv("/Files/Hadronic/HadronicData/log_neg_x12/eta_x_2_constant")
-hadronic_data_eta_x_1_constant = pd.read_csv("/Files/Hadronic/HadronicData/log_neg_x12/eta_x_1_constant")
+hadronic_data_x_constant = pd.read_csv("/Files/Hadronic/Data/log_neg_x12/x_constant")
+hadronic_data_eta_x_2_constant = pd.read_csv("/Files/Hadronic/Data/log_neg_x12/eta_x_2_constant")
+hadronic_data_eta_x_1_constant = pd.read_csv("/Files/Hadronic/Data/log_neg_x12/eta_x_1_constant")
 
 #predictions berechnen
 pred_feature_x_constant = tf.constant([hadronic_data_x_constant["x_1"], hadronic_data_x_constant["x_2"], hadronic_data_x_constant["eta"]], dtype="float32")
