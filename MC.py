@@ -62,6 +62,25 @@ def eta_cut(features, cut_eta=2.37, crack_interval=(1.37, 1.52), return_cut = Fa
     else:
         return features
 
+def cut(features, E=6500, cut_energy=40, cut_eta=2.37, crack_interval=(1.37, 1.52), return_cut=False):
+    pt = calc_pt(eta=features[:,2], x_1=features[:,0], x_2=features[:,1], E=E)
+    other_eta = features[:,2] + 1/2 * np.log((features[:,1])**2/(features[:,0]**2))
+    cut = (np.abs(other_eta) < cut_eta) & (~((np.abs(features[:,2]) > crack_interval[0]) & (np.abs(features[:,2]) < crack_interval[1]))) \
+           & (~((np.abs(other_eta) > crack_interval[0]) & (np.abs(other_eta) < crack_interval[1]))) & (pt > cut_energy) & (np.abs(features[:,2]) < cut_eta)
+    features = features[cut]
+    if return_cut:
+        return features, cut
+    else:
+        return features
+
+def crack_cut(eta_values, crack_interval=(1.37, 1.52), return_cut = False):
+    cut = (~((np.abs(eta_values) > crack_interval[0]) & (np.abs(eta_values) < crack_interval[1])))
+    eta_values = eta_values[cut]
+    if return_cut:
+        return eta_values, cut
+    else:
+        return eta_values
+
 def calc_other_eta(eta, x_1, x_2):
     other_eta = eta + 1/2 * np.log((x_2)**2/(x_1**2))
     return other_eta

@@ -561,8 +561,8 @@ class Dropout(keras.layers.Layer):
 
 
 def data_handling(data_path, label_name, scaling_bool=False, logarithm=False, base10=False, shift=False,
-                  label_normalization=False, feature_rescaling=False, train_frac=1 , batch_size=64, return_pd = False,
-                  lower_cutoff = 1e-20, upper_cutoff = 1e+3, transformer = None):
+                  label_normalization=False, feature_rescaling=False, train_frac=1 , batch_size=64, return_pd=False,
+                  lower_cutoff=1e-20, upper_cutoff=1e+3, transformer=None, return_as_tensor=True):
     #Daten einlesen
     data = pd.read_csv(data_path)
     #in test und trainingsdaten untertaeilen
@@ -624,15 +624,17 @@ def data_handling(data_path, label_name, scaling_bool=False, logarithm=False, ba
     test_features = transformer.rescale(test_features)
 
     #numpy arrays zu tensorflow-tensoren machen, wegen schneller verarbeitung
-    train_features = tf.constant(train_features, dtype="float32")
-    test_features = tf.constant(test_features, dtype="float32")
-    train_labels = tf.constant(train_labels, dtype="float32")
-    test_labels = tf.constant(test_labels, dtype="float32")
+    training_data = None
+    if return_as_tensor:
+        train_features = tf.constant(train_features, dtype="float32")
+        test_features = tf.constant(test_features, dtype="float32")
+        train_labels = tf.constant(train_labels, dtype="float32")
+        test_labels = tf.constant(test_labels, dtype="float32")
 
 
-    training_data = tf.data.Dataset.from_tensor_slices((train_features, train_labels))
+        training_data = tf.data.Dataset.from_tensor_slices((train_features, train_labels))
+        training_data = training_data.batch(batch_size=batch_size)
 
-    training_data = training_data.batch(batch_size=batch_size)
     if return_pd:
         re = (training_data, train_features, train_labels, test_features, test_labels, train_features_pd, train_labels_pd, transformer)
     else:
@@ -731,28 +733,30 @@ def make_losses_plot(history, custom, new_model):
     plt.legend()
     plt.tight_layout()
 
-def save_config(new_model,  save_path, model, learning_rate, training_epochs, batch_size, total_loss,
-                transformer, training_time, custom, loss_fn, feature_handling=None, min_delta = None, nr_hidden_layers=None,
-                lr_reduction=None, lr_factor=None, read_path=None ):
+def save_config(new_model, save_path, model, learning_rate, training_epochs, batch_size, avg_total_Loss,
+                transformer, training_time, custom, loss_fn, feature_handling=None, min_delta=None, nr_hidden_layers=None,
+                lr_reduction=None, lr_factor=None, total_losses=[], smallest_loss=0.0, loss_error=0.0, read_path=None):
     if new_model:
         config = pd.DataFrame(model.get_config())
         training_parameters = pd.DataFrame(
             {
-                "learning_rate": learning_rate,
-                "epochs": training_epochs,
-                "batch_size": batch_size,
-                "validation loss": "{:.2f}".format(float(total_loss)),
-                "transformer_config": str(transformer.get_config()),
-                "training time:": "{:.2f}".format(training_time),
-                "Custom": custom,
-                "loss_fn": loss_fn.name,
-                "feature_rescaling": feature_handling,
-                "min_delta": min_delta,
-                "nr_hidden_layers": nr_hidden_layers,
-                "lr_reduction": lr_reduction,
-                "lr_factor": lr_factor
-            },
-            index=[0]
+                "learning_rate": [learning_rate],
+                "epochs": [training_epochs],
+                "batch_size": [batch_size],
+                "total_losses": [total_losses],
+                "avg validation loss": ["{:.3f}".format(float(avg_total_Loss))],
+                "smallest loss": ["{:.3f}".format(float(smallest_loss))],
+                "loss error": ["{:.4f}".format(float(loss_error))],
+                "transformer_config": [str(transformer.get_config())],
+                "training time:": ["{:.2f}".format(training_time)],
+                "Custom": [custom],
+                "loss_fn": [loss_fn.name],
+                "feature_rescaling": [feature_handling],
+                "min_delta": [min_delta],
+                "nr_hidden_layers": [nr_hidden_layers],
+                "lr_reduction": [lr_reduction],
+                "lr_factor": [lr_factor]
+            }
         )
         # config.append(training_parameters)
         config = pd.concat([config, training_parameters], axis=1)
@@ -831,15 +835,35 @@ def pd_dataframe_to_tf_tensor(value):
     tensor = tf.convert_to_tensor(value=tensor)
     return tensor
 
-def create_param_configs(pools, size):
+def create_param_configs(pools, size, vary_multiple_parameters=True):
     checked_configs = list()
-    while len(checked_configs) < size:
-        config = []
+    if vary_multiple_parameters:
+        while len(checked_configs) < size:
+            config = []
+            for param in pools:
+                config.append(np.random.choice(pools[param]))
+            config = tuple(config)
+            checked_configs.append(config)
+            checked_configs = list(set(checked_configs))
+    else:
+        #herausfinden, welche pools mehr als einen Parameter haben
+        varying_params = []
         for param in pools:
-            config.append(np.random.choice(pools[param]))
-        config = tuple(config)
-        checked_configs.append(config)
-        checked_configs = list(set(checked_configs))
+            if len(pools[param]) > 1:
+                varying_params.append(param)
+        #Für jeden value in jedem variierenden pool eine config erstellen
+        for varying_param in varying_params:
+            for value in pools[varying_param]:
+                config = []
+                for param in pools:
+                    #Wenn es der zu variierende param ist den value nehmen, ansonsten den standardwert 0
+                    if param == varying_param:
+                        config.append(value)
+                    else:
+                        config.append(pools[param][0])
+                config = tuple(config)
+                checked_configs.append(config)
+                checked_configs = list(set(checked_configs))
     return checked_configs
 
 def construct_name(config_as_dict, names_set):
@@ -944,9 +968,10 @@ def plot_model(features_pd, labels, predictions, losses, keys, title, label_name
                 plot_predictions = np.array(predictions)[order]
                 plot_labels = np.array(labels)[order]
                 plt.plot(plot_features, plot_predictions, label="ML")
-                plt.plot(plot_features, plot_labels, label="analytic")
+                plt.plot(plot_features, plot_labels, label="analytic", linestyle="dashed")
                 if key == "x_1" or key == "x_2":
                     plt.yscale("log")
+                plt.grid(True)
                 plt.ylabel(label_name)
                 plt.xlabel(str(key))
                 plt.title(title)

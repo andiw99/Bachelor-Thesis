@@ -18,10 +18,11 @@ import ml
 
 
 #Grid erstellen, pool für jeden Hyperparameter, so kann man dynamische einstellen in welchen Dimensionen das Grid liegt
+# wichtig: Standardmodell hat index 0 in jedem pool
 pools = dict()
 pools["batch_size"] = [512]
 pools["units"] = [512]
-pools["nr_layers"] =  [3]
+pools["nr_layers"] =  [3,4,5]
 pools["learning_rate"]= [1e-3]
 pools["l2_kernel"] = [0.0]
 pools["l2_bias"] = [0.0]
@@ -31,7 +32,7 @@ pools["momentum"] = [0.1]
 pools["dropout"] = [False]
 pools["dropout_rate"] = [0]
 pools["kernel_initializer"] = [tf.keras.initializers.HeNormal()]
-pools["bias_initializer"] = [tf.keras.initializers.Zeros()]
+pools["bias_initializer"] = [tf.keras.initializers.Zeros(), tf.keras.initializers.Ones()]
 pools["hidden_activation"] = [tf.nn.relu]
 pools["output_activation"] = [ml.LinearActiavtion()]
 pools["feature_normalization"] = ["normalization"]
@@ -39,7 +40,7 @@ pools["dataset"] =["TrainingDataMidRange", "MuchTrainingDataMidRange", "LessTrai
 #Festlegen, welche Hyperparameter in der Bezeichnung stehen sollen:
 names = {"dataset"}
 
-
+vary_multiple_parameters = False
 
 #Variablen...
 train_frac = 0.95
@@ -73,7 +74,10 @@ repeat = 3
 
 
 #Menge mit bereits gesehen konfigurationen
-checked_configs = ml.create_param_configs(pools=pools, size=size)
+checked_configs = ml.create_param_configs(pools=pools, size=size, vary_multiple_parameters=vary_multiple_parameters)
+print(checked_configs)
+print(len(checked_configs))
+exit()
 results_list = dict()
 
 for config in checked_configs:
@@ -176,7 +180,9 @@ for config in checked_configs:
         total_losses.append(loss)
 
     #training_time und total loss mitteln:
-    total_loss = total_losses[np.argmin(total_losses)]
+    avg_total_loss = total_losses[np.argmin(total_losses)]
+    smallest_loss = np.min(total_losses)
+    loss_error = np.std(total_losses)
     training_time = 1 / repeat * training_time
     print("Losses of the specific cycle:", total_losses)
     print("average Loss over ", repeat, "cycles:", np.mean(total_losses))
@@ -186,7 +192,8 @@ for config in checked_configs:
     model.save(filepath=save_path, save_format="tf")
     (config, index) = ml.save_config(new_model=new_model, save_path=save_path, model=model, learning_rate=params["learning_rate"],
                                      training_epochs=training_epochs, batch_size=params["batch_size"],
-                                     total_loss=total_loss, transformer=transformer, training_time=training_time,
+                                     avg_total_Loss=avg_total_loss, smallest_loss=smallest_loss, loss_error=loss_error, total_losses=total_losses,
+                                     transformer=transformer, training_time=training_time,
                                      custom=custom, loss_fn=params["loss_fn"], feature_handling= params["feature_normalization"],
                                      min_delta = min_delta, nr_hidden_layers=params["nr_layers"])
 

@@ -123,8 +123,8 @@ plt.show()
 #Modell und config speichern
 model.save(filepath=save_path, save_format="tf")
 (config, index) = ml.save_config(new_model=new_model, model=model, learning_rate=learning_rate, training_epochs=training_epochs,
-               batch_size=batch_size, total_loss=total_loss, scaling_bool=scaling_bool, logarithm=logarithm, transformer=transformer,
-               training_time=training_time, custom=custom, loss_fn=loss_fn, read_path=read_path, save_path=save_path)
+                                 batch_size=batch_size, avg_total_Loss=total_loss, scaling_bool=scaling_bool, logarithm=logarithm, transformer=transformer,
+                                 training_time=training_time, custom=custom, loss_fn=loss_fn, read_path=read_path, save_path=save_path)
 
 
 

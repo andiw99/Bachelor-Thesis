@@ -16,8 +16,8 @@ quarks = {"quark": [1, 2, 3, 4],
 PID = {1: "d", 2: "u", 3: "s", 4: "c"}
 
 #PDF initialisieren
-#PDF = pdf.mkPDF("CT14nnlo", 0)
-PDF = pdf.mkPDF("MMHT2014nnlo68cl", 0)
+PDF = pdf.mkPDF("CT14nnlo", 0)
+#PDF = pdf.mkPDF("MMHT2014nnlo68cl", 0)
 
 #for q in quarks["quark"]:
     #print("Quark ", PID[q], "hat Ladung ", quarks["charge"][q-1])
@@ -35,7 +35,7 @@ stddev = 2
 xMin = PDF.xMin
 np.random.seed(20)
 
-set_name = "MMHT2014/"
+set_name = "CT14nnlo/"
 path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Data/" + set_name
 
 #Test

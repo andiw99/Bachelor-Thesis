@@ -29,13 +29,13 @@ else:
 
 time1 = time.time()
 #Daten einlesen
-data_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Data/TrainingData2M/"
+data_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Data/TrainingData4M_lower/"
 data_name = "all"
 project_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Models/"
 loss_name = "Source_loss"
 project_name = ""
 
-read_name = "best_guess" #"best_guess_important_range" #
+read_name = "best_guess_4M" #"best_guess_important_range" #
 label_name = "WQ"
 read_path =project_path + project_name + read_name
 transferred_transformer = None
@@ -58,7 +58,7 @@ if os.path.exists(project_path+ project_name + loss_name):
 train_frac = 0.95
 batch_size = 512
 training_epochs = 100
-repeat=3
+repeat=5
 nr_layers = 3
 units = 512
 learning_rate = 5e-3
@@ -141,9 +141,9 @@ for i, model in enumerate(models):
 
     #Überprüfen wie gut es war
     results = model(test_features)
-    total_loss = loss_function(y_true=transformer.retransform(test_labels),y_pred=transformer.retransform(results) )
-    total_losses.append(total_loss)
-    print("total loss:", float(total_loss))
+    loss = loss_function(y_true=transformer.retransform(test_labels), y_pred=transformer.retransform(results))
+    total_losses.append(float(loss))
+    print("total loss von Durchgang Nr. ", i, ":", float(loss))
 
     #Losses plotten
     ml.make_losses_plot(history=history, custom=custom, new_model=new_model)
@@ -151,17 +151,21 @@ for i, model in enumerate(models):
     plt.show()
 
 print("Losses of the specific cycle:", total_losses)
-print("average Loss over ", repeat, "cycles:", np.mean(total_losses))
+print("average Loss over", repeat, "cycles:", np.mean(total_losses))
 
 #Modell und config speichern
 print("Das beste Modell (Modell Nr.", np.argmin(total_losses), ") wird gespeichert")
 model = models[np.argmin(total_losses)]
-total_loss = total_losses[np.argmin(total_losses)]
+avg_total_loss = np.mean(total_losses)
+smallest_loss = np.min(total_losses)
+loss_error = np.std(total_losses)
+print("avg_total_loss", avg_total_loss, "smallest_loss:", smallest_loss, "loss_error:", loss_error, "total_losses", total_losses)
 training_time = 1/repeat * training_time
 model.save(filepath=save_path, save_format="tf")
 (config, index) = ml.save_config(new_model=new_model, model=model, learning_rate=learning_rate, training_epochs=training_epochs,
-               batch_size=batch_size, total_loss=total_loss, transformer=transformer,
-               training_time=training_time, custom=custom, loss_fn=loss_fn, read_path=read_path, save_path=save_path)
+                                 batch_size=batch_size, avg_total_Loss=avg_total_loss, transformer=transformer,
+                                 training_time=training_time, custom=custom, loss_fn=loss_fn, smallest_loss=smallest_loss,
+                                 loss_error=loss_error, total_losses=total_losses, read_path=read_path, save_path=save_path)
 
 
 

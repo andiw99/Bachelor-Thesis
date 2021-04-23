@@ -32,7 +32,7 @@ names = {"batch_size", "learning_rate"}
 
 time1 = time.time()
 #Daten einlesen
-data_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Data/CT14nnlo/"
+data_path = "/Files/Transfer/Data/WithoutCutWrongeValue/CT14nnlo/"
 data_name = "all"
 project_path = "/Files/Hadronic/Models/RefinedSearch/"
 loss_name = "best_loss"
@@ -124,7 +124,7 @@ for config in checked_configs:
     model.save(filepath=save_path, save_format="tf")
     (config, index) = ml.save_config(new_model=new_model, model=model, learning_rate=params["learning_rate"],
                                      training_epochs=training_epochs, batch_size=params["batch_size"],
-                                     total_loss=total_loss, transformer=transformer, training_time=training_time,
+                                     avg_total_Loss=total_loss, transformer=transformer, training_time=training_time,
                                      custom=custom, loss_fn=params["loss_fn"], save_path=save_path)
 
     #Überprüfen ob Fortschritt gemacht wurde

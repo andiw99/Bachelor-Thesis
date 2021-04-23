@@ -11,11 +11,11 @@ import MC
 
 
 #Random Samples einlesen:
-dataset_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Data/MC1M/"
+dataset_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Data/MC500k_small_loguni/"
 #Config der RandomSample generierung einlesen
 config = pd.read_csv(dataset_path + "config")
 #model einlesen
-model_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Models/best_guess"
+model_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Models/best_guess_4M"
 model, transformer = ml.import_model_transformer(model_path=model_path)
 
 #Variablen initialisieren:
@@ -23,7 +23,7 @@ variables = dict()
 for key in config:
     variables[key] = float(config[key][0])
 
-(_, features, labels, _, _, features_pd, labels_pd, _) = ml.data_handling(data_path= dataset_path + "all", label_name="WQ", return_pd=True)
+(_, features, labels, _, _, features_pd, labels_pd, _) = ml.data_handling(data_path= dataset_path + "all", label_name="WQ", return_pd=True, return_as_tensor=True)
 # TODO lables zu arrays wegen item assignment
 labels = labels.numpy()
 
@@ -78,6 +78,9 @@ print("loguni norm:", I2)
 
 analytic_integral = tf.math.reduce_mean((labels[:,0])/ \
                                         (loguni(features[:,0]) * loguni(features[:,1]) * gauss(np.abs(features[:,2]))))
+quadratic_analytic_integral = tf.math.reduce_mean(tf.math.square((labels[:,0])/ \
+                                        (loguni(features[:,0]) * loguni(features[:,1]) * gauss(np.abs(features[:,2])))))
+analytic_var = quadratic_analytic_integral - analytic_integral ** 2
 #print("WKen", loguni(features[:,0]), loguni(features[:,1]), gauss(features[:,2]))
 print("analytic_integral", float(analytic_integral))
 
@@ -89,6 +92,7 @@ labels_batched = labels_batched.batch(batch_size=8096)
 
 
 predictions = transformer.retransform(model.predict(features))
+#predictions = np.zeros(shape=len(labels))
 print("predictions:",predictions)
 print(np.mean(predictions))
 #aus den predictions die schlechten events rauscutten
@@ -102,5 +106,5 @@ ML_integral = tf.math.reduce_mean((predictions[:,0])/ \
 
 print("ML_integral in GeV", float(ML_integral), "in pb:", MC.gev_to_pb(float(ML_integral)))
 print("analytic_integral in GeV", float(analytic_integral), "in pb:", MC.gev_to_pb(float(analytic_integral)))
-
+print("stddev analytic integral in GeV²", np.sqrt(float(analytic_var)), "in pb:", MC.gev_to_pb(np.sqrt(float(analytic_var))))
 

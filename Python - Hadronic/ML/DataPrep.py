@@ -29,24 +29,27 @@ def main():
     #Variablen
     e = 1.602e-19
     E = 6500 #Strahlenergie in GeV, im Vornherein festgelegt?
-    x_total = int(20000) #Anzahl an x Werten
-    eta_total = int(20000) # Anzahl an eta Werten
+    x_total = int(4000000) #Anzahl an x Werten
+    eta_total = int(4000000) # Anzahl an eta Werten
     x_lower_limit = 0
-    x_upper_limit = 0.7
+    x_upper_limit = 1
     eta_limit = 2.37
-    loguni_param=0.05 #alt 0.01
+    loguni_param=0.0002 #alt 0.01
     stddev = 1.5
     xMin = PDF.xMin
-    eta_constant = True
+    eta_constant = False
     x_Grid = False
     cuts = False
-    eta_values = 150
+    lfs = False
+    num_eta_values = 25
 
-    set_name = "MCx20k/"
+    set_name = "MC4M_small_loguni/"
     root_name ="/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject"
     location = None #input("Welcher Rechner?")
     if location == "Taurus" or location == "taurus":
         root_name = "/home/s1388135/Bachelor-Thesis"
+    if lfs:
+        root_name = "/media/andiw/90D8E3C1D8E3A3A6/Users/andiw/Studium/Semester 6/Bachelor-Arbeit/LFS"
     path = root_name + "/Files/Hadronic/Data/" + set_name
 
 
@@ -86,7 +89,9 @@ def main():
         #TODO eventuell eher mit assign machen?
         x_1 = np.array([], dtype="float32")
         x_2 = np.array([], dtype="float32")
-        for eta_value in np.linspace(-eta_limit, eta_limit, num=eta_values):
+        eta_values = np.linspace(-eta_limit, eta_limit, num=num_eta_values)
+        eta_values = MC.crack_cut(eta_values)
+        for eta_value in eta_values:
             eta_frac = np.zeros(shape=(int(len(x_1_Rand)), ), dtype="float32")
             eta_frac += eta_value
             eta = np.concatenate((eta, eta_frac))

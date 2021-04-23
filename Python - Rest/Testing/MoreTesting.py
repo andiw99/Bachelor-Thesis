@@ -207,3 +207,6 @@ a = a[cut]
 b = b[cut]
 print(a)
 print(b)
+
+c = [4.123, 5.234]
+print("{:.2f}".format(c))

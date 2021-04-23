@@ -9,7 +9,7 @@ from matplotlib import cm
 
 #Pfade eingeben
 paths = dict()
-model_path= "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Models/SourceModel9"
+model_path= "/Files/Transfer/Models/Old/SourceModel9"
 
 #more data to plot?
 #plotting_data = ...
