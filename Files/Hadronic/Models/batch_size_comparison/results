@@ -1,0 +1,5 @@
+,0
+batch_size_1024_,0.54
+batch_size_64_,0.97
+batch_size_512_,0.58
+batch_size_4096_,1.17
