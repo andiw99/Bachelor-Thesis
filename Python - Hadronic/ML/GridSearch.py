@@ -20,23 +20,22 @@ import ml
 #Grid erstellen, pool für jeden Hyperparameter, so kann man dynamische einstellen in welchen Dimensionen das Grid liegt
 # wichtig: Standardmodell hat index 0 in jedem pool
 pools = dict()
-pools["batch_size"] = [512]
-pools["units"] = [512]
-pools["nr_layers"] =  [3,4,5]
-pools["learning_rate"]= [1e-3]
+pools["batch_size"] = [512, 128, 768, 2048, 8196]
+pools["units_nr_layers"] = [(512,3), (256,5), (64,7), (1024, 2)]
+pools["learning_rate"]= [1e-3, 1e-2, 1e-4, 5e-3]
 pools["l2_kernel"] = [0.0]
 pools["l2_bias"] = [0.0]
-pools["loss_fn"] = [keras.losses.MeanAbsoluteError()]
-pools["optimizer"] = [keras.optimizers.Adam]
+pools["loss_fn"] = [keras.losses.MeanAbsoluteError(), keras.losses.MeanSquaredError()]
+pools["optimizer"] = [keras.optimizers.Adam, keras.optimizers.RMSprop, keras.optimizers.SGD]
 pools["momentum"] = [0.1]
 pools["dropout"] = [False]
 pools["dropout_rate"] = [0]
 pools["kernel_initializer"] = [tf.keras.initializers.HeNormal()]
-pools["bias_initializer"] = [tf.keras.initializers.Zeros(), tf.keras.initializers.Ones()]
-pools["hidden_activation"] = [tf.nn.relu]
+pools["bias_initializer"] = [tf.keras.initializers.Zeros()]
+pools["hidden_activation"] = [tf.nn.relu, tf.nn.leaky_relu, tf.nn.elu, tf.nn.tanh, tf.nn.sigmoid]
 pools["output_activation"] = [ml.LinearActiavtion()]
 pools["feature_normalization"] = ["normalization"]
-pools["dataset"] =["TrainingDataMidRange", "MuchTrainingDataMidRange", "LessTrainingDataMidRange"]
+pools["dataset"] =["TrainingData1M", "TrainingData500k", "TrainingData2M", "TrainingData4M"]
 #Festlegen, welche Hyperparameter in der Bezeichnung stehen sollen:
 names = {"dataset"}
 
@@ -50,7 +49,7 @@ output_activation = ml.LinearActiavtion()
 bias_initializer =tf.keras.initializers.Zeros()
 l2_bias = 0
 momentum = 0.1
-min_lr = 1e-7
+min_lr = 5e-8
 lr_reduction=0.05
 lr_factor = 0.5
 nesterov = True
@@ -70,7 +69,7 @@ new_model=True
 
 lr_patience = 1
 stopping_patience = 3
-repeat = 3
+repeat = 5
 
 
 #Menge mit bereits gesehen konfigurationen
@@ -154,7 +153,7 @@ for config in checked_configs:
     models = []
     for i in range(repeat):
         #Modell initialisieren
-        models.append(ml.initialize_model(nr_layers=params["nr_layers"], units=params["units"], loss_fn=params["loss_fn"], optimizer=params["optimizer"],
+        models.append(ml.initialize_model(nr_layers=params["units_nr_layers"][1], units=params["units_nr_layers"][0], loss_fn=params["loss_fn"], optimizer=params["optimizer"],
                                             hidden_activation=params["hidden_activation"], output_activation=output_activation,
                                             kernel_initializer=params["kernel_initializer"], bias_initializer=bias_initializer, l2_kernel=params["l2_kernel"],
                                             learning_rate=params["learning_rate"], momentum=momentum, nesterov=nesterov,
@@ -203,7 +202,7 @@ for config in checked_configs:
                       index=index, config=config, loss_name=loss_name)
 
     #Ergebnis im dict festhalten
-    results_list[model_name] = "{:.2f}".format(float(total_loss))
+    results_list[model_name] = "{:.2f}".format(float(avg_total_loss))
 
     #Ergebnisse speichern
     results_list_pd = pd.DataFrame(

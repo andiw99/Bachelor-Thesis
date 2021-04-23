@@ -35,7 +35,7 @@ project_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/F
 loss_name = "Source_loss"
 project_name = ""
 
-read_name = "best_guess_4M" #"best_guess_important_range" #
+read_name = "many_layers_fun" #"best_guess_important_range" #
 label_name = "WQ"
 read_path =project_path + project_name + read_name
 transferred_transformer = None
@@ -58,9 +58,9 @@ if os.path.exists(project_path+ project_name + loss_name):
 train_frac = 0.95
 batch_size = 512
 training_epochs = 100
-repeat=5
-nr_layers = 3
-units = 512
+repeat=2
+nr_layers = 6
+units = 64
 learning_rate = 5e-3
 rm_layers = 1
 loss_fn = keras.losses.MeanAbsoluteError()
