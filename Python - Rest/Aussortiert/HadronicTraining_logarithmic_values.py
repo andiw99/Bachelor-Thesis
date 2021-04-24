@@ -9,7 +9,7 @@ import time
 
 time1 = time.time()
 #Daten einlesen
-hadronic_WQ_data_raw = pd.read_csv("HadronicData/lower_hadronic_WQ_data")
+hadronic_WQ_data_raw = pd.read_csv("Data/lower_hadronic_WQ_data")
 #best_losses = pd.read_csv("hadronic_best_losses")
 
 
@@ -169,8 +169,8 @@ for i in range(-200, 200):
 """
 
 #Daten einlesen
-hadronic_data_x_constant = pd.read_csv("HadronicData/hadronic__x_constant__0.2")
-hadronic_data_eta_constant = pd.read_csv("HadronicData/hadronic__eta_constant__1.0133779264214047")
+hadronic_data_x_constant = pd.read_csv("Data/hadronic__x_constant__0.2")
+hadronic_data_eta_constant = pd.read_csv("Data/hadronic__eta_constant__1.0133779264214047")
 
 #predictions berechnen
 pred_feature_x_constant = tf.constant([hadronic_data_x_constant["x_1"], hadronic_data_x_constant["x_2"], hadronic_data_x_constant["eta"]], dtype="float32")

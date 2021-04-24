@@ -5,6 +5,8 @@ from numpy import random
 from matplotlib import pyplot as plt
 import numpy as np
 import math
+import scipy as sc
+from scipy import integrate
 """
 (x_train, y_train), _ = tf.keras.datasets.mnist.load_data()
 dataset = tf.data.Dataset.from_tensor_slices(
@@ -87,7 +89,7 @@ print(list(dict.values()))
 learning_rate = 5
 
 
-config = pd.read_csv("/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/HadronicModels/Scaling+logarithm+MSE+leaky_relu/config")
+config = pd.read_csv("/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Models/Scaling+logarithm+MSE+leaky_relu/config")
 print(config)
 #print(config["learning_rate"])
 config = config.transpose()
@@ -160,8 +162,51 @@ print(b)
 
 a[0][0] = a[0][0] - 1.0
 print(a)
+
+
+
+def func(x,y):
+    z = x * y
+    return z
+from scipy.integrate import simps
+import numpy as np
+x = np.linspace(0, 1, 20)
+y = np.linspace(0, 1, 30)
+z = np.cos(x[:,None])**4 + np.sin(y)**2
+print(x)
+print(x[:,None])
+print(np.sin(y)**2)
+print(z)
+print(x)
+print(simps(z,y))
+print(simps(simps(z, y), x))
+
+
+import math
+
+gev_to_pb = 0.389379e9
+alpha = 0.0072973525693
+eta_min = -2.5
+eta_max = 2.5
+e_cms = 200.
+z=1/3
+
+print(
+    math.pi/3*alpha**2*z**4*e_cms**-2*
+    (math.tanh(eta_min)-math.tanh(eta_max)+2*(eta_max-eta_min))*gev_to_pb
+)
+
 """
-a = np.array([3, -2, 0, 2, -5])
-order = np.argsort(a)
-a = a[order]
+
+a = np.array([[1, 2, 3], [4, 5, 6]])
+b = np.array([[3], [4]])
 print(a)
+cut = a[:,0] + a[:,1] + a[:,2] > 8
+print(cut)
+a = a[cut]
+b = b[cut]
+print(a)
+print(b)
+
+c = [4.123, 5.234]
+print("{:.2f}".format(c))

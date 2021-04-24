@@ -1,0 +1,17 @@
+,0
+units,512
+nr_hidden_layers,2
+loss_fn,mean_squared_error
+optimizer,Adam
+hidden_activation,leaky_relu
+output_activation,linear
+kernel_regularization,
+bias_regularization,
+dropout,False
+dropout_rate,0.1
+learning_rate,2e-05
+epochs,20
+batch_size,32
+validation loss,"tf.Tensor(0.24922708, shape=(), dtype=float32)"
+scaling,True
+logarithm,True

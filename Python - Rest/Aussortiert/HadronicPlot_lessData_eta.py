@@ -39,6 +39,6 @@ time2 = time.time()
 print("Zeit, um Plot zu generieren:", time2 - time1)
 """
 
-hadronic_data_x_constant = pd.read_csv("HadronicData/logarithmic_hadronic_data__x_constant__0.11")
+hadronic_data_x_constant = pd.read_csv("Data/logarithmic_hadronic_data__x_constant__0.11")
 plt.plot(hadronic_data_x_constant["eta"], hadronic_data_x_constant["WQ"])
 plt.show()

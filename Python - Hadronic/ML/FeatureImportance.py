@@ -7,8 +7,8 @@ import ml
 import ast
 
 #Pfade einlesen
-data_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Data/CT14nnlo/all"
-model_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Models/best_model"
+data_path = "/Files/Transfer/Data/WithoutCutWrongeValue/CT14nnlo/all"
+model_path = "/Files/Transfer/Models/Old/best_model"
 
 #model und transformer laden
 (model, transformer) = ml.import_model_transformer(model_path=model_path)

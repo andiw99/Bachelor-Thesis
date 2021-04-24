@@ -1,0 +1,17 @@
+,0
+units,128
+nr_hidden_layers,1
+loss_fn,mean_squared_logarithmic_error
+optimizer,Adam
+hidden_activation,elu
+output_activation,linear
+kernel_regularization,<tensorflow.python.keras.regularizers.L2 object at 0x7f14dd690fd0>
+bias_regularization,<tensorflow.python.keras.regularizers.L2 object at 0x7f14dd690f10>
+dropout,False
+dropout_rate,0.1
+learning_rate,0.001
+epochs,40
+batch_size,48
+validation loss,"tf.Tensor(10364730.0, shape=(), dtype=float32)"
+scaling,True
+logarithm,False

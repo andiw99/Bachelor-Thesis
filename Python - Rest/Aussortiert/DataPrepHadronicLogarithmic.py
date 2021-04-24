@@ -26,7 +26,7 @@ x_upper_limit = 1
 eta_limit = 3
 
 set_name = "log_neg_3D_2/"
-path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/HadronicData/" + set_name
+path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Data/" + set_name
 
 name = "all"
 #Test

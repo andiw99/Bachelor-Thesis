@@ -7,8 +7,8 @@ import numpy as np
 show_3D_plots = False
 
 #Daten einlesen
-set_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/HadronicData/log_neg_x12/"
-#set_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/HadronicData/RandomSamples/"
+set_path = "/Files/Hadronic/Data/log_neg_x12/"
+#set_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Data/RandomSamples/"
 #eta constant
 hadronic_data_eta_constant = pd.read_csv( set_path + "eta_x_2_constant")
 #x-constant beide x_1, x_2

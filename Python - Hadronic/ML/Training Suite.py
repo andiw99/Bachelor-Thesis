@@ -25,26 +25,27 @@ else:
         transfer = ast.literal_eval(input("transfer= "))
         if not transfer:
             freeze = ast.literal_eval((input("freeze= ")))
-        input("auf die config geguckt?")
 
 
 time1 = time.time()
 #Daten einlesen
-data_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/HadronicData/NewRandom/"
+data_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Data/TrainingData4M_lower/"
 data_name = "all"
-project_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Models/"
+project_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Models/"
 loss_name = "Source_loss"
 project_name = ""
 
-read_name = "Feature-Normalization+MAE+SmallBatch"
+read_name = "many_layers_fun" #"best_guess_important_range" #
 label_name = "WQ"
 read_path =project_path + project_name + read_name
+transferred_transformer = None
 if transfer:
-    save_name = "transferred_model"
+    save_name = "transferred_model_mid"
     save_path = project_path + project_name + save_name
 else:
     save_path = read_path
-
+if not new_model:
+    (_, transferred_transformer) = ml.import_model_transformer(model_path=read_path)
 
 
 #Überprüfen, ob es für das vorliegende Problem schon losses gibt und ggf einlesen
@@ -55,15 +56,16 @@ if os.path.exists(project_path+ project_name + loss_name):
 
 #Variablen...
 train_frac = 0.95
-batch_size = 64
+batch_size = 512
 training_epochs = 100
-nr_layers = 2
-units = 512
-learning_rate = 1e-2
+repeat=2
+nr_layers = 6
+units = 64
+learning_rate = 5e-3
 rm_layers = 1
 loss_fn = keras.losses.MeanAbsoluteError()
-optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)
-hidden_activation = tf.nn.relu
+optimizer = tf.keras.optimizers.Adam
+hidden_activation = tf.nn.leaky_relu
 output_activation = ml.LinearActiavtion()
 kernel_initializer = tf.keras.initializers.HeNormal()
 bias_initializer = tf.keras.initializers.Zeros()
@@ -71,12 +73,8 @@ l2_kernel = 0
 l2_bias = 0
 lr_patience = 1
 stopping_patience = 3 * lr_patience
-min_delta= 3e-6
-reduce_lr_on_plateau = keras.callbacks.ReduceLROnPlateau(monitor="loss", factor=0.5, patience=lr_patience,
-                                                         min_delta=min_delta, min_lr=1e-7)
-early_stopping = keras.callbacks.EarlyStopping(monitor="loss", min_delta=1e-1 * min_delta, patience=stopping_patience)
-lr_schedule = keras.callbacks.LearningRateScheduler(ml.class_scheduler(reduction=0.05, min_lr=1e-7))
-callbacks = [reduce_lr_on_plateau, early_stopping, lr_schedule]
+min_delta= 2e-6
+min_lr = 5e-8
 dropout = False
 dropout_rate = 0.1
 scaling_bool = True
@@ -112,53 +110,62 @@ time2= time.time()
 (training_data, train_features, train_labels, test_features, test_labels, transformer) =\
         ml.data_handling(data_path=data_path+data_name,
         train_frac=train_frac,batch_size=batch_size,
-        label_name=label_name, scaling_bool=scaling_bool, logarithm=logarithm,
-        shift=shift, label_normalization=label_normalization, feature_rescaling=feature_rescaling)
+        label_name=label_name, scaling_bool=scaling_bool, logarithm=logarithm, base10=base10,
+        shift=shift, label_normalization=label_normalization, feature_rescaling=feature_rescaling,
+                         transformer=transferred_transformer)
 time3 = time.time()
-
-print("min ", tf.reduce_min(train_labels))
-print("max ", tf.reduce_max(train_labels))
-print("mean ", tf.reduce_mean(train_labels))
-print("stddev ", tf.math.reduce_std(train_labels))
-
-
-for i in range(train_features.shape[1]):
-    print("min ", tf.reduce_min(train_features[:,i]))
-    print("max ", tf.reduce_max(train_features[:,i]))
-    print("mean ", tf.reduce_mean(train_features[:,i]))
-    print("stddev ", tf.math.reduce_std(train_features[:,i]))
-
-
-
 print("Zeit, um Daten vorzubereiten:", time3-time1)
+models = []
+training_time = 0
+total_losses = []
+for i in range(repeat):
+    #initialisiere Model
+    models.append(ml.initialize_model(nr_layers=nr_layers, units=units, loss_fn=loss_fn, optimizer=optimizer, learning_rate=learning_rate, hidden_activation=hidden_activation, output_activation=output_activation,
+                                kernel_initializer=kernel_initializer, bias_initializer=bias_initializer, l2_kernel=l2_kernel, l2_bias=l2_bias, dropout=dropout, dropout_rate=dropout_rate,
+                                new_model=new_model, custom=custom, transfer=transfer, rm_layers=1, read_path=read_path, freeze=freeze, feature_normalization=feature_normalization)
+                  )
+for i, model in enumerate(models):
+    #callbacks initialisieren
+    reduce_lr_on_plateau = keras.callbacks.ReduceLROnPlateau(monitor="loss", factor=0.5, patience=lr_patience,
+                                                             min_delta=min_delta, min_lr=min_lr)
+    early_stopping = keras.callbacks.EarlyStopping(monitor="loss", min_delta=1e-1 * min_delta,
+                                                   patience=stopping_patience)
+    lr_schedule = keras.callbacks.LearningRateScheduler(ml.class_scheduler(reduction=0.05, min_lr=min_lr))
+    callbacks = [reduce_lr_on_plateau, early_stopping, lr_schedule]
+    #Training starten
+    time4 = time.time()
+    history = model.fit(x=train_features, y=train_labels, batch_size=batch_size, epochs=training_epochs, verbose=2,
+                        callbacks=callbacks, shuffle=True)
+    time5 = time.time()
+    training_time += time5 - time4
 
-#initialisiere Model
-model = ml.initialize_model(nr_layers=nr_layers, units=units, loss_fn=loss_fn, optimizer=optimizer, hidden_activation=hidden_activation, output_activation=output_activation,
-                            kernel_initializer=kernel_initializer, bias_initializer=bias_initializer, l2_kernel=l2_kernel, l2_bias=l2_bias, dropout=dropout, dropout_rate=dropout_rate,
-                            new_model=new_model, custom=custom, transfer=transfer, rm_layers=1, read_path=read_path, freeze=freeze, feature_normalization=feature_normalization)
+    #Überprüfen wie gut es war
+    results = model(test_features)
+    loss = loss_function(y_true=transformer.retransform(test_labels), y_pred=transformer.retransform(results))
+    total_losses.append(float(loss))
+    print("total loss von Durchgang Nr. ", i, ":", float(loss))
 
-#Training starten
-time4 = time.time()
-history = model.fit(x=train_features, y=train_labels, batch_size=batch_size, epochs=training_epochs, verbose=2,
-                    callbacks=callbacks, shuffle=True)
-time5 = time.time()
-training_time = time5 - time4
+    #Losses plotten
+    ml.make_losses_plot(history=history, custom=custom, new_model=new_model)
+    plt.savefig(save_path + "/training_losses")
+    plt.show()
 
-#Überprüfen wie gut es war
-results = model(test_features)
-total_loss = loss_function(y_true=transformer.retransform(test_labels),y_pred=transformer.retransform(results) )
-print("total loss:", float(total_loss))
-
-#Losses plotten
-ml.make_losses_plot(history=history, custom=custom, new_model=new_model)
-plt.savefig(save_path + "/training_losses")
-plt.show()
+print("Losses of the specific cycle:", total_losses)
+print("average Loss over", repeat, "cycles:", np.mean(total_losses))
 
 #Modell und config speichern
+print("Das beste Modell (Modell Nr.", np.argmin(total_losses), ") wird gespeichert")
+model = models[np.argmin(total_losses)]
+avg_total_loss = np.mean(total_losses)
+smallest_loss = np.min(total_losses)
+loss_error = np.std(total_losses)
+print("avg_total_loss", avg_total_loss, "smallest_loss:", smallest_loss, "loss_error:", loss_error, "total_losses", total_losses)
+training_time = 1/repeat * training_time
 model.save(filepath=save_path, save_format="tf")
 (config, index) = ml.save_config(new_model=new_model, model=model, learning_rate=learning_rate, training_epochs=training_epochs,
-               batch_size=batch_size, total_loss=total_loss, transformer=transformer,
-               training_time=training_time, custom=custom, loss_fn=loss_fn, feature_rescaling=feature_rescaling, read_path=read_path, save_path=save_path)
+                                 batch_size=batch_size, avg_total_Loss=avg_total_loss, transformer=transformer,
+                                 training_time=training_time, custom=custom, loss_fn=loss_fn, smallest_loss=smallest_loss,
+                                 loss_error=loss_error, total_losses=total_losses, read_path=read_path, save_path=save_path)
 
 
 

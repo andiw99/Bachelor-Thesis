@@ -14,10 +14,10 @@ transformer = ml.label_transformation(config=config)
 loss_function=keras.losses.mean_absolute_percentage_error
 loss_fn=mean_squared_logarithmic_error
 #Daten einlesen
-hadronic_data_x_constant = pd.read_csv("/Files/Hadronic/HadronicData/log_neg_x12/x_constant")
-hadronic_data_eta_x_2_constant = pd.read_csv("/Files/Hadronic/HadronicData/log_neg_x12/eta_x_2_constant")
-hadronic_data_eta_x_1_constant = pd.read_csv("/Files/Hadronic/HadronicData/log_neg_x12/eta_x_1_constant")
-hadronic_data_x_2_constant = pd.read_csv("/Files/Hadronic/HadronicData/log_neg_3D/x_2_constant__3D")
+hadronic_data_x_constant = pd.read_csv("/Files/Hadronic/Data/log_neg_x12/x_constant")
+hadronic_data_eta_x_2_constant = pd.read_csv("/Files/Hadronic/Data/log_neg_x12/eta_x_2_constant")
+hadronic_data_eta_x_1_constant = pd.read_csv("/Files/Hadronic/Data/log_neg_x12/eta_x_1_constant")
+hadronic_data_x_2_constant = pd.read_csv("/Files/Hadronic/Data/log_neg_3D/x_2_constant__3D")
 
 #predictions berechnen
 pred_feature_x_constant = tf.constant([hadronic_data_x_constant["x_1"], hadronic_data_x_constant["x_2"], hadronic_data_x_constant["eta"]], dtype="float32")

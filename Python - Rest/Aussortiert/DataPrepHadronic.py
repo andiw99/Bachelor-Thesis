@@ -153,9 +153,9 @@ hadronic_diff_WQ_data_eta_constant = pd.DataFrame(
 x_constant_name = name + "__x_constant__" + str(x_constant)
 eta_constant_name = name + "__eta_constant__" + str(eta_constant)
 
-hadronic_diff_WQ_data.to_csv("HadronicData/" + name, index=False)
-hadronic_diff_WQ_data_x_constant.to_csv("HadronicData/" + x_constant_name, index=False)
-hadronic_diff_WQ_data_eta_constant.to_csv("HadronicData/" + eta_constant_name, index=False)
+hadronic_diff_WQ_data.to_csv("Data/" + name, index=False)
+hadronic_diff_WQ_data_x_constant.to_csv("Data/" + x_constant_name, index=False)
+hadronic_diff_WQ_data_eta_constant.to_csv("Data/" + eta_constant_name, index=False)
 
 print(hadronic_diff_WQ_data)
 print(hadronic_diff_WQ_data_x_constant)
