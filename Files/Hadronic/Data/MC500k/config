@@ -1,2 +1,2 @@
-total_data,x_lower_limit,x_upper_limit,eta_limit,loguni_param,stddev
-500000,0,0.7,2.37,0.05,1.5
+x_total,total_data,x_lower_limit,x_upper_limit,eta_limit,loguni_param,stddev,cuts,eta constant,x_Grid,acceptance_ratio
+500000,151634,0,1,2.37,0.001,1.5,True,False,False,0.30327

@@ -32,7 +32,7 @@ names = {"batch_size", "learning_rate"}
 
 time1 = time.time()
 #Daten einlesen
-data_path = "/Files/Transfer/Data/WithoutCutWrongeValue/CT14nnlo/"
+data_path = "/Files/Transfer/Data/WithoutCutWrongeValue/PlottingData_CT14nnlo/"
 data_name = "all"
 project_path = "/Files/Hadronic/Models/RefinedSearch/"
 loss_name = "best_loss"

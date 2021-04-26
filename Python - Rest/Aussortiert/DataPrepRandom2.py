@@ -14,7 +14,7 @@ quarks = {"quark": [1, 2, 3, 4],
 PID = {1: "d", 2: "u", 3: "s", 4: "c"}
 
 #PDF initialisieren
-PDF = pdf.mkPDF("CT14nnlo", 0)
+PDF = pdf.mkPDF("PlottingData_CT14nnlo", 0)
 
 #for q in quarks["quark"]:
     #print("Quark ", PID[q], "hat Ladung ", quarks["charge"][q-1])

@@ -7,7 +7,7 @@ import ml
 import ast
 
 #Pfade einlesen
-data_path = "/Files/Transfer/Data/WithoutCutWrongeValue/CT14nnlo/all"
+data_path = "/Files/Transfer/Data/WithoutCutWrongeValue/PlottingData_CT14nnlo/all"
 model_path = "/Files/Transfer/Models/Old/best_model"
 
 #model und transformer laden

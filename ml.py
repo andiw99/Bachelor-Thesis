@@ -3,9 +3,11 @@ import ast
 import tensorflow as tf
 from tensorflow import keras
 import pandas as pd
+import matplotlib
 from matplotlib import pyplot as plt
 from matplotlib import cm
 import numpy as np
+import MC
 
 #Bis auf weiters output auskommentiert, da es nicht benutzt wird und auf taurus nicht läuft
 """
@@ -509,6 +511,7 @@ class label_transformation():
 
 
 #Dropout class stammt aus der tensorflow doku
+Dropout = LinearActiavtion
 #Bis auf weiters output auskommentiert, da es nicht benutzt wird und auf taurus nicht läuft
 """
 class Dropout(keras.layers.Layer):
@@ -565,12 +568,15 @@ class Dropout(keras.layers.Layer):
 """
 
 def data_handling(data_path, label_name, scaling_bool=False, logarithm=False, base10=False, shift=False,
-                  label_normalization=False, feature_rescaling=False, train_frac=1 , batch_size=64, return_pd=False,
-                  lower_cutoff=1e-20, upper_cutoff=1e+3, transformer=None, return_as_tensor=True):
+                  label_normalization=False, feature_rescaling=False, train_frac=1 , validation_total=0, batch_size=64, return_pd=False,
+                  lower_cutoff=1e-20, upper_cutoff=1e+3, label_cutoff=True, transformer=None, return_as_tensor=True):
     #Daten einlesen
     data = pd.read_csv(data_path)
     #in test und trainingsdaten untertaeilen
-    if not train_frac == 1:
+    if (train_frac != 1):
+        train_dataset = data.sample(frac=train_frac)
+    elif (validation_total != 0):
+        train_frac = (1 - validation_total/len(data[label_name]))
         train_dataset = data.sample(frac=train_frac)
     else:
         train_dataset = data.copy()
@@ -605,13 +611,14 @@ def data_handling(data_path, label_name, scaling_bool=False, logarithm=False, ba
     test_labels = np.transpose(np.array([test_labels_pd], dtype="float32"))
 
     #Ggf. Punkte mit WQ 0 entfernen
-    print("size train_labels bevor WQ cutoff:", train_labels.size)
-    train_features = train_features[(train_labels[:,0] > lower_cutoff) & (train_labels[:,0] < upper_cutoff)]
-    test_features = test_features[(test_labels[:,0] > lower_cutoff) & (test_labels[:,0] < upper_cutoff)]
+    if label_cutoff:
+        print("size train_labels bevor WQ cutoff:", train_labels.size)
+        train_features = train_features[(train_labels[:,0] > lower_cutoff) & (train_labels[:,0] < upper_cutoff)]
+        test_features = test_features[(test_labels[:,0] > lower_cutoff) & (test_labels[:,0] < upper_cutoff)]
 
-    train_labels = train_labels[(train_labels[:,0] > lower_cutoff) & (train_labels[:,0] < upper_cutoff)]
-    test_labels = test_labels[(test_labels[:,0] > lower_cutoff) & (test_labels[:,0] < upper_cutoff)]
-    print("size train_lables nach WQ cutoff:", train_labels.size)
+        train_labels = train_labels[(train_labels[:,0] > lower_cutoff) & (train_labels[:,0] < upper_cutoff)]
+        test_labels = test_labels[(test_labels[:,0] > lower_cutoff) & (test_labels[:,0] < upper_cutoff)]
+        print("size train_lables nach WQ cutoff:", train_labels.size)
 
     # Labels transformieren
     # Transformer initialisieren
@@ -646,13 +653,14 @@ def data_handling(data_path, label_name, scaling_bool=False, logarithm=False, ba
     return re
 
 
-def initialize_model(nr_layers, units, loss_fn, optimizer, hidden_activation,
-                     output_activation, kernel_initializer, bias_initializer,
-                     l2_kernel, l2_bias, dropout, dropout_rate,
-                     learning_rate = None, momentum = 0, nesterov=False,
-                     feature_normalization = False,
-                     new_model=True, custom=False, transfer=False, rm_layers=1,
-                     read_path=None, freeze=False, metrics = None):
+def initialize_model(nr_layers=3, units=512, loss_fn=keras.losses.MeanAbsoluteError(),
+                     optimizer=keras.optimizers.Adam, hidden_activation=tf.nn.leaky_relu,
+                     output_activation=LinearActiavtion, kernel_initializer=keras.initializers.HeNormal,
+                     bias_initializer=keras.initializers.Zeros, l2_kernel=0, l2_bias=0,
+                     dropout=False, dropout_rate=0, learning_rate=5e-3, momentum = 0,
+                     nesterov=False, feature_normalization = False, new_model=True, custom=False,
+                     read_path=None, freeze=False, metrics=None,
+                     transfer=False, source_model=None, rm_layers=1, add_layers=0):
     if new_model:
         if custom:
             model = DNN2(
@@ -686,16 +694,18 @@ def initialize_model(nr_layers, units, loss_fn, optimizer, hidden_activation,
 
     else:
         if transfer:
-            inputs = keras.Input(shape=(2, 1))
-            prev_model = keras.models.load_model(filepath=read_path)
+            #TODO ist das hier valid oder zerschieße ich mir das source model zwischen den Trainings?
+            print("model summary vor umbau:")
+            print(source_model.summary())
+            prev_model = source_model
             for i in range(rm_layers):
                 prev_model.pop()
             prev_model.trainable = False
 
             model = prev_model
-            for i in range(rm_layers):
+            for i in range(add_layers + 1):
                 inp = model.input
-                if i == (rm_layers - 1):
+                if i == (add_layers):
                     new_layer = keras.layers.Dense(units=1, activation=output_activation, name="New_Output_layer",
                                                    kernel_initializer=kernel_initializer,
                                                    bias_initializer=bias_initializer,
@@ -710,8 +720,9 @@ def initialize_model(nr_layers, units, loss_fn, optimizer, hidden_activation,
                                                    kernel_regularizer=keras.regularizers.l2(l2=l2_kernel),
                                                    bias_regularizer=keras.regularizers.l2(l2=l2_bias))
 
-                out = new_layer(prev_model.output)
+                out = new_layer(model.output)
                 model = keras.Model(inp, out)
+            print("model summary nach umbau:")
             print(model.summary())
 
         else:
@@ -726,8 +737,8 @@ def initialize_model(nr_layers, units, loss_fn, optimizer, hidden_activation,
     model.compile(optimizer=optimizer, loss=loss_fn, metrics = metrics)
     return model
 
-def make_losses_plot(history, custom, new_model):
-    if new_model and custom:
+def make_losses_plot(history):
+    if not type(history) == keras.callbacks.History:
         plt.plot(history, label="loss")
     else:
         plt.plot(history.history["loss"], label="loss")
@@ -739,11 +750,12 @@ def make_losses_plot(history, custom, new_model):
     plt.draw()
 
 
-def save_config(new_model, save_path, model, learning_rate, training_epochs, batch_size, avg_total_Loss,
-                transformer, training_time, custom, loss_fn, feature_handling=None, min_delta=None, nr_hidden_layers=None,
-                lr_reduction=None, lr_factor=None, total_losses=[], smallest_loss=0.0, loss_error=0.0, read_path=None):
+def save_config(new_model, save_path, model, learning_rate, training_epochs, batch_size, avg_total_Loss=0,
+                transformer=None, training_time=None, loss_fn=None, custom=False, feature_handling=None, min_delta=None, offset=None,
+                nr_hidden_layers=None, lr_reduction=None, lr_factor=None, total_losses=[], smallest_loss=0.0,
+                loss_error=0.0, read_path=None, fine_tuning=None, source_model=None):
     if new_model:
-        config = pd.DataFrame(model.get_config())
+        config = pd.DataFrame([model.get_config()])
         training_parameters = pd.DataFrame(
             {
                 "learning_rate": [learning_rate],
@@ -754,14 +766,17 @@ def save_config(new_model, save_path, model, learning_rate, training_epochs, bat
                 "smallest loss": ["{:.5f}".format(float(smallest_loss))],
                 "loss error": ["{:.5f}".format(float(loss_error))],
                 "transformer_config": [str(transformer.get_config())],
-                "training time:": ["{:.2f}".format(training_time)],
+                "training time": ["{:.2f}".format(training_time)],
                 "Custom": [custom],
                 "loss_fn": [loss_fn.name],
                 "feature_rescaling": [feature_handling],
                 "min_delta": [min_delta],
                 "nr_hidden_layers": [nr_hidden_layers],
                 "lr_reduction": [lr_reduction],
-                "lr_factor": [lr_factor]
+                "lr_factor": [lr_factor],
+                "fine_tuning": [fine_tuning],
+                "source_model": [source_model],
+                "offset": [offset]
             }
         )
         # config.append(training_parameters)
@@ -878,11 +893,8 @@ def construct_name(config_as_dict, names_set):
     save_path = str()
     for param in config_as_dict:
         if param in names_set:
-            if type(config_as_dict[param]) == np.float64 or type(config_as_dict[param]) == np.int64\
-                    or type(config_as_dict[param]) == float or type(config_as_dict[param]) == int:
+            if type(config_as_dict[param]) in {np.float64, np.int64, float, int, str, np.str_, np.bool_, bool, tuple}:
                 save_path += str(param) + "_" + str(config_as_dict[param]) + "_"
-            elif type(config_as_dict[param]) == str or type(config_as_dict[param]) == bool or type(config_as_dict[param]) == 		    np.bool_ or type(config_as_dict[param]) == np.str_ or type(config_as_dict[param]) == tuple:
-                save_path  += str(param) + "_" + str(config_as_dict[param]) + "_"
             else:
                 try:
                     save_path += config_as_dict[param].name + "_"
@@ -893,9 +905,8 @@ def construct_name(config_as_dict, names_set):
                         try:
                             save_path += config_as_dict[param]._name + "_"
                         except AttributeError:
-                            print("kein Attribut hat funktioniert")
-                        finally:
-                            print("progressing anyway...")
+                            pass
+
     return save_path
 
 def construct_optimizer(optimizer, learning_rate=None, momentum=None, nesterov=None):
@@ -932,7 +943,7 @@ def get_varying_value(features_pd):
             keys.append(key)
     return keys
 
-def plot_model(features_pd, labels, predictions, losses, keys, title, label_name, save_path = None):
+def plot_model(features_pd, labels, predictions, losses, keys, title, label_name, save_path = None, plot_losses=False):
     if len(keys) == 2:
         fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
         # plot the surface
@@ -975,29 +986,83 @@ def plot_model(features_pd, labels, predictions, losses, keys, title, label_name
                 plot_features = np.array(features_pd[key])[order]
                 plot_predictions = np.array(predictions)[order]
                 plot_labels = np.array(labels)[order]
-                plt.plot(plot_features, plot_predictions, label="ML")
-                plt.plot(plot_features, plot_labels, label="analytic", linestyle="dashed")
+                fig, (ax_fct, ax_ratio) = plt.subplots(nrows=2, ncols=1, sharex=True, figsize=(6.4, 9.6))
+                ax_fct.plot(plot_features, MC.gev_to_pb(plot_predictions), label="Predictions", linewidth=2.5, linestyle="dotted")
+                ax_fct.plot(plot_features, MC.gev_to_pb(plot_labels), label="Labels", linestyle="dashed")
+                s = "text fehlt"
                 if key == "x_1" or key == "x_2":
-                    plt.yscale("log")
-                plt.grid(True)
-                plt.ylabel(label_name)
-                plt.xlabel(str(key))
-                plt.title(title)
-                plt.legend()
+                    ax_fct.set_yscale("log")
+                    xlabel = "$" + key + "$"
+                    s = (r"$x_1$ = " + "{:.2f}".format(features_pd["x_1"][0])) * (key != "x_1")\
+                        + (r"$x_2$ = " + "{:.2f}".format(features_pd["x_2"][0])) * (key != "x_2")\
+                        + "\n$\eta$ = " + "{:.2f}".format(features_pd["eta"][1])
+                if key == "eta":
+                    xlabel = "$\eta$"
+                    s = r"$x_1$ = " + "{:.2f}".format(features_pd["x_1"][0]) + "\n$x_2$ = " + "{:.2f}".format(features_pd["x_2"][1])
+                if features_pd.shape[1] == 3:
+                    ylabel = r"$\frac{d^3\sigma}{d x_1 d x_2 d \eta} / pb$"
+                else:
+                    if key == "theta":
+                        ylabel = r"$\frac{d \sigma}{d \theta}$"
+                    if key == "eta":
+                        ylabel = r"$\frac{d \sigma}{d \eta}$"
+                ax_fct.grid(True)
+                ax_fct.set_ylabel(ylabel, loc="center")
+                #ax_fct.set_xlabel(xlabel)
+                ax_fct.text(x=0.035, y=0.175, s=s, bbox=dict(boxstyle="round", facecolor="white", alpha=1, edgecolor="gainsboro"), transform=ax_fct.transAxes)
+                ax_fct.set_title(title)
+                ax_fct.legend(loc=(0.025, 0.025))
+                plt.tight_layout()
                 if save_path:
                     plt.savefig(save_path + "_" + str(key))
+                #plt.show()
+
+                #Ratios plotten
+                ratios = plot_labels/plot_predictions
+                ax_ratio.plot(plot_features, ratios,
+                        label="Ratio", linewidth=0, marker=".", markersize=3)
+                s = "text fehlt"
+                if key == "x_1" or key == "x_2":
+                    xlabel = "$" + key + "$"
+                    s = (r"$x_1$ = " + "{:.2f}".format(
+                        features_pd["x_1"][0])) * (key != "x_1") \
+                        + (r"$x_2$ = " + "{:.2f}".format(
+                        features_pd["x_2"][0])) * (key != "x_2") \
+                        + "\n$\eta$ = " + "{:.2f}".format(
+                        features_pd["eta"][1])
+                if key == "eta":
+                    xlabel = "$\eta$"
+                    s = r"$x_1$ = " + "{:.2f}".format(features_pd["x_1"][
+                                                          0]) + "\n$x_2$ = " + "{:.2f}".format(
+                        features_pd["x_2"][1])
+                ax_ratio.yaxis.set_label_coords(-0.125,0.5)
+                ax_ratio.grid(True)
+                ax_ratio.set_ylabel(r"$\omega$", loc="center", rotation=0)
+                ax_ratio.set_ylim(0.98, 1.02)
+                ax_ratio.set_xlabel(xlabel)
+                """
+                ax_ratio.text(x=0.035, y=0.175, s=s,
+                        bbox=dict(boxstyle="round", facecolor="white", alpha=1,
+                                  edgecolor="gainsboro"),
+                        transform=ax_ratio.transAxes)                
+                """
+                plt.legend(loc=(0.025, 0.025))
+                plt.tight_layout()
+                if save_path:
+                    plt.savefig(save_path + "_" + str(key) + "_ratio")
                 plt.show()
 
                 # losses plotten
-                plot_losses = np.array(losses)[order]
-                plt.plot(plot_features, plot_losses)
-                plt.ylabel("Loss")
-                plt.xlabel(str(key))
-                plt.yscale("Log")
-                plt.title(title)
-                if save_path:
-                    plt.savefig(save_path + "_" + str(key) + "_loss")
-                plt.show()
+                if plot_losses:
+                    plot_losses = np.array(losses)[order]
+                    plt.plot(plot_features, plot_losses)
+                    plt.ylabel("Loss")
+                    plt.xlabel(str(key))
+                    plt.yscale("Log")
+                    plt.title(title)
+                    if save_path:
+                        plt.savefig(save_path + "_" + str(key) + "_loss")
+                    plt.show()
 
 def scheduler(epoch, learning_rate, reduction = 0.1):
     if epoch < 10:
