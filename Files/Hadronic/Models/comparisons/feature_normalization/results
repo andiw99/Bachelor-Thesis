@@ -1,0 +1,11 @@
+,0
+dataset_TrainingData4M_,0.23
+learning_rate_0.005_,0.36
+dataset_TrainingData500k_,0.80
+leaky_relu_,0.41
+"units_nr_layers_(64, 7)_",0.50
+learning_rate_0.01_,0.50
+tanh_,0.84
+"units_nr_layers_(512, 3)_",0.31
+feature_normalization_normalization_,0.34
+,0.32

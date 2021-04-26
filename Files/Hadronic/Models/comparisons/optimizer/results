@@ -1,0 +1,31 @@
+,0
+dataset_TrainingData4M_,0.23
+learning_rate_0.005_,0.36
+dataset_TrainingData500k_,0.80
+leaky_relu_,0.41
+"units_nr_layers_(64, 7)_",0.50
+learning_rate_0.01_,0.50
+tanh_,0.84
+"units_nr_layers_(512, 3)_",0.31
+feature_normalization_normalization_,0.34
+,0.32
+learning_rate_0.001_,0.31
+mean_absolute_error_,0.35
+batch_size_8196_,1.59
+learning_rate_0.0001_,0.64
+"units_nr_layers_(256, 5)_",0.29
+"units_nr_layers_(1024, 2)_",0.67
+batch_size_512_,0.31
+batch_size_768_,0.38
+batch_size_128_,0.35
+batch_size_2048_,0.57
+mean_squared_error_,0.81
+sigmoid_,5.45
+elu_,0.54
+dataset_TrainingData8M_,0.18
+Adam_,0.34
+dataset_TrainingData2M_,0.33
+RMSprop_,0.48
+dataset_TrainingData1M_,0.44
+relu_,0.33
+SGD_,7.70

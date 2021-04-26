@@ -736,6 +736,7 @@ def make_losses_plot(history, custom, new_model):
     plt.yscale("log")
     plt.legend()
     plt.tight_layout()
+    plt.draw()
 
 
 def save_config(new_model, save_path, model, learning_rate, training_epochs, batch_size, avg_total_Loss,
@@ -749,9 +750,9 @@ def save_config(new_model, save_path, model, learning_rate, training_epochs, bat
                 "epochs": [training_epochs],
                 "batch_size": [batch_size],
                 "total_losses": [total_losses],
-                "avg validation loss": ["{:.3f}".format(float(avg_total_Loss))],
-                "smallest loss": ["{:.3f}".format(float(smallest_loss))],
-                "loss error": ["{:.4f}".format(float(loss_error))],
+                "avg validation loss": ["{:.5f}".format(float(avg_total_Loss))],
+                "smallest loss": ["{:.5f}".format(float(smallest_loss))],
+                "loss error": ["{:.5f}".format(float(loss_error))],
                 "transformer_config": [str(transformer.get_config())],
                 "training time:": ["{:.2f}".format(training_time)],
                 "Custom": [custom],
@@ -866,7 +867,8 @@ def create_param_configs(pools, size, vary_multiple_parameters=True):
                         config.append(value)
                     else:
                         config.append(pools[param][0])
-                config.append(param)
+                #noch einmal in den tupel packen welche die zu variierende groesse ist
+                config.append(varying_param)
                 config = tuple(config)
                 checked_configs.append(config)
                 checked_configs = list(set(checked_configs))

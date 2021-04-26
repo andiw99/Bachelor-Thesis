@@ -39,9 +39,9 @@ pools["feature_normalization"] = ["normalization", None]
 pools["scaling_bool"] = [True]
 pools["base10"] = [True]
 pools["label_normalization"] = [True]
-pools["min_delta"] = [5e-6]
+pools["min_delta"] = [2e-6]
 pools["min_lr"] = [5e-8]
-pools["dataset"] =["TrainingData1M", "TrainingData500k", "TrainingData2M", "TrainingData4M"]
+pools["dataset"] =["TrainingData2M", "TrainingData500k", "TrainingData1M", "TrainingData4M", "TrainingData8M"]
 #Festlegen, welche Hyperparameter in der Bezeichnung stehen sollen:
 names = {"loss_fn", "units_nr_layers", "optimizer", "hidden_activation", "dataset", "batch_size", "learning_rate", "units_nr_layers"}
 
@@ -73,9 +73,6 @@ repeat = 5
 
 #Menge mit bereits gesehen konfigurationen
 checked_configs = ml.create_param_configs(pools=pools, size=size, vary_multiple_parameters=vary_multiple_parameters)
-print(checked_configs)
-print(len(checked_configs))
-exit()
 results_list = dict()
 
 for config in checked_configs:
@@ -86,7 +83,9 @@ for config in checked_configs:
 
     data_path = root_path + "/Files/Hadronic/Data/" + params["dataset"] +  "/"
     data_name = "all"
-    project_path = root_path + "Files/Hadronic/Models/optimizers_comparison/"
+    project_path = root_path + "Files/Hadronic/Models/comparisons/"
+    if not vary_multiple_parameters:
+        project_path += str(config[-1]) + "/"
     loss_name = "best_loss"
     project_name = ""
 
@@ -96,8 +95,10 @@ for config in checked_configs:
         feature_rescaling = True
     elif params["feature_normalization"] == "normalization":
         feature_normalization = True
-
-    #training_epochs = int(1/200 * params["batch_size"]) + 10
+        
+    #Trainingsparameter ein wenig nach batches anpassen
+    training_epochs = int(1/100 * params["batch_size"]) + 90
+    lr_reduction = 25/params["batch_size"]
 
     #Callbacks initialisieren
     #min delta initialiseren
@@ -139,8 +140,8 @@ for config in checked_configs:
     for i in range(repeat):
         #Modell initialisieren
         models.append(ml.initialize_model(nr_layers=params["units_nr_layers"][1], units=params["units_nr_layers"][0], loss_fn=params["loss_fn"], optimizer=params["optimizer"],
-                                            hidden_activation=params["hidden_activation"], output_activation=output_activation,
-                                            kernel_initializer=params["kernel_initializer"], bias_initializer=bias_initializer, l2_kernel=params["l2_kernel"],
+                                            hidden_activation=params["hidden_activation"], output_activation=params["output_activation"],
+                                            kernel_initializer=params["kernel_initializer"], bias_initializer=params["bias_initializer"], l2_kernel=params["l2_kernel"],
                                             learning_rate=params["learning_rate"], momentum=params["momentum"], nesterov=nesterov,
                                             l2_bias=params["l2_bias"], dropout=params["dropout"], dropout_rate=params["dropout_rate"],
                                             new_model=new_model, custom=custom, feature_normalization=feature_normalization))
@@ -164,7 +165,7 @@ for config in checked_configs:
         total_losses.append(loss)
 
     #training_time und total loss mitteln:
-    avg_total_loss = total_losses[np.argmin(total_losses)]
+    avg_total_loss = np.mean(total_losses)
     smallest_loss = np.min(total_losses)
     loss_error = np.std(total_losses)
     training_time = 1 / repeat * training_time
@@ -179,7 +180,7 @@ for config in checked_configs:
                                      avg_total_Loss=avg_total_loss, smallest_loss=smallest_loss, loss_error=loss_error, total_losses=total_losses,
                                      transformer=transformer, training_time=training_time,
                                      custom=custom, loss_fn=params["loss_fn"], feature_handling= params["feature_normalization"],
-                                     min_delta = min_delta, nr_hidden_layers=params["nr_layers"])
+                                     min_delta = params["min_delta"], nr_hidden_layers=params["units_nr_layers"][1])
 
     #Überprüfen ob Fortschritt gemacht wurde
     ml.check_progress(model=models[np.argmin(total_losses)], transformer=transformer, test_features=test_features, test_labels=test_labels,
