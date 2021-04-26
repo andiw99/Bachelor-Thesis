@@ -23,20 +23,19 @@ def main():
     plt.show()
     epsilon = 0.163
     offset = 0.2
-
+    """
     custom_dist = MC.x_power_dist(power=4, offset=offset, mean=np.pi/2, scale=1, epsilon=epsilon)
-    scale = custom_dist.cdf(np.pi - epsilon)
+    scale = custom_dist.cdf(np.pi - epsilon) - custom_dist.cdf(epsilon)
     custom_dist = MC.x_power_dist(power=4, offset=offset, mean=np.pi/2, scale=scale, epsilon=epsilon)
+    """
+    custom_dist = MC.x_power_dist(power=4, offset=offset, a=epsilon, b=np.pi-epsilon, normed=True)
 
-
-    x = np.linspace(0+epsilon, np.pi -epsilon, num=500)
+    x = np.linspace(0+epsilon, np.pi-epsilon, num=500)
     y = custom_dist.cdf(x)
     plt.plot(y, x)
     plt.show()
 
-    inverse_cdf = MC.inverse_cdf(xp=y, fp=x)
-
-    custom_samples = inverse_cdf(stats.uniform.rvs(loc=0, scale=1, size=5000))
+    custom_samples = custom_dist.rvs(size=50000, interpol_nr=50000)
     plt.hist(custom_samples, bins=20)
     plt.show()
 
