@@ -196,7 +196,7 @@ print(
     (math.tanh(eta_min)-math.tanh(eta_max)+2*(eta_max-eta_min))*gev_to_pb
 )
 
-"""
+
 a = "hallo"
 bool = True
 print(float(bool))
@@ -211,3 +211,8 @@ a = (1,2)
 print(type(a), *a)
 if type(a) == tuple:
     print("hello")
+"""
+a = 1
+a *= 4
+a *= 5
+print(a)

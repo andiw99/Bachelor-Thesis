@@ -187,18 +187,36 @@ class calc_diff_WQ():
         return diff_WQ
 
 class x_power_dist():
-    def __init__(self, power, offset, mean, scale, epsilon):
+    def __init__(self, power, offset, scale=1, a=0, b=1, normed=False):
         self.offset = offset
-        self.mean = mean
+        self.a = a
+        self.b = b
         self.scale = scale
         self.power = power
-        self.epsilon = epsilon
+        self.mean = (self.b - self.a)/2 + self.a
+        if normed:
+            self.scale = self.cdf(b)-self.cdf(a)
+
 
     def __call__(self, x):
         y = (self.offset + (x-self.mean) ** self.power)/self.scale
         return y
 
     def cdf(self, x):
-        y = (self.offset * (x-self.epsilon) + 1/(self.power + 1) * \
-            ((x - self.mean) ** (self.power + 1) - (self.epsilon - self.mean) ** (self.power + 1)))/self.scale
+        y = (self.offset * (x-self.a) + 1/(self.power + 1) * \
+            ((x - self.mean) ** (self.power + 1) - (self.a - self.mean) ** (self.power + 1)))/self.scale
         return y
+
+    def rvs(self, size, interpol_nr=1000):
+        try:
+            custom_samples = self.inverse_cdf(stats.uniform.rvs(loc=0, scale=1, size=size))
+        except:
+            print("inverse cdf muss zunächst interpoliert werden...")
+            self.build_inverse_cdf(interpol_nr=interpol_nr)
+            custom_samples = self.inverse_cdf(stats.uniform.rvs(loc=0, scale=1, size=size))
+        return custom_samples
+
+    def build_inverse_cdf(self, interpol_nr=1000):
+        x = np.linspace(self.a, self.b, num=interpol_nr)
+        y = self.cdf(x)
+        self.inverse_cdf = inverse_cdf(xp=y, fp=x)
