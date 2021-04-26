@@ -13,6 +13,17 @@ Files/Hadronic/Data/WithoutCutWrongeValue/log_neg_x12/all
 /home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Partonic/PartonicData/
 /home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/
 
+<<<<<<< HEAD
+Files/Hadronic/Data/RandomSamples/Loguniform+Gauss
+Files/Hadronic/Data/RandomSamples/all
+Files/Hadronic/Data/NewRandom/all
+Files/Hadronic/Models/BigRandomSearch/batch_size_512_units_1024_nr_layers_6_learning_rate_1e-05_mean_squared_error_Adam_relu_/variables/variables.data-00000-of-00001
+Files/Hadronic/Models/BigRandomSearch/batch_size_32_units_1024_nr_layers_6_learning_rate_0.01_mean_squared_error_Adam_sigmoid_feature_normalization_rescaling_/variables/variables.data-00000-of-00001
+Files/Aussortiert/Data/logarithmic_hadronic_data
+Files/Aussortiert/Data/logarithmic_hadronic_data_no_negative
+Files/Transfer/Data/MMHT2014/all
+Files/Transfer/Data/NewRandom/all
+=======
 Files/Transfer/Data/CT14nnlo/ all
 Files/Transfer/Data/Old/NewRandom/all
 Files/Transfer/Data/Old/MC_xIntegrationTrapez/all
@@ -69,6 +80,7 @@ Files/Hadronic/Data/TrainingData2M/all
 Files/Hadronic/Data/MC4M_small_loguni/all
 Files/Aussortiert/Data/logarithmic_hadronic_data_no_negative
 Files/Aussortiert/Data/logarithmic_hadronic_data
+<<<<<<< HEAD
 Files/Transfer/Data/PlottingData_MMHT2014/all
 Files/Transfer/Data/WithoutCutWrongeValue/CT14nnlo/ all
 Files/Transfer/Data/WithoutCutWrongeValue/Old/NewRandom/all
@@ -105,3 +117,6 @@ Files/Hadronic/Data/MC4M_small_loguni/all
 Files/Hadronic/Data/TrainingData8M/all
 Files/Aussortiert/Data/logarithmic_hadronic_data_no_negative
 Files/Aussortiert/Data/logarithmic_hadronic_data
+=======
+>>>>>>> 2121f74f29efda2e5ef0586704d92a3b457aa486
+>>>>>>> fa911b53d02bd9c42a12b943ede5dc79255aea8c

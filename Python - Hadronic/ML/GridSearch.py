@@ -17,6 +17,7 @@ sys.path.insert(0, root_path)
 import ml
 
 
+
 #Grid erstellen, pool für jeden Hyperparameter, so kann man dynamische einstellen in welchen Dimensionen das Grid liegt
 # wichtig: Standardmodell hat index 0 in jedem pool
 pools = dict()
@@ -34,31 +35,28 @@ pools["kernel_initializer"] = [tf.keras.initializers.HeNormal()]
 pools["bias_initializer"] = [tf.keras.initializers.Zeros()]
 pools["hidden_activation"] = [tf.nn.relu, tf.nn.leaky_relu, tf.nn.elu, tf.nn.tanh, tf.nn.sigmoid]
 pools["output_activation"] = [ml.LinearActiavtion()]
-pools["feature_normalization"] = ["normalization"]
+pools["feature_normalization"] = ["normalization", None]
+pools["scaling_bool"] = [True]
+pools["base10"] = [True]
+pools["label_normalization"] = [True]
+pools["min_delta"] = [5e-6]
+pools["min_lr"] = [5e-8]
 pools["dataset"] =["TrainingData1M", "TrainingData500k", "TrainingData2M", "TrainingData4M"]
 #Festlegen, welche Hyperparameter in der Bezeichnung stehen sollen:
-names = {"dataset"}
+names = {"loss_fn", "units_nr_layers", "optimizer", "hidden_activation", "dataset", "batch_size", "learning_rate", "units_nr_layers"}
 
 vary_multiple_parameters = False
 
 #Variablen...
 train_frac = 0.95
 training_epochs = 100
-size = 3
-output_activation = ml.LinearActiavtion()
-bias_initializer =tf.keras.initializers.Zeros()
-l2_bias = 0
-momentum = 0.1
-min_lr = 5e-8
+size = 4
+min_lr = 1e-7
 lr_reduction=0.05
 lr_factor = 0.5
 nesterov = True
 loss_function = keras.losses.MeanAbsolutePercentageError()
-dropout = False
-dropout_rate = 0.1
-scaling_bool = True
 logarithm = True
-base10 = True
 shift = False
 label_normalization = True
 feature_normalization = True
@@ -70,6 +68,7 @@ new_model=True
 lr_patience = 1
 stopping_patience = 3
 repeat = 5
+
 
 
 #Menge mit bereits gesehen konfigurationen
@@ -102,36 +101,22 @@ for config in checked_configs:
 
     #Callbacks initialisieren
     #min delta initialiseren
-    #Fall dass msle benutzt werden soll behandeln, label normalization auf [-1,1] verhindern
-    actual_label_normalization = label_normalization
-    actual_hidden_activation = params["hidden_activation"]
-    if params["loss_fn"].name == "mean_absolute_error":
-        min_delta = 1e-5
-        label_normalization = actual_label_normalization
-        params["hidden_activation"] = actual_hidden_activation
-    elif params["loss_fn"].name == "mean_squared_error":
-        min_delta = 1e-6
-        label_normalization = actual_label_normalization
-        params["hidden_activation"] = actual_hidden_activation
-    elif params["loss_fn"].name == "mean_squared_logarithmic_error":
-        min_delta = 1e-7
-        label_normalization = False
-        params["hidden_activation"] = tf.nn.leaky_relu
-
-    reduce_lr = keras.callbacks.LearningRateScheduler(ml.class_scheduler(reduction=lr_reduction, min_lr=min_lr))
-    reduce_lr_on_plateau = keras.callbacks.ReduceLROnPlateau(monitor="loss", factor=lr_factor, patience=lr_patience, min_delta=min_delta, min_lr=min_lr)
-    early_stopping = keras.callbacks.EarlyStopping(monitor="loss", min_delta=1e-1 * min_delta, patience=stopping_patience)
+    reduce_lr = keras.callbacks.LearningRateScheduler(ml.class_scheduler(reduction=lr_reduction, min_lr=params["min_lr"]))
+    reduce_lr_on_plateau = keras.callbacks.ReduceLROnPlateau(monitor="loss", factor=lr_factor, patience=lr_patience, min_delta=params["min_delta"], min_lr=params["min_lr"])
+    early_stopping = keras.callbacks.EarlyStopping(monitor="loss", min_delta=1e-1 * params["min_delta"], patience=stopping_patience)
     callbacks = [reduce_lr_on_plateau, early_stopping, reduce_lr]
 
     # Daten einlsen
     # Daten einlesen:
     (training_data, train_features, train_labels, test_features, test_labels, transformer) = ml.data_handling(
-        data_path=data_path + data_name, label_name=label_name, scaling_bool=scaling_bool, logarithm=logarithm, base10=base10,
-        shift=shift, label_normalization=label_normalization, feature_rescaling=feature_rescaling,
+        data_path=data_path + data_name, label_name=label_name, scaling_bool=params["scaling_bool"], logarithm=logarithm, base10=params["base10"],
+        shift=shift, label_normalization=params["label_normalization"], feature_rescaling=feature_rescaling,
         train_frac=train_frac)
 
 
     #Create path to save model
+    if not vary_multiple_parameters:
+        names = {config[-1]}
     model_name = ml.construct_name(params, names_set=names)
     save_path = project_path + model_name
     print("Wir initialisieren Modell ", model_name)
@@ -156,8 +141,8 @@ for config in checked_configs:
         models.append(ml.initialize_model(nr_layers=params["units_nr_layers"][1], units=params["units_nr_layers"][0], loss_fn=params["loss_fn"], optimizer=params["optimizer"],
                                             hidden_activation=params["hidden_activation"], output_activation=output_activation,
                                             kernel_initializer=params["kernel_initializer"], bias_initializer=bias_initializer, l2_kernel=params["l2_kernel"],
-                                            learning_rate=params["learning_rate"], momentum=momentum, nesterov=nesterov,
-                                            l2_bias=l2_bias, dropout=dropout, dropout_rate=dropout_rate,
+                                            learning_rate=params["learning_rate"], momentum=params["momentum"], nesterov=nesterov,
+                                            l2_bias=params["l2_bias"], dropout=params["dropout"], dropout_rate=params["dropout_rate"],
                                             new_model=new_model, custom=custom, feature_normalization=feature_normalization))
     for i,model in enumerate(models):
     # Training starten
@@ -211,5 +196,6 @@ for config in checked_configs:
     )
     results_list_pd = results_list_pd.transpose()
     results_list_pd.to_csv(project_path + "results")
+
 
 

@@ -9,13 +9,14 @@ from matplotlib import cm
 import numpy as np
 import MC
 
+#Bis auf weiters output auskommentiert, da es nicht benutzt wird und auf taurus nicht läuft
+"""
 from tensorflow.python.ops import array_ops
 from tensorflow.python.ops import nn
 from tensorflow.python.framework import ops
 from tensorflow.python.keras import backend as K
 from tensorflow.python.keras.utils import control_flow_util
-
-import ml
+"""
 
 
 class Linear(keras.layers.Layer):
@@ -510,6 +511,9 @@ class label_transformation():
 
 
 #Dropout class stammt aus der tensorflow doku
+Dropout = LinearActiavtion
+#Bis auf weiters output auskommentiert, da es nicht benutzt wird und auf taurus nicht läuft
+"""
 class Dropout(keras.layers.Layer):
   def __init__(self, rate, name=None, noise_shape=None, seed=None, **kwargs):
     super(Dropout, self).__init__(**kwargs)
@@ -561,7 +565,7 @@ class Dropout(keras.layers.Layer):
 
   def get_regularization(self):
       return 0
-
+"""
 
 def data_handling(data_path, label_name, scaling_bool=False, logarithm=False, base10=False, shift=False,
                   label_normalization=False, feature_rescaling=False, train_frac=1 , validation_total=0, batch_size=64, return_pd=False,
@@ -651,7 +655,7 @@ def data_handling(data_path, label_name, scaling_bool=False, logarithm=False, ba
 
 def initialize_model(nr_layers=3, units=512, loss_fn=keras.losses.MeanAbsoluteError(),
                      optimizer=keras.optimizers.Adam, hidden_activation=tf.nn.leaky_relu,
-                     output_activation=ml.LinearActiavtion, kernel_initializer=keras.initializers.HeNormal,
+                     output_activation=LinearActiavtion, kernel_initializer=keras.initializers.HeNormal,
                      bias_initializer=keras.initializers.Zeros, l2_kernel=0, l2_bias=0,
                      dropout=False, dropout_rate=0, learning_rate=5e-3, momentum = 0,
                      nesterov=False, feature_normalization = False, new_model=True, custom=False,
@@ -743,6 +747,7 @@ def make_losses_plot(history):
     plt.yscale("log")
     plt.legend()
     plt.tight_layout()
+
 
 def save_config(new_model, save_path, model, learning_rate, training_epochs, batch_size, avg_total_Loss=0,
                 transformer=None, training_time=None, loss_fn=None, custom=False, feature_handling=None, min_delta=None, offset=None,
@@ -876,6 +881,7 @@ def create_param_configs(pools, size, vary_multiple_parameters=True):
                         config.append(value)
                     else:
                         config.append(pools[param][0])
+                config.append(param)
                 config = tuple(config)
                 checked_configs.append(config)
                 checked_configs = list(set(checked_configs))
@@ -885,7 +891,7 @@ def construct_name(config_as_dict, names_set):
     save_path = str()
     for param in config_as_dict:
         if param in names_set:
-            if type(config_as_dict[param]) in {np.float64, np.int64, float, int, str, np.str_, np.bool_}:
+            if type(config_as_dict[param]) in {np.float64, np.int64, float, int, str, np.str_, np.bool_, bool, tuple}:
                 save_path += str(param) + "_" + str(config_as_dict[param]) + "_"
             else:
                 try:
