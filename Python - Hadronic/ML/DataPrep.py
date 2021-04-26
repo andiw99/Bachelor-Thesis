@@ -29,21 +29,22 @@ def main():
     #Variablen
     e = 1.602e-19
     E = 6500 #Strahlenergie in GeV, im Vornherein festgelegt?
-    x_total = int(4000000) #Anzahl an x Werten
-    eta_total = int(4000000) # Anzahl an eta Werten
+    x_total = int(2000000) #Anzahl an x Werten
+    eta_total = int(2000000) # Anzahl an eta Werten
     x_lower_limit = 0
     x_upper_limit = 1
     eta_limit = 2.37
-    loguni_param=0.0002 #alt 0.01
-    stddev = 1.5
+    loguni_param=0.00005 #alt 0.01
+    stddev = 2
     xMin = PDF.xMin
     eta_constant = False
     x_Grid = False
-    cuts = False
+    cuts = True
     lfs = False
+    eta_gauss = True
     num_eta_values = 25
 
-    set_name = "MC4M_small_loguni/"
+    set_name = "MC2M_newgauss_tinyloguni_largestd/"
     root_name ="/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject"
     location = None #input("Welcher Rechner?")
     if location == "Taurus" or location == "taurus":
@@ -99,6 +100,10 @@ def main():
             x_2 = np.concatenate((x_2, x_2_Rand))
 
     else:
+        if eta_gauss:
+            while eta.size < eta_total:
+                eta = np.append(eta, stats.norm.rvs(scale=stddev, size=int(eta_total - eta.size)))
+                eta = eta[np.abs(eta) < eta_limit]
         eta_upper=np.array([])
         eta_lower = np.array([])
         while eta.size < eta_total:
@@ -107,8 +112,7 @@ def main():
             eta_lower = np.append(eta_lower, abs(stats.norm.rvs(scale=stddev , size = int((eta_total/2))- eta_lower.size)) - eta_limit)
             eta_lower = eta_lower[eta_lower <= 0]
             eta = np.append(eta_upper, eta_lower)
-        plt.hist(eta, rwidth=0.8)
-        plt.show()
+
 
 
     features = np.array([x_1, x_2, eta])
@@ -141,6 +145,9 @@ def main():
 
     diff_WQ = ml.calc_diff_WQ(PDF=PDF, quarks=quarks, x_1=features[:,0], x_2=features[:,1], eta=features[:,2], E=E)
 
+    #berechnen, wie viele punkte akzeptiert und wie viele gecuttet wurden:
+    acceptance_ratio = diff_WQ.size/x_total
+
     hadronic_diff_WQ_data = pd.DataFrame(
         {
             "x_1": features[:,0],
@@ -153,13 +160,18 @@ def main():
 
     config = pd.DataFrame(
         {
+            "x_total": x_total,
             "total_data": diff_WQ.size,
             "x_lower_limit": x_lower_limit,
             "x_upper_limit": x_upper_limit,
             "eta_limit": eta_limit,
             "loguni_param": loguni_param,
             "stddev": stddev,
-
+            "cuts": str(cuts),
+            "eta constant": eta_constant,
+            "x_Grid": x_Grid,
+            "acceptance_ratio": "{:.5f}".format(acceptance_ratio),
+            "eta_gauss": eta_gauss
         },
         index=[0]
     )

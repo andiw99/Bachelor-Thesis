@@ -8,17 +8,18 @@ import MC
 
 #Pfade eingeben
 paths = dict()
-model_path= "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Models/best_guess_4M"
+model_path= "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Models/transferred_model_2M_new_layer"
 #model_path= "/Files/Hadronic/Models/best_guess_4M"
 #more data to plot?
 #plotting_data = ...
 
 #Pfade in dict speichern
 paths["model"] = model_path
-paths["$\eta, x_1$ constant"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Data/CT14nnlo/eta_x_1_constant"
-paths["x constant"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Data/CT14nnlo/x_constant"
+paths["$\eta, x_1$ constant"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Data/NewPlottingData_MMHT2014/eta_x_1_constant"
+paths["$x_1, x_2$ constant"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Data/NewPlottingData_MMHT2014/x_constant"
+paths["$\eta, x_2$ constant"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Data/NewPlottingData_MMHT2014/eta_x_2_constant"
 save_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Plots/Meeting/"
-name = "best_guess_new_data_cut"
+name = "transferred_model_transfer_data"
 input("namen geändert?")
 save_path = save_path + name
 label_name = "WQ"
@@ -39,14 +40,13 @@ labels = dict()
 for dataset, path in paths.items():
     if dataset != "model":
         (_, features[dataset], labels[dataset], _, _, features_pd[dataset], labels_pd[dataset], _) =\
-            ml.data_handling(data_path=path, label_name=label_name, return_pd=True)
+            ml.data_handling(data_path=path, label_name=label_name, return_pd=True, label_cutoff=False)
 
 
 # Für jedes Dataset predictions und losses berechnen
 # predictions, losses:
 predictions = dict()
 losses = dict()
-print(features_pd)
 for dataset in features:
     if use_cut:
         features[dataset], cut = MC.cut(features=features[dataset], return_cut=True)
@@ -55,7 +55,7 @@ for dataset in features:
         labels_pd[dataset] = labels_pd[dataset][cut].reset_index(drop=True)
     predictions[dataset] = transformer.retransform(model(transformer.rescale(features[dataset])))
     losses[dataset] = loss_function(y_true=labels[dataset], y_pred=predictions[dataset])
-print(features_pd)
+
 
 #Jetzt plotten irgendwie
 for dataset in predictions:

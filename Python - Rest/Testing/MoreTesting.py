@@ -197,16 +197,17 @@ print(
 )
 
 """
-
-a = np.array([[1, 2, 3], [4, 5, 6]])
-b = np.array([[3], [4]])
-print(a)
-cut = a[:,0] + a[:,1] + a[:,2] > 8
-print(cut)
-a = a[cut]
-b = b[cut]
-print(a)
+a = "hallo"
+bool = True
+print(float(bool))
+b = a * False
 print(b)
 
-c = [4.123, 5.234]
-print("{:.2f}".format(c))
+for i in range(0):
+    print("hallo?")
+
+
+a = (1,2)
+print(type(a), *a)
+if type(a) == tuple:
+    print("hello")

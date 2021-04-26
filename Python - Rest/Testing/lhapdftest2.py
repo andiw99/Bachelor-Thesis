@@ -1,7 +1,7 @@
 import lhapdf as pdf
 import numpy as np
 
-PDF = pdf.mkPDF("CT14nnlo", 0)
+PDF = pdf.mkPDF("PlottingData_CT14nnlo", 0)
 quarks = {"quark": [1, 2, 3, 4],
           "charge": [-1/3,2/3, -1/3, 2/3]}
 print("xfxQ2:", PDF.xfxQ2(1, 0.5, 0.001))

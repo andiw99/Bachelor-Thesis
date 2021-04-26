@@ -1,0 +1,2 @@
+x_total,total_data,x_lower_limit,x_upper_limit,eta_limit,loguni_param,stddev,cuts,eta constant,x_Grid,acceptance_ratio,eta_gauss
+2000000,396895,0,1,2.37,0.0001,1.5,True,False,False,0.19845,True

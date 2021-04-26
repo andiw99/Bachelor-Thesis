@@ -12,7 +12,7 @@ show_3D_plots =False
 config ={'scaling': True, 'logarithm': False, 'shift': False, 'label_normalization': False, 'scale': 10903854514176.0}
 transformer = ml.label_transformation(config=config)
 loss_function=keras.losses.mean_absolute_percentage_error
-loss_fn=mean_squared_logarithmic_error
+loss_fn=loss_function
 #Daten einlesen
 hadronic_data_x_constant = pd.read_csv("/Files/Hadronic/Data/log_neg_x12/x_constant")
 hadronic_data_eta_x_2_constant = pd.read_csv("/Files/Hadronic/Data/log_neg_x12/eta_x_2_constant")
