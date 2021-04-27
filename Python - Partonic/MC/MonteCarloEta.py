@@ -11,7 +11,7 @@ def Func(x):
     return 2*x - np.tanh(x)
 
 #Model laden
-model = keras.models.load_model(filepath="/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Partonic/PartonicModels/PartonicEta/best_model")
+model = keras.models.load_model(filepath="/Files/Partonic/Models/PartonicEta/best_model")
 
 #Variablen
 N = 100000 #punkte

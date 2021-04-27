@@ -6,9 +6,9 @@ from matplotlib import pyplot as plt
 
 #Daten präparieren
 epsilon = 0.075
-total = 60000
-name = "TrainingData60k_ep_0.075_IS"
-importance_sampling = True
+total = 200000
+name = "TrainingData200k_ep_0.075_IS"
+importance_sampling = False
 offset = 0.4
 
 #daten random uniform

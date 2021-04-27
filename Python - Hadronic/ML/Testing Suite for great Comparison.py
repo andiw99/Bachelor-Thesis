@@ -16,6 +16,9 @@ def main():
     #Pfade eingeben
     testing_data_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Data/TransferTestData50k/all"
     project_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Models/comparisons"
+    save_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Plots/hadronic_comparisons/"
+
+    input("save_path geändert und an slash hinten gedacht?")
 
     directorys = dict()
     for comparison in os.listdir(project_path):
@@ -28,8 +31,10 @@ def main():
         #Für jede comparison muss es ein dict mit den models geben
         model_paths[comparison] = dict()
         models[comparison] = dict()
-        #model names laden
-        model_names = os.listdir(directorys[comparison])
+        #model names laden, nur die directorys
+        model_names = [name for name in os.listdir(directorys[comparison])
+                       if (os.path.isdir(os.path.join(directorys[comparison], name)))
+                        & (name != "best_model")]
         # pfade in dictionarys packen
         for model in model_names:
             model_paths[comparison][model] = directorys[comparison] + "/" + model
@@ -140,7 +145,7 @@ def main():
         fig, ax = plt.subplots()
         #rects1 = ax.bar(x-width/2, MSE_losses, width, yerr=0.01, label="MSE", color="orange")
         rects3 = ax.bar(x, avg_MAPE_losses[comparison], width/1.5, yerr=MAPE_errors[comparison],
-                         capsize=45, label="Avg")
+                         capsize=50/len(names), label="Avg")
         rects2 = ax.bar(x, MAPE_losses[comparison], width, label="Min", alpha=0.75)
 
         ax.set_title("Validation loss for different " + str(comparison))
@@ -153,6 +158,10 @@ def main():
         ax.set_xticklabels(names)
         fig.legend()
         fig.tight_layout()
+        if save_path:
+            if not os.path.exists(save_path):
+                os.mkdir(save_path)
+            plt.savefig(save_path + str(comparison) + "_comparison")
         plt.show()
 
 
