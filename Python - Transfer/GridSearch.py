@@ -40,11 +40,19 @@ names = {"loss_fn", "hidden_activation", "rm_layers", "add_layers", "units",
          "dataset", "batch_size", "learning_rate", "fine_tuning", "offset"}
 
 vary_multiple_parameters = True
+grid_search = True
 
 # Variablen...
 train_frac = 0.95 # TODO train_frac so einstellen, dass man immer die gleiche anzahl an validation daten hat
 validation_total = 15000
 size = 4
+if grid_search:
+    size = 1	
+    for param in pools:
+    	size *= len(pools[param])
+    size = np.minimum(100, size)    	
+    print("size:", size)
+   
 lr_reduction = 0.05
 lr_factor = 0.5
 nesterov = True
@@ -179,34 +187,12 @@ for config in checked_configs:
 
         # Überprüfen wie gut es war
         results = models[i].predict(test_features)
-        call_results = models[i](test_features)
-        print("call_results:", call_results)
-        print("test_features", test_features)
-        print("test_labels", test_labels)
-        print("predictions", results)
-        print("test_labels retransformed", transformer.retransform(test_labels))
-        print("predictions retransformed", transformer.retransform(results))
-        print("transformer_config:", transformer.get_config())
         loss = float(loss_function(y_pred=transformer.retransform(results),
                                    y_true=transformer.retransform(
                                        test_labels)))
         print("Loss von Durchgang Nummer ", i, " : ", loss)
         total_losses.append(loss)
-        #TODO das hier entfernen
-        print("model_get_config", models[i].get_config())
-        (config, index) = ml.save_config(new_model=True, save_path=save_path,
-                                         model=models[i],
-                                         learning_rate=params["learning_rate"],
-                                         training_epochs=training_epochs,
-                                         batch_size=params["batch_size"],
-                                         total_losses=total_losses,
-                                         transformer=transformer,
-                                         training_time=training_time,
-                                         loss_fn=params["loss_fn"],
-                                         min_delta=params["min_delta"],
-                                         offset=params["offset"],
-                                         fine_tuning=params["fine_tuning"],
-                                         source_model=params["source_model"], )
+
 
     # training_time und total loss mitteln:
     avg_total_loss = np.mean(total_losses)
@@ -220,7 +206,6 @@ for config in checked_configs:
     # Modell und config speichern
     model = models[np.argmin(total_losses)]
     model.save(filepath=save_path, save_format="tf")
-    print("model.get_config", model.get_config())
     (config, index) = ml.save_config(new_model=True, save_path=save_path,
                                      model=model,
                                      learning_rate=params["learning_rate"],

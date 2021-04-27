@@ -45,7 +45,7 @@ def main():
     pools["label_normalization"] = [True, False]
     pools["min_delta"] = [5e-6]
     pools["min_lr"] = [5e-8]
-    pools["dataset"] =["TrainingData60k_ep_0.01", "TrainingData60k_ep_0.075", "TrainingData_ep_0.075_IS", "TrainingData_ep_0.163"]
+    pools["dataset"] =["TrainingData60k_ep_0.01", "TrainingData60k_ep_0.075", "TrainingData60k_ep_0.075_IS", "TrainingData60k_ep_0.163", "TrainingData200k_ep_0.075"]
     #Festlegen, welche Hyperparameter in der Bezeichnung stehen sollen:
     names = {"loss_fn", "units", "nr_layers",
              "optimizer", "hidden_activation", "dataset",
@@ -57,7 +57,7 @@ def main():
     #Variablen...
     train_frac = 0.95
     training_epochs = 100
-    size = 4
+    size = 100
     min_lr = 1e-7
     lr_reduction=0.05
     lr_factor = 0.5
@@ -80,9 +80,6 @@ def main():
 
     #Menge mit bereits gesehen konfigurationen
     checked_configs = ml.create_param_configs(pools=pools, size=size, vary_multiple_parameters=vary_multiple_parameters)
-    print(checked_configs)
-    print(len(checked_configs))
-    exit()
     results_list = dict()
 
     for config in checked_configs:
@@ -91,7 +88,7 @@ def main():
         for i,param in enumerate(pools):
             params[param] = config[i]
 
-        data_path = root_path + "/Files/Partonic/PartonicData/" + params["dataset"] +  "/"
+        data_path = root_path + "Files/Partonic/PartonicData/" + params["dataset"] +  "/"
         data_name = "all"
         project_path = root_path + "Files/Partonic/Models/RandomSearchTheta/"
         loss_name = "best_loss"
@@ -145,7 +142,7 @@ def main():
         models = []
         for i in range(repeat):
             #Modell initialisieren
-            models.append(ml.initialize_model(nr_layers=params["units_nr_layers"][1], units=params["units_nr_layers"][0], loss_fn=params["loss_fn"], optimizer=params["optimizer"],
+            models.append(ml.initialize_model(nr_layers=params["nr_layers"], units=params["units"], loss_fn=params["loss_fn"], optimizer=params["optimizer"],
                                                 hidden_activation=params["hidden_activation"], output_activation=params["output_activation"],
                                                 kernel_initializer=params["kernel_initializer"], bias_initializer=params["bias_initializer"], l2_kernel=params["l2_kernel"],
                                                 learning_rate=params["learning_rate"], momentum=params["momentum"], nesterov=nesterov,
@@ -194,7 +191,7 @@ def main():
                           index=index, config=config, loss_name=loss_name)
 
         #Ergebnis im dict festhalten
-        results_list[model_name] = "{:.2f}".format(float(avg_total_loss))
+        results_list[model_name] = "{:.4f}".format(float(avg_total_loss))
 
         #Ergebnisse speichern
         results_list_pd = pd.DataFrame(
