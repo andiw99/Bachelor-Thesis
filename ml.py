@@ -738,16 +738,21 @@ def initialize_model(nr_layers=3, units=512, loss_fn=keras.losses.MeanAbsoluteEr
     return model
 
 def make_losses_plot(history):
+    fig, ax = plt.subplots()
     if not type(history) == keras.callbacks.History:
-        plt.plot(history, label="loss")
+        ax.plot(history, label="loss")
     else:
-        plt.plot(history.history["loss"], label="loss")
-    plt.ylabel("Losses")
-    plt.xlabel("Epoch")
-    plt.yscale("log")
-    plt.legend()
+        ax.plot(history.history["loss"], label="loss")
+    ax.set_ylabel("Losses")
+    ax.set_xlabel("Epoch")
+    ax.set_yscale("log")
+    ax.legend()
     plt.tight_layout()
+<<<<<<< HEAD
     plt.draw()
+=======
+    return fig, ax
+>>>>>>> 85a262cb48cde7a20062ff46c4b88653461dbcad
 
 
 def save_config(new_model, save_path, model, learning_rate, training_epochs, batch_size, avg_total_Loss=0,
@@ -824,6 +829,30 @@ def check_progress(model, transformer, test_features, test_labels, best_losses, 
         print("VERBESSERUNG ERREICHT!")
 
 
+def calc_reweight(PDF1, PDF2, quarks, x_1, x_2, E):
+    Q2 = 2 * x_1 * x_2 * (E ** 2)
+    for i, q in enumerate(quarks["quark"]):
+        if i == 0:
+            sum_PDF1 = ((quarks["charge"][q-1])**4) *  \
+                    ((np.maximum(0, np.array(PDF1.xfxQ2(q, x_1, Q2)) * np.array(PDF1.xfxQ2(-q, x_2, Q2))) + \
+                    np.maximum(0, np.array(PDF1.xfxQ2(-q, x_1, Q2)) * np.array(PDF1.xfxQ2(q, x_2, Q2)))) / (x_1 * x_2))
+
+            sum_PDF2 = ((quarks["charge"][q-1])**4) *  \
+                    ((np.maximum(0, np.array(PDF2.xfxQ2(q, x_1, Q2)) * np.array(PDF2.xfxQ2(-q, x_2, Q2))) + \
+                    np.maximum(0, np.array(PDF2.xfxQ2(-q, x_1, Q2)) * np.array(PDF2.xfxQ2(q, x_2, Q2)))) / (x_1 * x_2))
+        else:
+            sum_PDF1 += ((quarks["charge"][q-1])**4) *  \
+                    ((np.maximum(0, np.array(PDF1.xfxQ2(q, x_1, Q2)) * np.array(PDF1.xfxQ2(-q, x_2, Q2))) + \
+                    np.maximum(0, np.array(PDF1.xfxQ2(-q, x_1, Q2)) * np.array(PDF1.xfxQ2(q, x_2, Q2)))) / (x_1 * x_2))
+
+            sum_PDF2 += ((quarks["charge"][q-1])**4) *  \
+                    ((np.maximum(0, np.array(PDF2.xfxQ2(q, x_1, Q2)) * np.array(PDF2.xfxQ2(-q, x_2, Q2))) + \
+                    np.maximum(0, np.array(PDF2.xfxQ2(-q, x_1, Q2)) * np.array(PDF2.xfxQ2(q, x_2, Q2)))) / (x_1 * x_2))
+
+    reweight = sum_PDF1 / sum_PDF2
+
+    return reweight
+
 def calc_diff_WQ(PDF, quarks, x_1, x_2, eta, E):
     e = 0.30282212
     for i, q in enumerate(quarks["quark"]):
@@ -841,6 +870,7 @@ def calc_diff_WQ(PDF, quarks, x_1, x_2, eta, E):
     if diff_WQ.size == 1:
         diff_WQ = float(diff_WQ)
     return diff_WQ
+
 
 def import_model_transformer(model_path):
     model = keras.models.load_model(filepath=model_path)
@@ -893,7 +923,7 @@ def construct_name(config_as_dict, names_set):
     save_path = str()
     for param in config_as_dict:
         if param in names_set:
-            if type(config_as_dict[param]) in {np.float64, np.int64, float, int, str, np.str_, np.bool_, bool, tuple}:
+            if type(config_as_dict[param]) in {np.float64, np.int64, float, int, str, np.str_, np.bool_, bool, tuple, None}:
                 save_path += str(param) + "_" + str(config_as_dict[param]) + "_"
             else:
                 try:
@@ -986,8 +1016,8 @@ def plot_model(features_pd, labels, predictions, losses, keys, title, label_name
                 plot_features = np.array(features_pd[key])[order]
                 plot_predictions = np.array(predictions)[order]
                 plot_labels = np.array(labels)[order]
-                fig, (ax_fct, ax_ratio) = plt.subplots(nrows=2, ncols=1, sharex=True, figsize=(6.4, 9.6))
-                ax_fct.plot(plot_features, MC.gev_to_pb(plot_predictions), label="Predictions", linewidth=2.5, linestyle="dotted")
+                fig, (ax_fct, ax_ratio) = plt.subplots(nrows=2, ncols=1, sharex=True, gridspec_kw={"height_ratios": [3,1]}, figsize=(6.4, 7.2))
+                ax_fct.plot(plot_features, MC.gev_to_pb(plot_predictions), label="Predictions", linewidth=3, linestyle="dotted")
                 ax_fct.plot(plot_features, MC.gev_to_pb(plot_labels), label="Labels", linestyle="dashed")
                 s = "text fehlt"
                 if key == "x_1" or key == "x_2":
@@ -996,13 +1026,16 @@ def plot_model(features_pd, labels, predictions, losses, keys, title, label_name
                     s = (r"$x_1$ = " + "{:.2f}".format(features_pd["x_1"][0])) * (key != "x_1")\
                         + (r"$x_2$ = " + "{:.2f}".format(features_pd["x_2"][0])) * (key != "x_2")\
                         + "\n$\eta$ = " + "{:.2f}".format(features_pd["eta"][1])
-                if key == "eta":
+                elif key == "eta":
                     xlabel = "$\eta$"
                     s = r"$x_1$ = " + "{:.2f}".format(features_pd["x_1"][0]) + "\n$x_2$ = " + "{:.2f}".format(features_pd["x_2"][1])
+                elif key in {"theta", "Theta"}:
+                    xlabel = r"$\theta$"
                 if features_pd.shape[1] == 3:
                     ylabel = r"$\frac{d^3\sigma}{d x_1 d x_2 d \eta} / pb$"
                 else:
-                    if key == "theta":
+
+                    if key in {"theta", "Theta"}:
                         ylabel = r"$\frac{d \sigma}{d \theta}$"
                     if key == "eta":
                         ylabel = r"$\frac{d \sigma}{d \eta}$"
@@ -1019,6 +1052,8 @@ def plot_model(features_pd, labels, predictions, losses, keys, title, label_name
 
                 #Ratios plotten
                 ratios = plot_labels/plot_predictions
+                #stddev der ratios berechnen, für skala
+                ratios_std = np.std(ratios)
                 ax_ratio.plot(plot_features, ratios,
                         label="Ratio", linewidth=0, marker=".", markersize=3)
                 s = "text fehlt"
@@ -1035,10 +1070,14 @@ def plot_model(features_pd, labels, predictions, losses, keys, title, label_name
                     s = r"$x_1$ = " + "{:.2f}".format(features_pd["x_1"][
                                                           0]) + "\n$x_2$ = " + "{:.2f}".format(
                         features_pd["x_2"][1])
-                ax_ratio.yaxis.set_label_coords(-0.125,0.5)
+                ax_ratio.yaxis.set_label_coords(-0.125,0.45)
                 ax_ratio.grid(True)
                 ax_ratio.set_ylabel(r"$\omega$", loc="center", rotation=0)
-                ax_ratio.set_ylim(0.98, 1.02)
+                if ratios_std > 0.05:
+                    ax_ratio.set_yscale("log")
+                    ax_ratio.set_ylim(1-0.05, 1+0.05)
+                else:
+                    ax_ratio.set_ylim(np.mean(ratios)-4*ratios_std, np.mean(ratios) + 4*ratios_std)
                 ax_ratio.set_xlabel(xlabel)
                 """
                 ax_ratio.text(x=0.035, y=0.175, s=s,

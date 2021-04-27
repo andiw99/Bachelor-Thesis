@@ -7,7 +7,7 @@ import numpy as np
 show_3D_plots = True
 
 #Daten einlesen
-set_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Reweight/Data/Uniform+Strange+middlex/"
+set_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Reweight/Data/TrainingData200k_cut_x_08/"
 #x_2 constant
 data_x_2_constant = pd.read_csv( set_path + "x_2_constant")
 #x-constant beide x_1, x_2
@@ -45,7 +45,7 @@ if show_3D_plots:
     reweight = np.array(all["reweight"])
     print("min bei", np.min(reweight))
     print("max bei", np.max(reweight))
-    x_1 = all["x_1"]
+    x_1 = np.array(all["x_1"])
     x_2 = np.array(all["x_2"])
     #plot the surface
     surf = ax.plot_trisurf(x_2, x_1, reweight, cmap=cm.coolwarm,

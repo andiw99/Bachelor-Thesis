@@ -15,7 +15,7 @@ def func(x):
 def Func(x):
     return -x - 2 * (1/np.tan(x))
 #Model laden
-model_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Partonic/PartonicModels/PartonicTheta/best_model"
+model_path = "/Files/Partonic/Models/PartonicTheta/best_model"
 model = keras.models.load_model(filepath=model_path)
 config = pd.read_csv(model_path + "/config")
 config = config.transpose()

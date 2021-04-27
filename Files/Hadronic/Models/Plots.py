@@ -8,7 +8,7 @@ import MC
 
 #Pfade eingeben
 paths = dict()
-model_path= "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Models/transferred_model_2M_new_layer"
+model_path= "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Models/best_guess_4M"
 #model_path= "/Files/Hadronic/Models/best_guess_4M"
 #more data to plot?
 #plotting_data = ...
@@ -19,7 +19,7 @@ paths["$\eta, x_1$ constant"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbei
 paths["$x_1, x_2$ constant"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Data/NewPlottingData_MMHT2014/x_constant"
 paths["$\eta, x_2$ constant"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Data/NewPlottingData_MMHT2014/eta_x_2_constant"
 save_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Plots/Meeting/"
-name = "transferred_model_transfer_data"
+name = "not_transferred_model_transfer_data"
 input("namen geändert?")
 save_path = save_path + name
 label_name = "WQ"
@@ -53,7 +53,7 @@ for dataset in features:
         features_pd[dataset] = features_pd[dataset][cut].reset_index(drop=True)
         labels[dataset] = labels[dataset][cut]
         labels_pd[dataset] = labels_pd[dataset][cut].reset_index(drop=True)
-    predictions[dataset] = transformer.retransform(model(transformer.rescale(features[dataset])))
+    predictions[dataset] = transformer.retransform(model.predict(transformer.rescale(features[dataset])))
     losses[dataset] = loss_function(y_true=labels[dataset], y_pred=predictions[dataset])
 
 

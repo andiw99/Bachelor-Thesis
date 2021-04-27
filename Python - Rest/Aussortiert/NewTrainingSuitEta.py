@@ -14,7 +14,7 @@ time1 = time.time()
 #Daten einlesen
 data_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Partonic/PartonicData/"
 data_name = "diff_WQ_eta_data"
-project_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Partonic/PartonicModels/"
+project_path = "/Files/Partonic/Models/"
 loss_name = "partonic_loss_eta"
 project_name = "PartonicEta/"
 

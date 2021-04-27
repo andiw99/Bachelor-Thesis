@@ -39,7 +39,7 @@ print(config)
 config = config.transpose()
 print(config)
 transformer_config = ast.literal_eval(config["transformer_config"][0])
-transformer = ml.LabelTransformation(config=transformer_config)
+transformer = ml.label_transformation(config=transformer_config)
 loss_function = keras.losses.MeanAbsoluteError()
 
 #In Features und Labels unterteilen
@@ -54,27 +54,29 @@ for dataset in data:
     for i,feature in enumerate(features_pd[dataset]):
         if i == 0:
             features[dataset] = tf.constant([features_pd[dataset][feature]], dtype="float32")
+            print(features[dataset])
         else:
             more_features = tf.constant([features_pd[dataset][feature]], dtype="float32")
-            features[dataset] = tf.experimental.numpy.append(features[dataset], more_features, axis=0)
+            features[dataset] = np.concatenate((features[dataset], more_features), axis=0)
+            print(features[dataset])
     #transponieren
     features[dataset] = tf.transpose(features[dataset])
     labels[dataset] = tf.transpose(tf.constant([labels_pd[dataset]], dtype="float32"))
-
+    print(features[dataset])
 
 # Für jedes Dataset predictions und losses berechnen
 # predictions:
 predictions = dict()
 for dataset in features:
-    predictions[dataset] = transformer.retransform(model(features[dataset], training=False))
+    predictions[dataset] = transformer.retransform(model.predict(features[dataset]))
 
 #losses
 losses = dict()
 
 for dataset in predictions:
-    losses[dataset] = []
+    losses[dataset] = np.zeros(shape=len(labels[dataset]))
     for i,label in enumerate(predictions[dataset]):
-        losses[dataset].append(float(loss_function(y_true=labels[dataset][i], y_pred=label)))
+        losses[dataset][i] = (float(loss_function(y_true=labels[dataset][i], y_pred=label)))
 
 #Jetzt plotten irgendwie
 for dataset in predictions:

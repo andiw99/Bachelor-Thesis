@@ -9,7 +9,7 @@ def func(x):
 def Func(x):
     return -x - 2 * (1/np.tan(x))
 #Model laden
-model = keras.models.load_model(filepath="/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Partonic/PartonicModels/PartonicTheta/best_model")
+model = keras.models.load_model(filepath="/Files/Partonic/Models/PartonicTheta/best_model")
 
 #Variablen
 N = 10000 #punkte

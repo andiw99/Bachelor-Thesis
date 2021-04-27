@@ -211,8 +211,25 @@ a = (1,2)
 print(type(a), *a)
 if type(a) == tuple:
     print("hello")
+
+a = [1, 2, 3]
+b = np.array([1, 2, 3])
+
+a = a[a != 1]
+print(a)
+
+b= b[b != 1]
+print(b)
+c = None
+
+print(c, type(c))
+print(str(c), type(str(c)))
 """
-a = 1
-a *= 4
-a *= 5
+
+a = pd.DataFrame()
+a["hallo"] = ["test"]
+a["mello"] = ["wello"]
+print(a)
+
+a = a.transpose()
 print(a)
