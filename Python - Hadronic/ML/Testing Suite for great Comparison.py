@@ -1,3 +1,4 @@
+import ast
 from matplotlib import pyplot as plt
 import numpy as np
 from tensorflow import keras
@@ -16,7 +17,7 @@ def main():
     #Pfade eingeben
     testing_data_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Data/TransferTestData50k/all"
     project_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Models/comparisons"
-    save_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Plots/hadronic_comparisons/"
+    save_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Plots/hadronic_comparisons_test/"
 
     input("save_path geändert und an slash hinten gedacht?")
 
@@ -57,6 +58,7 @@ def main():
     MSE = dict()
     MAPE = dict()
     avg_MAPE = dict()
+    all_MAPE = dict()
     MAPE_error = dict()
     if from_config:
         configs = dict()
@@ -65,11 +67,14 @@ def main():
             MAPE[comparison] = dict()
             avg_MAPE[comparison] = dict()
             MAPE_error[comparison] = dict()
+            all_MAPE[comparison] = dict()
             for model in config_paths[comparison]:
                 configs[comparison][model] = pd.read_csv(config_paths[comparison][model], index_col="property").transpose()
                 MAPE[comparison][model] = float(configs[comparison][model]["smallest loss"][0])
                 MAPE_error[comparison][model] = float(configs[comparison][model]["loss error"][0])
                 avg_MAPE[comparison][model] = float(configs[comparison][model]["avg validation loss"][0])
+                all_MAPE[comparison][model] = tuple(ast.literal_eval(configs[comparison][model]["total_losses"][0]))
+
                 #MSE[comparison][model] = 0.1
 
 
@@ -127,41 +132,28 @@ def main():
     MAPE_losses = dict()
     MAPE_errors = dict()
     avg_MAPE_losses = dict()
+    all_MAPE_losses = dict()
     for comparison in model_paths:
+        # TODO prints entfernen wenn alles läuft
         print(MAPE_error[comparison])
         names = list(model_paths[comparison].keys())
         #MSE_losses = list(MSE.values())
         MAPE_losses[comparison] = list(MAPE[comparison].values())
-        MAPE_errors[comparison] = list(MAPE_error[comparison].values())
+        MAPE_errors[comparison] = list(MAPE_error[comparison].values()) # TODO errors mit 1/N-1 statt 1/N
         avg_MAPE_losses[comparison] = list(avg_MAPE[comparison].values())
+        all_MAPE_losses[comparison] = list(all_MAPE[comparison].values())
         print(MAPE_losses[comparison])
         print(MAPE_errors[comparison])
         print(type(MAPE_losses[comparison][0]))
         print(type(MAPE_errors[comparison][0]))
+        print(all_MAPE[comparison])
+        print(all_MAPE_losses)
+        print(names)
 
-        x = np.arange(len(names))
-        width = 0.7
+        ml.make_comparison_plot(names=names, losses=MAPE_losses[comparison], all_losses=all_MAPE_losses[comparison],
+                                avg_losses=avg_MAPE_losses[comparison], losses_errors=MAPE_errors[comparison], save_path=save_path,
+                                comparison=comparison)
 
-        fig, ax = plt.subplots()
-        #rects1 = ax.bar(x-width/2, MSE_losses, width, yerr=0.01, label="MSE", color="orange")
-        rects3 = ax.bar(x, avg_MAPE_losses[comparison], width/1.5, yerr=MAPE_errors[comparison],
-                         capsize=50/len(names), label="Avg")
-        rects2 = ax.bar(x, MAPE_losses[comparison], width, label="Min", alpha=0.75)
-
-        ax.set_title("Validation loss for different " + str(comparison))
-        ax.set_ylabel("MAPE")
-        ax.set_axisbelow(True)
-        ax.yaxis.grid(True, color="lightgray")
-        #ax.xaxis.grid(True, color="gray")
-        ax.set_xticks(x)
-        ax.set_xticks(x)
-        ax.set_xticklabels(names)
-        fig.legend()
-        fig.tight_layout()
-        if save_path:
-            if not os.path.exists(save_path):
-                os.mkdir(save_path)
-            plt.savefig(save_path + str(comparison) + "_comparison")
         plt.show()
 
 

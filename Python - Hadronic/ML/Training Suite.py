@@ -30,13 +30,13 @@ def main():
 
     time1 = time.time()
     #Daten einlesen
-    data_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Data/TransferData2M/"
+    data_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Data/TrainingData8M/"
     data_name = "all"
     project_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Models/"
     loss_name = "Source_loss"
     project_name = ""
 
-    read_name = "transferred_model_2M_new_layer__" #"best_guess_important_range" #
+    read_name = "hadronic_model" #"best_guess_important_range" #
     label_name = "WQ"
     read_path =project_path + project_name + read_name
     transferred_transformer = None
@@ -60,18 +60,19 @@ def main():
     #Variablen...
     train_frac = 0.95
     batch_size = 512
-    training_epochs = 3
+    training_epochs = 40
     repeat=2
-    nr_layers = 6
-    units = 64
-    learning_rate = 5e-3
+    nr_layers = 3
+    units = 512
+    learning_rate = 2e-3
     if not any([new_model, transfer, freeze]):
         learning_rate = 5e-6
         print("learning_rate für fine tuning reduziert!")
     rm_layers = 1
     loss_fn = keras.losses.MeanAbsoluteError()
-    optimizer = tf.keras.optimizers.Adam
-    hidden_activation = tf.nn.leaky_relu
+    optimizer = keras.optimizers.Adam(learning_rate=learning_rate, clipvalue=2)
+    print("optimizer")
+    hidden_activation = tf.nn.relu
     output_activation = ml.LinearActiavtion()
     kernel_initializer = tf.keras.initializers.HeNormal()
     bias_initializer = tf.keras.initializers.Zeros()
@@ -88,7 +89,7 @@ def main():
     base10 = True
     shift = False
     label_normalization = True
-    feature_normalization = True
+    feature_normalization = False
     feature_rescaling= False
 
     #ggf Losses einlesen
@@ -104,8 +105,6 @@ def main():
 
     #Loss für validation loss festlegen
     loss_function = keras.losses.MeanAbsolutePercentageError()
-    loss_function_name = loss_function.name
-    loss_fn_name = loss_fn.name
 
     #Verzeichnis erstellen
     if not os.path.exists(path=save_path):
@@ -142,15 +141,6 @@ def main():
         time4 = time.time()
         history = model.fit(x=train_features, y=train_labels, batch_size=batch_size, epochs=training_epochs, verbose=2,
                             callbacks=callbacks, shuffle=True)
-        print(history, type(history))
-        print(history.history, type(history.history))
-        print(history.history["loss"], type(history.history["loss"]))
-        if type(history) == keras.callbacks.History:
-            print("ich bins")
-        history2 = history
-        history += history2
-        print(history)
-        exit()
         time5 = time.time()
         training_time += time5 - time4
 
@@ -161,7 +151,7 @@ def main():
         print("total loss von Durchgang Nr. ", i, ":", float(loss))
 
         #Losses plotten
-        ml.make_losses_plot(history=history, custom=custom, new_model=new_model)
+        ml.make_losses_plot(history=history)
         plt.savefig(save_path + "/training_losses")
         plt.show()
 

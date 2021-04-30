@@ -226,10 +226,9 @@ print(c, type(c))
 print(str(c), type(str(c)))
 """
 
-a = pd.DataFrame()
-a["hallo"] = ["test"]
-a["mello"] = ["wello"]
-print(a)
 
-a = a.transpose()
-print(a)
+
+y = [(1, 1, 2, 3), (1, 1, 2, 4)]
+x = [1, 2]
+py.plot(x, y)
+plot.show()

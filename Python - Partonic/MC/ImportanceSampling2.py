@@ -54,6 +54,12 @@ def main():
 
     #totalen WQ berechnen, integration über theta und über phi (*2pi)
     diff_WQ_theta = MC.diff_WQ_theta(s=40000, q=1/3)
+    #plot
+    plt.plot(np.linspace(start=epsilon, stop=np.pi - epsilon, num=200), MC.gev_to_pb(diff_WQ_theta(np.linspace(start=epsilon, stop=np.pi-epsilon, num=200))))
+    plt.xlabel(r"$\theta$")
+    plt.ylabel(r"$\frac{d\sigma}{d\theta}$")
+    plt.show()
+
     sigma_total = integrate.quad(diff_WQ_theta, a=epsilon, b=np.pi-epsilon)[0]
     sigma_total_mc =  np.mean(diff_WQ_theta(custom_samples)/custom_dist(custom_samples))
     print("sigma total in GeV:", sigma_total, "sigma total in pb:", 1/2 * MC.gev_to_pb(sigma_total))

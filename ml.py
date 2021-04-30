@@ -8,6 +8,7 @@ from matplotlib import pyplot as plt
 from matplotlib import cm
 import numpy as np
 import MC
+import os
 
 #Bis auf weiters output auskommentiert, da es nicht benutzt wird und auf taurus nicht läuft
 """
@@ -734,7 +735,7 @@ def initialize_model(nr_layers=3, units=512, loss_fn=keras.losses.MeanAbsoluteEr
             print(model.summary())
     #optimizer instanz erstellen
     optimizer = construct_optimizer(optimizer=optimizer, learning_rate=learning_rate, momentum=momentum, nesterov=nesterov)
-    model.compile(optimizer=optimizer, loss=loss_fn, metrics = metrics)
+    model.compile(optimizer=optimizer, loss=loss_fn, metrics=metrics)
     return model
 
 def make_losses_plot(history):
@@ -755,7 +756,7 @@ def make_losses_plot(history):
 def save_config(new_model, save_path, model, learning_rate, training_epochs, batch_size, avg_total_Loss=0,
                 transformer=None, training_time=None, loss_fn=None, custom=False, feature_handling=None, min_delta=None, offset=None,
                 nr_hidden_layers=None, lr_reduction=None, lr_factor=None, total_losses=[], smallest_loss=0.0,
-                loss_error=0.0, read_path=None, fine_tuning=None, source_model=None):
+                loss_error=0.0, read_path=None, fine_tuning=None, source_model=None, units=None):
     if new_model:
         config = pd.DataFrame([model.get_config()])
         training_parameters = pd.DataFrame(
@@ -774,6 +775,7 @@ def save_config(new_model, save_path, model, learning_rate, training_epochs, bat
                 "feature_rescaling": [feature_handling],
                 "min_delta": [min_delta],
                 "nr_hidden_layers": [nr_hidden_layers],
+                "units": [units],
                 "lr_reduction": [lr_reduction],
                 "lr_factor": [lr_factor],
                 "fine_tuning": [fine_tuning],
@@ -937,16 +939,19 @@ def construct_name(config_as_dict, names_set):
     return save_path
 
 def construct_optimizer(optimizer, learning_rate=None, momentum=None, nesterov=None):
-    try:
-        optimizer = optimizer(learning_rate=learning_rate, momentum=momentum, nesterov=nesterov, clipvalue=2)
-    except:
+    if optimizer == str:
+        optimizer = keras.optimizers.get({"class_name": optimizer, "config": {"lr": learning_rate}})
+    else:
         try:
-            optimizer = optimizer(learning_rate=learning_rate, momentum=momentum)
+            optimizer = optimizer(learning_rate=learning_rate, momentum=momentum, nesterov=nesterov, clipvalue=2)
         except:
             try:
-                optimizer = optimizer(learning_rate=learning_rate, clipvalue=2)
+                optimizer = optimizer(learning_rate=learning_rate, momentum=momentum)
             except:
-                optimizer = optimizer
+                try:
+                    optimizer = optimizer(learning_rate=learning_rate, clipvalue=2)
+                except:
+                    optimizer = optimizer
     return optimizer
 
 def load_model_and_transormer(model_path):
@@ -970,7 +975,10 @@ def get_varying_value(features_pd):
             keys.append(key)
     return keys
 
-def plot_model(features_pd, labels, predictions, losses, keys, title, label_name, save_path = None, plot_losses=False):
+def plot_model(features_pd, labels, predictions,  keys, save_path=None, losses=None, plot_losses=False, trans_to_pb = True):
+    colors = ["C0", "C2", "C9", "C6", "deeppink"]
+    linestyles = ["solid", "dashdot", "dashed", "dashdot"]
+    facecolors = ["C0", "None", "None", "None"]
     if len(keys) == 2:
         fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
         # plot the surface
@@ -1009,50 +1017,74 @@ def plot_model(features_pd, labels, predictions, losses, keys, title, label_name
             value = features_pd[key][0]
             if not all(values == value for values in features_pd[key]):
                 # Fkt plotten
-                order = np.argsort(features_pd[key], axis=0)
+                order = np.argsort(np.array(features_pd[key]), axis=0)
+                print(order)
+                print(features_pd[key])
+                print(predictions)
                 plot_features = np.array(features_pd[key])[order]
-                plot_predictions = np.array(predictions)[order]
+                plot_predictions = dict()
+                for model_name in predictions:
+                    print(predictions[model_name])
+                    plot_predictions[model_name] = np.array(predictions[model_name])[order]
+                    if trans_to_pb:
+                        plot_predictions[model_name] = MC.gev_to_pb(plot_predictions[model_name])
                 plot_labels = np.array(labels)[order]
+                if trans_to_pb:
+                    plot_labels = MC.gev_to_pb(plot_labels)
                 fig, (ax_fct, ax_ratio) = plt.subplots(nrows=2, ncols=1, sharex=True, gridspec_kw={"height_ratios": [3,1]}, figsize=(6.4, 7.2))
-                ax_fct.plot(plot_features, MC.gev_to_pb(plot_predictions), label="Predictions", linewidth=3, linestyle="dotted")
-                ax_fct.plot(plot_features, MC.gev_to_pb(plot_labels), label="Labels", linestyle="dashed")
-                s = "text fehlt"
-                if key == "x_1" or key == "x_2":
-                    ax_fct.set_yscale("log")
-                    xlabel = "$" + key + "$"
-                    s = (r"$x_1$ = " + "{:.2f}".format(features_pd["x_1"][0])) * (key != "x_1")\
-                        + (r"$x_2$ = " + "{:.2f}".format(features_pd["x_2"][0])) * (key != "x_2")\
-                        + "\n$\eta$ = " + "{:.2f}".format(features_pd["eta"][1])
-                elif key == "eta":
-                    xlabel = "$\eta$"
-                    s = r"$x_1$ = " + "{:.2f}".format(features_pd["x_1"][0]) + "\n$x_2$ = " + "{:.2f}".format(features_pd["x_2"][1])
-                elif key in {"theta", "Theta"}:
-                    xlabel = r"$\theta$"
+                ax_fct.plot(plot_features, plot_labels, label="Analytic", linestyle="dashed", color="C1")
+                for i,model_name in enumerate(plot_predictions):
+                    ax_fct.plot(plot_features, plot_predictions[model_name], label=model_name, linewidth=2, color=colors[i], linestyle=linestyles[i])
+                s = ""
                 if features_pd.shape[1] == 3:
-                    ylabel = r"$\frac{d^3\sigma}{d x_1 d x_2 d \eta} / pb$"
+                    ylabel = r"$\frac{d^3\sigma}{d x_1 d x_2 d \eta} [pb]$"
+                    if key == "x_1" or key == "x_2":
+                        ax_fct.set_yscale("log")
+                        xlabel = "$" + key + "$"
+                        s = (r"$x_1$ = " + "{:.2f}".format(features_pd["x_1"][0])) * (key != "x_1")\
+                            + (r"$x_2$ = " + "{:.2f}".format(features_pd["x_2"][0])) * (key != "x_2")\
+                            + "\n$\eta$ = " + "{:.2f}".format(features_pd["eta"][1])
+                    elif key == "eta":
+                        xlabel = "$\eta$"
+                        s = r"$x_1$ = " + "{:.2f}".format(features_pd["x_1"][0]) + "\n$x_2$ = " + "{:.2f}".format(features_pd["x_2"][1])
+                    elif key in {"theta", "Theta"}:
+                        xlabel = r"$\theta$"
                 else:
-
                     if key in {"theta", "Theta"}:
-                        ylabel = r"$\frac{d \sigma}{d \theta}$"
+                        ylabel = r"$\frac{d \sigma}{d \theta}[pb]$"
+                        xlabel = r"$\theta$"
+                        pi_ticks = np.array([0, np.pi/4, np.pi/2, 3*np.pi/4, np.pi])
+                        pi_names = np.array(["0", r"$\frac{1}{4} \pi$", r"$\frac{1}{2} \pi$", r"$\frac{3}{4} \pi$", r"$\pi$"])
+                        ax_fct.set_xticks(pi_ticks)
+                        ax_fct.set_xticklabels(pi_names, fontdict={'fontsize': 20})
                     if key == "eta":
-                        ylabel = r"$\frac{d \sigma}{d \eta}$"
+                        ylabel = r"$\frac{d \sigma}{d \eta}[pb]$"
                 ax_fct.grid(True)
-                ax_fct.set_ylabel(ylabel, loc="center")
+                ax_fct.set_ylabel(ylabel, loc="center", fontsize=15)
                 #ax_fct.set_xlabel(xlabel)
-                ax_fct.text(x=0.035, y=0.175, s=s, bbox=dict(boxstyle="round", facecolor="white", alpha=1, edgecolor="gainsboro"), transform=ax_fct.transAxes)
-                ax_fct.set_title(title)
-                ax_fct.legend(loc=(0.025, 0.025))
+                print(np.ptp(plot_labels))
+                print(np.min(plot_labels))
+                print(np.max(plot_labels))
+                ax_fct.set_ylim((np.min(plot_labels)-0.05 * np.ptp(plot_labels), np.max(plot_labels) * 1.1)) # ylim so setzen dass Legende hereinpasst
+                ax_fct.text(x=0.6, y=0.92, s=s, bbox=dict(boxstyle="round", facecolor="white", alpha=1, edgecolor="gainsboro"), transform=ax_fct.transAxes)
+                ax_fct.legend(loc=(0.75, 0.89))
+                # TODO plots checken ob das so passt mit der legendenpostion
                 plt.tight_layout()
-                if save_path:
-                    plt.savefig(save_path + "_" + str(key))
                 #plt.show()
 
                 #Ratios plotten
-                ratios = plot_labels/plot_predictions
-                #stddev der ratios berechnen, für skala
-                ratios_std = np.std(ratios)
-                ax_ratio.plot(plot_features, ratios,
-                        label="Ratio", linewidth=0, marker=".", markersize=3)
+                ratios = dict()
+                ratios_std = dict()
+                for model_name in plot_predictions:
+                    ratios[model_name] = plot_labels/plot_predictions[model_name]
+                    #stddev der ratios berechnen, für skala
+                    ratios_std[model_name] = np.std(ratios[model_name])
+                print(ratios_std, np.array([*ratios_std.values()]))
+                ratios_std = np.max(np.array([*ratios_std.values()]))
+                print(ratios_std)
+
+                for i,model_name in enumerate(ratios):
+                    ax_ratio.scatter(plot_features, ratios[model_name], marker=".", s=20, linewidths=0.15, facecolors=facecolors[i], edgecolors=colors[i])
                 s = "text fehlt"
                 if key == "x_1" or key == "x_2":
                     xlabel = "$" + key + "$"
@@ -1064,27 +1096,35 @@ def plot_model(features_pd, labels, predictions, losses, keys, title, label_name
                         features_pd["eta"][1])
                 if key == "eta":
                     xlabel = "$\eta$"
-                    s = r"$x_1$ = " + "{:.2f}".format(features_pd["x_1"][
-                                                          0]) + "\n$x_2$ = " + "{:.2f}".format(
-                        features_pd["x_2"][1])
-                ax_ratio.yaxis.set_label_coords(-0.125,0.45)
+                    if features_pd.shape[1] == 3:
+                        s = r"$x_1$ = " + \
+                            "{:.2f}".format(features_pd["x_1"][0]) + "\n$x_2$ = " + \
+                            "{:.2f}".format(features_pd["x_2"][1])
+                ax_ratio.yaxis.set_label_coords(-0.125,0.5)
                 ax_ratio.grid(True)
-                ax_ratio.set_ylabel(r"$\omega$", loc="center", rotation=0)
+                ax_ratio.set_ylabel(r"ratio", loc="center", rotation=90, fontsize=15)
                 if ratios_std > 0.05:
                     ax_ratio.set_yscale("log")
                     ax_ratio.set_ylim(1-0.05, 1+0.05)
+                    ax_ratio.set_yticks(np.array([0.96, 0.98, 1.00, 1.02, 1.04]))
+                    ax_ratio.set_yticklabels(np.array([0.960, 0.980, 1.000, 1.020, 1.040]))
                 else:
-                    ax_ratio.set_ylim(np.mean(ratios)-4*ratios_std, np.mean(ratios) + 4*ratios_std)
-                ax_ratio.set_xlabel(xlabel)
+                    try:
+                        ax_ratio.set_ylim(np.mean(ratios)-4*ratios_std, np.mean(ratios) + 4*ratios_std)
+                    except:
+                        ax_ratio.set_ylim(1 - 4 * ratios_std,
+                                          1 + 4 * ratios_std)
+                ax_ratio.set_xlabel(xlabel, fontsize=15)
                 """
                 ax_ratio.text(x=0.035, y=0.175, s=s,
                         bbox=dict(boxstyle="round", facecolor="white", alpha=1,
                                   edgecolor="gainsboro"),
                         transform=ax_ratio.transAxes)                
                 """
-                plt.legend(loc=(0.025, 0.025))
                 plt.tight_layout()
                 if save_path:
+                    if not os.path.exists(save_path):
+                        os.makedirs(save_path)
                     plt.savefig(save_path + "_" + str(key) + "_ratio")
                 plt.show()
 
@@ -1095,7 +1135,6 @@ def plot_model(features_pd, labels, predictions, losses, keys, title, label_name
                     plt.ylabel("Loss")
                     plt.xlabel(str(key))
                     plt.yscale("Log")
-                    plt.title(title)
                     if save_path:
                         plt.savefig(save_path + "_" + str(key) + "_loss")
                     plt.show()
@@ -1105,6 +1144,64 @@ def scheduler(epoch, learning_rate, reduction = 0.1):
         return learning_rate
     else:
         return learning_rate * (1-reduction)
+
+
+def make_comparison_plot(names, losses, all_losses, avg_losses=None, losses_errors=None, save_path=None, comparison=None):
+    x = list(np.arange(len(names)))
+    print(x, len(x))
+    print(all_losses, len(x))
+
+    fig, ax = plt.subplots(figsize=(len(x) * 1.5, 4.8))
+    for xe, ye in zip(x, all_losses):
+        ax.scatter([xe] * len(ye), ye, marker=".", facecolors="None", edgecolors="C0")  # alle punkte plotten
+    ax.scatter(x, losses, marker="o", color="orange", label="Min")  # niedrigster punkt hervorheben
+    ax.errorbar(x, avg_losses, yerr=losses_errors,
+                linewidth=0, elinewidth=1, color="C0",
+                capsize=30 /np.sqrt(len(x)))  # errobars zeigen
+
+    ax.set_ylabel("MAPE")
+    ax.set_axisbelow(True)
+    ax.yaxis.grid(True, color="lightgray")
+    ax.set_xlim(x[0]-0.5, x[-1]+0.5)
+    ax.set_xticks(x)
+    ax.set_xticklabels(names)
+    ax.set_xlabel(comparison)
+    fig.legend()
+    fig.tight_layout()
+    if save_path:
+        if not os.path.exists(save_path):
+            os.mkdir(save_path)
+        plt.savefig(save_path + str(comparison) + "_comparison")
+
+
+def make_MC_plot(x, analytic_integral, ml_integral, xlabel=None, ylabel=None, save_path=None, name="", analytic_errors=None, ml_errors=None, scale="linear"):
+    fig, (ax, ax_ratio) = plt.subplots(nrows=2, ncols=1, sharex=True, gridspec_kw={"height_ratios": [3,1], "hspace": 0.05}, figsize=(6.4, 7.2))
+    # Integration plotten
+    ax.step(x=x, y=analytic_integral,
+                label="analytic", where="mid")
+    ax.step(x=x, y=ml_integral, label="ML", where="mid", linestyle="dashed")
+    if analytic_errors is not None:
+        ax.errorbar(x=x, y=analytic_integral, yerr=analytic_errors, linewidth=0, elinewidth=2, capsize=100/len(x), ecolor="C0")
+    if ml_errors is not None:
+        ax.errorbar(x=x, y=ml_integral, yerr=ml_errors, linewidth=0, elinewidth=2, capsize=100/len(x), ecolor="orange")
+
+    ax.set_ylabel(ylabel)
+    ax.set_yscale(scale)
+    ax.grid(True, color="lightgray")
+    ax.legend()
+    # ratio plotten
+    ratio = analytic_integral/ml_integral
+    ax_ratio.step(x=x, y=ratio, where="mid")
+    ax_ratio.set_ylabel("ratio")
+    ax_ratio.set_ylim(1-0.05, 1+0.05)
+    ax_ratio.grid(True, color="lightgray")
+    ax_ratio.set_xlabel(xlabel)
+    plt.tight_layout()
+    if save_path:
+        if not os.path.exists(save_path):
+            os.mkdir(save_path)
+        plt.savefig(save_path + name + "mc")
+
 
 class class_scheduler():
     def __init__(self, reduction, offset=10, min_lr=0):
