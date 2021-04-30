@@ -61,11 +61,8 @@ def main():
     lr_factor = 0.5
     nesterov = True
     loss_function = keras.losses.MeanAbsolutePercentageError()
-    logarithm = True
     shift = False
-    label_normalization = True
-    feature_normalization = True
-    feature_rescaling = False
+
 
     custom = False
     new_model = True
@@ -86,17 +83,16 @@ def main():
         for i,param in enumerate(pools):
             params[param] = config[i]
 
-        data_path = root_path + "/Files/Reweight/Data/" + params["dataset"] +  "/"
+        data_path = root_path + "Files/Reweight/Data/" + params["dataset"] +  "/"
         data_name = "all"
-        project_path = root_path + "Files/Reweight/Models/RandomSearch/"
+        project_path = root_path + "Files/Reweight/Models/RandomSearch_logartihm_false/"
         loss_name = "best_loss"
         project_name = ""
 
         label_name = "reweight"
-
-        if params["feature_normalization"] == "rescaling":
-            feature_rescaling = True
-        elif params["feature_normalization"] == "normalization":
+        
+        feature_normalization = None
+        if params["feature_normalization"] == "normalization":
             feature_normalization = True
 
         #training_epochs = int(1/200 * params["batch_size"]) + 10
@@ -111,8 +107,8 @@ def main():
         # Daten einlsen
         # Daten einlesen:
         (training_data, train_features, train_labels, test_features, test_labels, transformer) = ml.data_handling(
-            data_path=data_path + data_name, label_name=label_name, scaling_bool=params["scaling_bool"], logarithm=logarithm, base10=params["base10"],
-            shift=shift, label_normalization=params["label_normalization"], feature_rescaling=feature_rescaling,
+            data_path=data_path + data_name, label_name=label_name, scaling_bool=params["scaling_bool"], logarithm=params["logarithm"], base10=params["base10"],
+            shift=shift, label_normalization=params["label_normalization"],
             train_frac=train_frac)
 
 
@@ -166,9 +162,9 @@ def main():
             total_losses.append(loss)
 
         #training_time und total loss mitteln:
-        avg_total_loss = total_losses[np.argmin(total_losses)]
+        avg_total_loss = np.mean(total_losses)
         smallest_loss = np.min(total_losses)
-        loss_error = np.std(total_losses)
+        loss_error = np.std(total_losses, ddof=1)
         training_time = 1 / repeat * training_time
         print("Losses of the specific cycle:", total_losses)
         print("average Loss over ", repeat, "cycles:", np.mean(total_losses))

@@ -748,11 +748,8 @@ def make_losses_plot(history):
     ax.set_yscale("log")
     ax.legend()
     plt.tight_layout()
-<<<<<<< HEAD
-    plt.draw()
-=======
     return fig, ax
->>>>>>> 85a262cb48cde7a20062ff46c4b88653461dbcad
+
 
 
 def save_config(new_model, save_path, model, learning_rate, training_epochs, batch_size, avg_total_Loss=0,
