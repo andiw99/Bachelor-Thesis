@@ -7,25 +7,30 @@ import ml
 import MC
 
 #Pfade eingeben
-paths = dict()
-model_path= "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Partonic/Models/PartonicTheta/RandomSearchTheta/batch_size_128_units_64_nr_layers_4_learning_rate_0.005_mean_absolute_error_RMSprop_leaky_relu_logarithm_True_scaling_bool_True_base10_True_label_normalization_True_dataset_TrainingData60k_ep_0.01_"
+model_paths = dict()
+model_paths["best model"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Partonic/Models/PartonicTheta/RandomSearchTheta/best_model"
+model_paths["importance sampling"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Partonic/Models/PartonicTheta/theta_model_full_range_IS"
+model_paths["full range"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Partonic/Models/PartonicTheta/RandomSearchTheta/batch_size_128_units_64_nr_layers_3_learning_rate_0.005_mean_absolute_error_RMSprop_leaky_relu_logarithm_True_scaling_bool_True_base10_False_label_normalization_False_dataset_TrainingData60k_ep_0.01_"
 #model_path= "/Files/Hadronic/Models/best_guess_4M"
 #more data to plot?
 #plotting_data = ...
 
 #Pfade in dict speichern
-paths["model"] = model_path
-paths["$\eta, x_1$ constant"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Partonic/PartonicData/TrainingData60k_ep_0.01/all"
+paths = dict()
+paths["$\eta, x_1$ constant"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Partonic/PartonicData/PlottingData5k_ep_0.01/all"
 save_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Plots/"
-name = "partonic_theta_best_001_mdoel_grid_search"
+name = "multiple_models_test"
 input("namen geändert?")
 save_path = save_path + name
 label_name = "WQ"
+trans_to_pb = True
 
 #Daten einlesen
 # Modell und transformer laden
-(model, transformer) = ml.load_model_and_transormer(model_path=model_path)
-
+models = dict()
+transformers = dict()
+for model_name in model_paths:
+    (models[model_name], transformers[model_name]) = ml.load_model_and_transormer(model_path=model_paths[model_name])
 show_3D_plots = False
 use_cut = False
 loss_function = keras.losses.MeanAbsoluteError(reduction=keras.losses.Reduction.NONE)
@@ -51,13 +56,17 @@ for dataset in features:
         features_pd[dataset] = features_pd[dataset][cut].reset_index(drop=True)
         labels[dataset] = labels[dataset][cut]
         labels_pd[dataset] = labels_pd[dataset][cut].reset_index(drop=True)
-    predictions[dataset] = transformer.retransform(model.predict(transformer.rescale(features[dataset])))
-    losses[dataset] = loss_function(y_true=labels[dataset], y_pred=predictions[dataset])
+    predictions[dataset] = dict()
+    losses[dataset] = dict()
+    for model_name in models:
+        predictions[dataset][model_name] = transformers[model_name].retransform(
+            models[model_name].predict(transformers[model_name].rescale(features[dataset])))
+        losses[dataset][model_name] = loss_function(y_true=labels[dataset], y_pred=predictions[dataset][model_name])
 
 
 #Jetzt plotten irgendwie
 for dataset in predictions:
     keys = ml.get_varying_value(features_pd=features_pd[dataset])
     ml.plot_model(features_pd=features_pd[dataset], labels=labels[dataset], predictions=predictions[dataset],
-                 losses=losses[dataset], keys=keys, title=dataset, label_name=label_name, save_path=save_path)
+                 losses=losses[dataset], keys=keys, save_path=save_path, trans_to_pb=trans_to_pb)
 

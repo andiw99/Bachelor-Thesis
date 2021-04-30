@@ -29,12 +29,12 @@ def main():
     #Variablen
     e = 1.602e-19
     E = 6500 #Strahlenergie in GeV, im Vornherein festgelegt?
-    x_total = int(2000000) #Anzahl an x Werten
-    eta_total = int(2000000) # Anzahl an eta Werten
+    x_total = int(30000000) #Anzahl an x Werten
+    eta_total = int(30000000) # Anzahl an eta Werten
     x_lower_limit = 0
     x_upper_limit = 1
     eta_limit = 2.37
-    loguni_param=0.00005 #alt 0.01
+    loguni_param=0.001 #alt 0.01
     stddev = 2
     xMin = PDF.xMin
     eta_constant = False
@@ -44,7 +44,7 @@ def main():
     eta_gauss = True
     num_eta_values = 25
 
-    set_name = "MC2M_newgauss_tinyloguni_largestd/"
+    set_name = "MC30M_newgauss/"
     root_name ="/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject"
     location = None #input("Welcher Rechner?")
     if location == "Taurus" or location == "taurus":
@@ -74,7 +74,7 @@ def main():
             x_2 = np.concatenate((x_2, (stats.loguniform.rvs(a=loguni_param, b=1+loguni_param, size=x_total-x_2.size) - loguni_param) * (x_upper_limit - x_lower_limit) + x_lower_limit))
             x_2 = x_2[x_2 >= xMin]
 
-    plt.hist(x_1, bins=20, rwidth=0.8)
+    plt.hist(x_1, bins=30, rwidth=0.8)
     plt.yscale("linear")
     plt.show()
 
@@ -140,7 +140,7 @@ def main():
     plt.show()
     plt.hist(features[:,1], bins=40, rwidth=0.9)
     plt.show()
-    plt.hist(features[:,2], bins=40, rwidth=0.9)
+    plt.hist(features[:,2], bins=50, rwidth=0.9)
     plt.show()
 
     diff_WQ = ml.calc_diff_WQ(PDF=PDF, quarks=quarks, x_1=features[:,0], x_2=features[:,1], eta=features[:,2], E=E)

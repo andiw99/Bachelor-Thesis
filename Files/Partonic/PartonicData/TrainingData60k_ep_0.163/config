@@ -1,2 +1,2 @@
-epsilon,total
-0.163,60000
+epsilon,total,power,offset,
+0.163,60000,4,0.4

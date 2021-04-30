@@ -5,21 +5,22 @@ import os
 from matplotlib import pyplot as plt
 
 #Daten präparieren
-epsilon = 0.075
-total = 200000
-name = "TrainingData200k_ep_0.075_IS"
+epsilon = 0.01
+total = 5000
+name = "PlottingData5k_ep_0.01"
 importance_sampling = False
 offset = 0.4
+power = 4
 
 #daten random uniform
 diff_WQ_theta = MC.diff_WQ_theta(s=200**2, q=1/3)
 if importance_sampling:
-    custom_dist = MC.x_power_dist(power=4, offset=offset, a=epsilon, b=np.pi-epsilon, normed=True)
+    custom_dist = MC.x_power_dist(power=power, offset=offset, a=epsilon, b=np.pi-epsilon, normed=True)
     theta = custom_dist.rvs(size=total)
     plt.hist(theta, bins=20)
     plt.show()
 else:
-    theta = np.random.uniform(low=epsilon, high= np.pi - epsilon, size=60000)
+    theta = np.random.uniform(low=epsilon, high= np.pi - epsilon, size=total)
 WQ = diff_WQ_theta(theta)
 WQ = list(WQ)
 theta = list(theta)
@@ -36,6 +37,8 @@ config = pd.DataFrame(
         "epsilon": epsilon,
         "total": total,
         "importance_sampling": True,
+        "power": power,
+        "offset": offset,
     },
     index=[0]
 )

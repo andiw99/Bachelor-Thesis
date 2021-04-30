@@ -11,7 +11,7 @@ import MC
 
 def main():
     #Random Samples einlesen:
-    dataset_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Data/MC2M_newgauss_tinyloguni_largestd/"
+    dataset_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Data/MC2M_newgauss_tinyloguni/"
     #Config der RandomSample generierung einlesen
     config = pd.read_csv(dataset_path + "config")
     #model einlesen
@@ -40,6 +40,7 @@ def main():
     labels[~eta_cut] = 0.0
     print("labels nach cut:", labels),
     print("mean nach cut", np.mean(labels))
+    # Hier duerfte sich nix geandert haben, wenn der cut schon durchgefuehrt ist
 
     #Wahrscheinlichkeitsverteilung initialisieren und kalibriren
     er_fc = MC.erf(mu=variables["eta_limit"], sigma=variables["stddev"])
@@ -111,7 +112,7 @@ def main():
 
     print("ML_integral in GeV", float(ML_integral), "in pb:", MC.gev_to_pb(float(ML_integral)))
     print("analytic_integral in GeV", float(analytic_integral), "in pb:", MC.gev_to_pb(float(analytic_integral)))
-    print("stddev analytic integral in GeV²", np.sqrt(float(analytic_var)), "in pb:", MC.gev_to_pb(np.sqrt(float(analytic_var))))
+    print("stddev analytic integral in GeV²", np.sqrt(float(analytic_var))/np.sqrt(2000000), "in pb:", MC.gev_to_pb(np.sqrt(float(analytic_var)))/np.sqrt(2000000))
 
 
 if __name__ == "__main__":

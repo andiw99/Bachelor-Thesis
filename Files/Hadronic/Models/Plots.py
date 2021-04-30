@@ -8,7 +8,7 @@ import MC
 
 #Pfade eingeben
 paths = dict()
-model_path= "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Models/best_guess_4M"
+model_path= "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Models/transferred_model_2M_new_layer"
 #model_path= "/Files/Hadronic/Models/best_guess_4M"
 #more data to plot?
 #plotting_data = ...
@@ -19,7 +19,7 @@ paths["$\eta, x_1$ constant"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbei
 paths["$x_1, x_2$ constant"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Data/NewPlottingData_MMHT2014/x_constant"
 paths["$\eta, x_2$ constant"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Data/NewPlottingData_MMHT2014/eta_x_2_constant"
 save_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Plots/Meeting/"
-name = "not_transferred_model_transfer_data"
+name = "transferred_model_transfer_data_new"
 input("namen geändert?")
 save_path = save_path + name
 label_name = "WQ"
@@ -61,5 +61,5 @@ for dataset in features:
 for dataset in predictions:
     keys = ml.get_varying_value(features_pd=features_pd[dataset])
     ml.plot_model(features_pd=features_pd[dataset], labels=labels[dataset], predictions=predictions[dataset],
-                 losses=losses[dataset], keys=keys, title=dataset, label_name=label_name, save_path=save_path)
+                 losses=losses[dataset], keys=keys, save_path=save_path)
 
