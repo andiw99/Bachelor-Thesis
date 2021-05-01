@@ -37,7 +37,7 @@ pools["hidden_activation"] = [tf.nn.relu, tf.nn.leaky_relu, tf.nn.elu]
 pools["output_activation"] = [ml.LinearActiavtion()]
 pools["feature_normalization"] = ["normalization", None]
 pools["scaling_bool"] = [True]
-pools["logartihm"] = [True]
+pools["logarithm"] = [True]
 pools["base10"] = [True, False]
 pools["label_normalization"] = [True, False]
 pools["min_delta"] = [5e-6]
@@ -80,7 +80,9 @@ for config in checked_configs:
 
     data_path = root_path + "/Files/Hadronic/Data/" + params["dataset"] +  "/"
     data_name = "all"
-    project_path = root_path + "Files/Hadronic/Models/optimizers_comparison/"
+    project_path = root_path + "Files/Hadronic/Models/LastRandomSearch/"
+    if not vary_multiple_parameters:
+        project_path += str(config[-1]) + "/"
     loss_name = "best_loss"
     project_name = ""
 
@@ -90,8 +92,10 @@ for config in checked_configs:
         feature_rescaling = True
     elif params["feature_normalization"] == "normalization":
         feature_normalization = True
-
-    #training_epochs = int(1/200 * params["batch_size"]) + 10
+        
+    #Trainingsparameter ein wenig nach batches anpassen
+    training_epochs = int(1/100 * params["batch_size"]) + 90
+    lr_reduction = 25/params["batch_size"]
 
     #Callbacks initialisieren
     #min delta initialiseren
@@ -173,7 +177,8 @@ for config in checked_configs:
                                      avg_total_Loss=avg_total_loss, smallest_loss=smallest_loss, loss_error=loss_error, total_losses=total_losses,
                                      transformer=transformer, training_time=training_time,
                                      custom=custom, loss_fn=params["loss_fn"], feature_handling= params["feature_normalization"],
-                                     min_delta = params["min_delta"], nr_hidden_layers=params["units_nr_layers"][0], units=params["units_nr_layers"][1])
+                                     min_delta = params["min_delta"], nr_hidden_layers=params["units_nr_layers"][1], units=params["units_nr_layers"][0])
+
 
     #Überprüfen ob Fortschritt gemacht wurde
     ml.check_progress(model=models[np.argmin(total_losses)], transformer=transformer, test_features=test_features, test_labels=test_labels,

@@ -752,6 +752,7 @@ def make_losses_plot(history):
     return fig, ax
 
 
+
 def save_config(new_model, save_path, model, learning_rate, training_epochs, batch_size, avg_total_Loss=0,
                 transformer=None, training_time=None, loss_fn=None, custom=False, feature_handling=None, min_delta=None, offset=None,
                 nr_hidden_layers=None, lr_reduction=None, lr_factor=None, total_losses=[], smallest_loss=0.0,
@@ -890,7 +891,8 @@ def create_param_configs(pools, size, vary_multiple_parameters=True):
         while len(checked_configs) < size:
             config = []
             for param in pools:
-                config.append(np.random.choice(pools[param]))
+                index = np.random.choice(len(pools[param]))
+                config.append(pools[param][index])
             config = tuple(config)
             checked_configs.append(config)
             checked_configs = list(set(checked_configs))
@@ -910,7 +912,8 @@ def create_param_configs(pools, size, vary_multiple_parameters=True):
                         config.append(value)
                     else:
                         config.append(pools[param][0])
-                config.append(param)
+                #noch einmal in den tupel packen welche die zu variierende groesse ist
+                config.append(varying_param)
                 config = tuple(config)
                 checked_configs.append(config)
                 checked_configs = list(set(checked_configs))
