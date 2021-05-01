@@ -102,6 +102,14 @@ def strong_reweight_cut(features, E=6500, cut_energy=40, cut_eta=2.37, return_cu
     else:
         return features
 
+def x_cut(features, lower_cut=0.15, upper_cut=0.3, return_cut=False):
+    cut = (features < upper_cut) & (features > lower_cut)
+    features = features[cut]
+    if return_cut:
+        return features, cut
+    else:
+        return features
+
 def calc_other_eta(eta, x_1, x_2):
     other_eta = eta + 1/2 * np.log((x_2)**2/(x_1**2))
     return other_eta

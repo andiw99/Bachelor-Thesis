@@ -4,146 +4,70 @@ import numpy as np
 from tensorflow import keras
 from matplotlib import pyplot as plt
 import ml
-import ast
-from matplotlib import cm
-
-
+import MC
 
 #Pfade eingeben
 paths = dict()
-model_path= "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Reweight/Models/best_model"
-training_data_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Reweight/Data/Uniform+Strange+middlex/x_1_constant"
-
+model_paths = dict()
+model_paths["Predictions"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Reweight/Models/RandomSearch/best_model"
+#model_path= "/Files/Hadronic/Models/best_guess_4M"
 #more data to plot?
-#plotting_data = ...
+#PlottingDataLowX_data = ...
 
 #Pfade in dict speichern
-paths["model"] = model_path
-paths["x_1_constant"] = training_data_path
-paths["x_2_constant"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Reweight/Data/Uniform+Strange+middlex/x_2_constant"
-paths["3D-Plot"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Reweight/Data/Uniform+Strange+middlex/all"
+paths["$x_1$ constant"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Reweight/Data/TrainingData200k_cut_x_08/x_1_constant"
+paths["$x_2$ constant"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Reweight/Data/TrainingData200k_cut_x_08/x_2_constant"
+save_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Plots/finished/"
+name = "reweight_itself"
+input("namen geändert?")
+save_path = save_path + name
 label_name = "reweight"
+trans_to_pb = False
+y_label = "reweight"
 
 #Daten einlesen
-data = dict()
-for key,path in paths.items():
-    if key != "model":
-        data[key] = pd.read_csv(path)
-
-# Modell laden
-model = keras.models.load_model(filepath=model_path)
+# Modell und transformer laden
+models = dict()
+transformers = dict()
+for model_name in model_paths:
+    (models[model_name], transformers[model_name]) = ml.load_model_and_transormer(model_path=model_paths[model_name])
 
 show_3D_plots = False
-config = pd.read_csv(model_path + "/config")
-print(config)
-config = config.transpose()
-print(config)
-transformer_config = ast.literal_eval(config["transformer_config"][0])
-transformer = ml.label_transformation(config=transformer_config)
-loss_function = keras.losses.MeanAbsoluteError()
+use_cut = False
+loss_function = keras.losses.MeanAbsoluteError(reduction=keras.losses.Reduction.NONE)
 
 #In Features und Labels unterteilen
 features_pd = dict()
 labels_pd = dict()
 features = dict()
 labels = dict()
-for dataset in data:
-    features_pd[dataset] = data[dataset]
-    labels_pd[dataset] = features_pd[dataset].pop(label_name)
-    #Aus den Pandas Dataframes tf-Tensoren machen
-    for i,feature in enumerate(features_pd[dataset]):
-        if i == 0:
-            features[dataset] = tf.constant([features_pd[dataset][feature]], dtype="float32")
-            print(features[dataset])
-        else:
-            more_features = tf.constant([features_pd[dataset][feature]], dtype="float32")
-            features[dataset] = np.concatenate((features[dataset], more_features), axis=0)
-            print(features[dataset])
-    #transponieren
-    features[dataset] = tf.transpose(features[dataset])
-    labels[dataset] = tf.transpose(tf.constant([labels_pd[dataset]], dtype="float32"))
-    print(features[dataset])
+for dataset, path in paths.items():
+    if dataset != "model":
+        (_, features[dataset], labels[dataset], _, _, features_pd[dataset], labels_pd[dataset], _) =\
+            ml.data_handling(data_path=path, label_name=label_name, return_pd=True, label_cutoff=False)
+
 
 # Für jedes Dataset predictions und losses berechnen
-# predictions:
+# predictions, losses:
 predictions = dict()
-for dataset in features:
-    predictions[dataset] = transformer.retransform(model.predict(features[dataset]))
-
-#losses
 losses = dict()
+for dataset in features:
+    if use_cut:
+        features[dataset], cut = MC.cut(features=features[dataset], return_cut=True)
+        features_pd[dataset] = features_pd[dataset][cut].reset_index(drop=True)
+        labels[dataset] = labels[dataset][cut]
+        labels_pd[dataset] = labels_pd[dataset][cut].reset_index(drop=True)
+    predictions[dataset] = dict()
+    losses[dataset] = dict()
+    for model_name in models:
+        predictions[dataset][model_name] = transformers[model_name].retransform(
+            models[model_name].predict(transformers[model_name].rescale(features[dataset])))
+        losses[dataset][model_name] = loss_function(y_true=labels[dataset], y_pred=predictions[dataset][model_name])
 
-for dataset in predictions:
-    losses[dataset] = np.zeros(shape=len(labels[dataset]))
-    for i,label in enumerate(predictions[dataset]):
-        losses[dataset][i] = (float(loss_function(y_true=labels[dataset][i], y_pred=label)))
 
 #Jetzt plotten irgendwie
 for dataset in predictions:
-    #überprüfen, ob es sich um 3d-data handelt
-    plotting_data = 0
-    keys = []
-    for key in data[dataset]:
-        value = data[dataset][key][0]
-        if not all(values == value for values in data[dataset][key]):
-            plotting_data += 1
-            keys.append(key)
-
-    if plotting_data == 2:
-        fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
-        # plot the surface
-        print("data[dataset][keys[0]]:",data[dataset][keys[0]])
-        print("data[dataset][keys[1]]",data[dataset][keys[1]])
-        print("labels[dataset]", labels[dataset])
-        plot_labels = labels[dataset][:,0]
-        print(plot_labels)
-        surf = ax.plot_trisurf(data[dataset][keys[0]], data[dataset][keys[1]], plot_labels, cmap=cm.coolwarm,
-                               linewidth=0, antialiased=False)
-        ax.set_xlabel(keys[0])
-        ax.set_ylabel(keys[1])
-        ax.set_zlabel("rewait")
-        ax.set_zscale("linear")
-        plt.tight_layout()
-        ax.view_init(10, 50)
-        plt.show()
-
-        #losses plotten
-        plot_losses = losses[dataset]
-        fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
-        # plot the surface
-        surf = ax.plot_trisurf(data[dataset][keys[0]], data[dataset][keys[1]], losses[dataset], cmap=cm.coolwarm,
-                               linewidth=0, antialiased=False)
-        ax.set_xlabel(keys[0])
-        ax.set_ylabel(keys[1])
-        ax.set_zlabel("reweight")
-        ax.set_zscale("linear")
-        plt.tight_layout()
-        ax.view_init(10, 50)
-        plt.show()
-
-    #Überprüfen, ob das feature konstant ist:
-    if plotting_data == 1:
-        for key in data[dataset]:
-            value = data[dataset][key][0]
-            if not all(values == value for values in data[dataset][key]):
-                #Fkt plotten
-                order = np.argsort(data[dataset][key], axis=0)
-                plot_features = np.array(data[dataset][key])[order]
-                plot_predictions = np.array(predictions[dataset])[order]
-                plot_labels = np.array(labels[dataset])[order]
-                plt.plot(plot_features, plot_predictions, label="ML")
-                plt.plot(plot_features, plot_labels, label="analytic")
-                plt.ylabel(label_name)
-                plt.xlabel(str(key))
-                plt.title(dataset)
-                plt.legend()
-                plt.show()
-
-                #losses plotten
-                plot_losses = np.array(losses[dataset])[order]
-                plt.plot(plot_features, plot_losses)
-                plt.ylabel("Loss")
-                plt.yscale("Log")
-                plt.title(dataset)
-                plt.show()
+    keys = ml.get_varying_value(features_pd=features_pd[dataset])
+    ml.plot_model(features_pd=features_pd[dataset], labels=labels[dataset], predictions=predictions[dataset],
+                  keys=keys, save_path=save_path, set_ylabel=y_label, trans_to_pb=trans_to_pb, set_yscale="linear")
 

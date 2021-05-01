@@ -36,7 +36,7 @@ def main():
     loss_name = "Source_loss"
     project_name = ""
 
-    read_name = "hadronic_model" #"best_guess_important_range" #
+    read_name = "last_random_search_best" #"best_guess_important_range" #
     label_name = "WQ"
     read_path =project_path + project_name + read_name
     transferred_transformer = None
@@ -59,20 +59,20 @@ def main():
 
     #Variablen...
     train_frac = 0.95
-    batch_size = 512
-    training_epochs = 40
-    repeat=2
-    nr_layers = 3
-    units = 512
-    learning_rate = 2e-3
+    batch_size = 256
+    training_epochs = 100
+    repeat=3
+    nr_layers = 5
+    units = 256
+    learning_rate = 1e-2
     if not any([new_model, transfer, freeze]):
         learning_rate = 5e-6
         print("learning_rate für fine tuning reduziert!")
     rm_layers = 1
     loss_fn = keras.losses.MeanAbsoluteError()
-    optimizer = keras.optimizers.Adam(learning_rate=learning_rate, clipvalue=2)
+    optimizer = keras.optimizers.Adam
     print("optimizer")
-    hidden_activation = tf.nn.relu
+    hidden_activation = tf.nn.leaky_relu
     output_activation = ml.LinearActiavtion()
     kernel_initializer = tf.keras.initializers.HeNormal()
     bias_initializer = tf.keras.initializers.Zeros()
@@ -88,8 +88,8 @@ def main():
     logarithm = True
     base10 = True
     shift = False
-    label_normalization = True
-    feature_normalization = False
+    label_normalization = False
+    feature_normalization = True
     feature_rescaling= False
 
     #ggf Losses einlesen

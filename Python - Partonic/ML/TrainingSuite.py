@@ -30,13 +30,13 @@ def main():
 
     time1 = time.time()
     #Daten einlesen
-    data_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Partonic/PartonicData/TrainingData60k_ep_0.01_IS/all"
+    data_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Partonic/PartonicData/TrainingData10k_ep_0.01/all"
     data_name = ""
     project_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Partonic/Models/PartonicTheta/"
     loss_name = "Source_loss"
     project_name = ""
 
-    read_name = "theta_model_full_range_IS" #"best_guess_important_range" #
+    read_name = "theta_model_full_range_less_data" #"best_guess_important_range" #
     label_name = "WQ"
     read_path =project_path + project_name + read_name
     transferred_transformer = None
@@ -63,17 +63,17 @@ def main():
     training_epochs = 300
     repeat=5
     nr_layers = 4
-    units = 64
-    learning_rate = 1e-3
+    units = 128
+    learning_rate = 5e-3
     if not any([new_model, transfer, freeze]):
         learning_rate = 5e-6
         print("learning_rate für fine tuning reduziert!")
     rm_layers = 1
-    loss_fn = keras.losses.MeanSquaredError()
+    loss_fn = keras.losses.MeanAbsoluteError()
     #optimizer = keras.optimizers.get({"class_name": "Adam", "config": {"lr": 1e-3}})
     optimizer = keras.optimizers.RMSprop
     print("optimizer")
-    hidden_activation = tf.nn.relu
+    hidden_activation = tf.nn.leaky_relu
     output_activation = ml.LinearActiavtion()
     kernel_initializer = tf.keras.initializers.HeNormal()
     bias_initializer = tf.keras.initializers.Zeros()

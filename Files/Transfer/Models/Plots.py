@@ -8,13 +8,14 @@ import MC
 
 #Pfade eingeben
 paths = dict()
-model_path= "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Models/transferred_search/transferred_search/best_model"
+model_paths = dict()
+model_paths["transferred model"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Models/transferred_search/transferred_search/best_model"
+model_paths["source_model"] =
 #model_path= "/Files/Hadronic/Models/best_guess_4M"
 #more data to plot?
 #plotting_data = ...
 
 #Pfade in dict speichern
-paths["model"] = model_path
 paths["$\eta, x_1$ constant"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Data/NewPlottingData_MMHT2014/eta_x_1_constant"
 paths["$x_1, x_2$ constant"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Data/NewPlottingData_MMHT2014/x_constant"
 paths["$\eta, x_2$ constant"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Data/NewPlottingData_MMHT2014/eta_x_2_constant"
