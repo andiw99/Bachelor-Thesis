@@ -3,12 +3,12 @@ import numpy as np
 import ml
 import MC
 from scipy import integrate
-
+from matplotlib import pyplot as plt
 
 #Pfade in dict speichern
 paths = dict()
-paths["Distribution"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Partonic/PartonicData/TrainingData60k_ep_0.163/"
-save_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Plots/"
+paths[r"$x^4$-Distribution"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Partonic/PartonicData/TrainingData60k_ep_0.163/"
+save_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Plots/finished/"
 name = "IS_dist_comparison"
 #input("namen geändert?")
 save_path = save_path + name
@@ -17,8 +17,8 @@ trans_to_pb = False
 
 
 #In Features und Labels unterteilen
-features_pd = dict()
 labels_pd = dict()
+features_pd = dict()
 features = dict()
 labels = dict()
 for dataset, path in paths.items():
@@ -40,8 +40,8 @@ for dataset in variables:
     print(variables[dataset])
     dists[dataset] = MC.x_power_dist(power=variables[dataset]["power"], offset=variables[dataset]["offset"],
                                      a=variables[dataset]["epsilon"], b=np.pi-variables[dataset]["epsilon"], normed=True)
-
-
+#Test x³ dist
+#dists[r"$x^3$"] = MC.x_power_dist(power=3, offset=0.5, a=0.163, b=np.pi-0.163, normed=True)
 
 # Für jedes Dataset predictions und losses berechnen
 # predictions, losses:
@@ -54,16 +54,13 @@ for dataset in features:
     ordered_labels = np.array(labels[dataset])[order]
     predictions[dataset] = dict()
     predictions[dataset][dataset] = dists[dataset](features[dataset])
+    #predictions[dataset][r"$x^3$"] = dists[r"$x^3$"](features[dataset])
     labels[dataset] = np.array(MC.gev_to_pb(labels[dataset]))
-    print(predictions[dataset], predictions[dataset][dataset])
-    print("labels vor trans", labels[dataset])
-    print("features vor trans", features[dataset])
     #Rescaling der lables sodass integral 1
-    I = integrate.trapezoid(MC.gev_to_pb(ordered_features[:,0]), MC.gev_to_pb(ordered_labels[:,0]))
+    plt.plot(ordered_features, MC.gev_to_pb(ordered_labels))
+    I = integrate.trapezoid(MC.gev_to_pb(ordered_labels)[:,0], ordered_features[:,0])
     scaling = 1 / I
-    print("Integral", I, "integral/2pi", I/(2*np.pi))
     labels[dataset] = scaling * labels[dataset]
-    print(labels[dataset])
 
 
 
@@ -72,5 +69,6 @@ for dataset in features:
 for dataset in predictions:
     keys = ml.get_varying_value(features_pd=features_pd[dataset])
     ml.plot_model(features_pd=features_pd[dataset], labels=labels[dataset], predictions=predictions[dataset],
-                 keys=keys, save_path=save_path, trans_to_pb=trans_to_pb)
+                 keys=keys, save_path=save_path, trans_to_pb=trans_to_pb, set_ylabel=r"$\rho$", set_ratio_yscale="linear",
+                  autoscale_ratio=True)
 

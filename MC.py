@@ -220,12 +220,12 @@ class x_power_dist():
 
 
     def __call__(self, x):
-        y = (self.offset + (x-self.mean) ** self.power)/self.scale
+        y = (self.offset + np.abs((x-self.mean) ** self.power))/self.scale
         return y
 
     def cdf(self, x):
         y = (self.offset * (x-self.a) + 1/(self.power + 1) * \
-            ((x - self.mean) ** (self.power + 1) - (self.a - self.mean) ** (self.power + 1)))/self.scale
+            ((x - self.mean) ** (self.power + 1)  - (self.a - self.mean) ** (self.power + 1)))/self.scale
         return y
 
     def rvs(self, size, interpol_nr=1000):

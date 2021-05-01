@@ -973,9 +973,10 @@ def get_varying_value(features_pd):
             keys.append(key)
     return keys
 
-def plot_model(features_pd, labels, predictions,  keys, save_path=None, losses=None, plot_losses=False, trans_to_pb = True):
+def plot_model(features_pd, labels, predictions,  keys, save_path=None, losses=None,
+               plot_losses=False, trans_to_pb=True, set_ylabel=None, set_ratio_yscale=None, autoscale_ratio=False):
     colors = ["C0", "C2", "C9", "C6", "deeppink"]
-    linestyles = ["solid", "dashdot", "dashed", "dashdot"]
+    linestyles = ["dashed", "dashdot", "dashed", "dashdot"]
     facecolors = ["C0", "None", "None", "None"]
     if len(keys) == 2:
         fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
@@ -1029,15 +1030,17 @@ def plot_model(features_pd, labels, predictions,  keys, save_path=None, losses=N
                 plot_labels = np.array(labels)[order]
                 if trans_to_pb:
                     plot_labels = MC.gev_to_pb(plot_labels)
-                fig, (ax_fct, ax_ratio) = plt.subplots(nrows=2, ncols=1, sharex=True, gridspec_kw={"height_ratios": [3,1]}, figsize=(6.4, 7.2))
-                ax_fct.plot(plot_features, plot_labels, label="Analytic", linestyle="dashed", color="C1")
+                fig, (ax_fct, ax_ratio) = plt.subplots(nrows=2, ncols=1, sharex=True, gridspec_kw={"height_ratios": [2.5,1]}, figsize=(6.4, 7.2))
+                ax_fct.plot(plot_features, plot_labels, label="Analytic", linestyle="solid", color="C1")
                 for i,model_name in enumerate(plot_predictions):
                     ax_fct.plot(plot_features, plot_predictions[model_name], label=model_name, linewidth=2, color=colors[i], linestyle=linestyles[i])
                 s = ""
+                log_factor = 1      #skalierungsfaktor falls logarithmische skala
                 if features_pd.shape[1] == 3:
                     ylabel = r"$\frac{d^3\sigma}{d x_1 d x_2 d \eta} [pb]$"
                     if key == "x_1" or key == "x_2":
                         ax_fct.set_yscale("log")
+                        log_factor=2
                         xlabel = "$" + key + "$"
                         s = (r"$x_1$ = " + "{:.2f}".format(features_pd["x_1"][0])) * (key != "x_1")\
                             + (r"$x_2$ = " + "{:.2f}".format(features_pd["x_2"][0])) * (key != "x_2")\
@@ -1058,13 +1061,15 @@ def plot_model(features_pd, labels, predictions,  keys, save_path=None, losses=N
                     if key == "eta":
                         ylabel = r"$\frac{d \sigma}{d \eta}[pb]$"
                 ax_fct.grid(True)
+                if set_ylabel:
+                    ylabel = set_ylabel
                 ax_fct.set_ylabel(ylabel, loc="center", fontsize=15)
                 #ax_fct.set_xlabel(xlabel)
                 print(np.ptp(plot_labels))
                 print(np.min(plot_labels))
                 print(np.max(plot_labels))
-                ax_fct.set_ylim((np.min(plot_labels)-0.05 * np.ptp(plot_labels), np.max(plot_labels) * 1.1)) # ylim so setzen dass Legende hereinpasst
-                ax_fct.text(x=0.6, y=0.92, s=s, bbox=dict(boxstyle="round", facecolor="white", alpha=1, edgecolor="gainsboro"), transform=ax_fct.transAxes)
+                ax_fct.set_ylim((np.min(plot_labels)-0.05 * np.ptp(plot_labels), np.max(plot_labels) * 1.1 * log_factor)) # ylim so setzen dass Legende hereinpasst
+                ax_fct.text(x=0.6, y=0.91, s=s, bbox=dict(boxstyle="round", facecolor="white", alpha=1, edgecolor="gainsboro"), transform=ax_fct.transAxes)
                 ax_fct.legend(loc=(0.75, 0.89))
                 # TODO plots checken ob das so passt mit der legendenpostion
                 plt.tight_layout()
@@ -1103,7 +1108,7 @@ def plot_model(features_pd, labels, predictions,  keys, save_path=None, losses=N
                 ax_ratio.set_ylabel(r"ratio", loc="center", rotation=90, fontsize=15)
                 if ratios_std > 0.05:
                     ax_ratio.set_yscale("log")
-                    ax_ratio.set_ylim(1-0.05, 1+0.05)
+                    ax_ratio.set_ylim(1-0.2, 1+0.2)
                     ax_ratio.set_yticks(np.array([0.96, 0.98, 1.00, 1.02, 1.04]))
                     ax_ratio.set_yticklabels(np.array([0.960, 0.980, 1.000, 1.020, 1.040]))
                 else:
@@ -1113,6 +1118,10 @@ def plot_model(features_pd, labels, predictions,  keys, save_path=None, losses=N
                         ax_ratio.set_ylim(1 - 4 * ratios_std,
                                           1 + 4 * ratios_std)
                 ax_ratio.set_xlabel(xlabel, fontsize=15)
+                if set_ratio_yscale:
+                    ax_ratio.set_yscale(set_ratio_yscale)
+                if autoscale_ratio:
+                    ax_ratio.autoscale()
                 """
                 ax_ratio.text(x=0.035, y=0.175, s=s,
                         bbox=dict(boxstyle="round", facecolor="white", alpha=1,
