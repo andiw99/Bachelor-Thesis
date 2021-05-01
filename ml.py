@@ -891,7 +891,8 @@ def create_param_configs(pools, size, vary_multiple_parameters=True):
         while len(checked_configs) < size:
             config = []
             for param in pools:
-                config.append(np.random.choice(pools[param]))
+                index = np.random.choice(len(pools[param]))
+                config.append(pools[param][index])
             config = tuple(config)
             checked_configs.append(config)
             checked_configs = list(set(checked_configs))

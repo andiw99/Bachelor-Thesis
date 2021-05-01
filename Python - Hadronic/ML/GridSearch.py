@@ -37,7 +37,7 @@ pools["hidden_activation"] = [tf.nn.relu, tf.nn.leaky_relu, tf.nn.elu]
 pools["output_activation"] = [ml.LinearActiavtion()]
 pools["feature_normalization"] = ["normalization", None]
 pools["scaling_bool"] = [True]
-pools["logartihm"] = [True]
+pools["logarithm"] = [True]
 pools["base10"] = [True, False]
 pools["label_normalization"] = [True, False]
 pools["min_delta"] = [5e-6]
@@ -80,7 +80,7 @@ for config in checked_configs:
 
     data_path = root_path + "/Files/Hadronic/Data/" + params["dataset"] +  "/"
     data_name = "all"
-    project_path = root_path + "Files/Hadronic/Models/comparisons/"
+    project_path = root_path + "Files/Hadronic/Models/LastRandomSearch/"
     if not vary_multiple_parameters:
         project_path += str(config[-1]) + "/"
     loss_name = "best_loss"
