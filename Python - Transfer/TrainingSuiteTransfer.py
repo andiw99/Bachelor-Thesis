@@ -30,21 +30,26 @@ def main():
 
     time1 = time.time()
     #Daten einlesen
-    data_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Data/TrainingData8M/"
+    data_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Data/TransferData1M/"
     data_name = "all"
-    project_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Models/"
+    project_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Models/LastRandomSearch/"
+    save_path = project_path
     loss_name = "Source_loss"
     project_name = ""
 
-    read_name = "last_random_search_best" #"best_guess_important_range" #
+    read_name = "best_model"
     label_name = "WQ"
     read_path =project_path + project_name + read_name
     transferred_transformer = None
     add_layers = 0
+    fine_tuning = False
     if transfer:
-        save_name = "transferred_model_2M_new_layer"
-        save_path = project_path + project_name + save_name
+        save_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Models/"
+
+        save_name = "transfer_tuning_scnd"
+        save_path = save_path + project_name + save_name
         add_layers = int(input("add layers: "))
+        fine_tuning = ast.literal_eval(input("fine tuning:"))
     else:
         save_path = read_path
     if not new_model:
@@ -59,29 +64,32 @@ def main():
 
     #Variablen...
     train_frac = 0.95
-    batch_size = 256
+    batch_size = 768
     training_epochs = 100
-    repeat=3
-    nr_layers = 5
-    units = 256
-    learning_rate = 1e-2
+    repeat = 5
+    nr_layers = 6
+    units = 128
+    learning_rate = 5e-3
     if not any([new_model, transfer, freeze]):
         learning_rate = 5e-6
         print("learning_rate für fine tuning reduziert!")
     rm_layers = 1
+    add_layers = 1
     loss_fn = keras.losses.MeanAbsoluteError()
     optimizer = keras.optimizers.Adam
     print("optimizer")
-    hidden_activation = tf.nn.leaky_relu
+    hidden_activation = tf.nn.relu
     output_activation = ml.LinearActiavtion()
     kernel_initializer = tf.keras.initializers.HeNormal()
     bias_initializer = tf.keras.initializers.Zeros()
     l2_kernel = 0
     l2_bias = 0
     lr_patience = 1
+    lr_reduction = 0.05
     stopping_patience = 3 * lr_patience
     min_delta= 2e-6
     min_lr = 5e-8
+    offset = 6
     dropout = False
     dropout_rate = 0.1
     scaling_bool = True
@@ -125,9 +133,12 @@ def main():
     total_losses = []
     for i in range(repeat):
         #initialisiere Model
-        models.append(ml.initialize_model(nr_layers=nr_layers, units=units, loss_fn=loss_fn, optimizer=optimizer, learning_rate=learning_rate, hidden_activation=hidden_activation, output_activation=output_activation,
+        source_model = None
+        if transfer:
+            (source_model, _) = ml.import_model_transformer(model_path=read_path)
+        models.append(ml.initialize_model(source_model=source_model, nr_layers=nr_layers, units=units, loss_fn=loss_fn, optimizer=optimizer, learning_rate=learning_rate, hidden_activation=hidden_activation, output_activation=output_activation,
                                     kernel_initializer=kernel_initializer, bias_initializer=bias_initializer, l2_kernel=l2_kernel, l2_bias=l2_bias, dropout=dropout, dropout_rate=dropout_rate,
-                                    new_model=new_model, custom=custom, transfer=transfer, rm_layers=1, read_path=read_path, freeze=freeze, feature_normalization=feature_normalization, add_layers=add_layers)
+                                    new_model=new_model, custom=custom, transfer=transfer, rm_layers=rm_layers, read_path=read_path, freeze=freeze, feature_normalization=feature_normalization, add_layers=add_layers)
                       )
     for i, model in enumerate(models):
         #callbacks initialisieren
@@ -135,17 +146,25 @@ def main():
                                                                  min_delta=min_delta, min_lr=min_lr)
         early_stopping = keras.callbacks.EarlyStopping(monitor="loss", min_delta=1e-1 * min_delta,
                                                        patience=stopping_patience)
-        lr_schedule = keras.callbacks.LearningRateScheduler(ml.class_scheduler(reduction=0.05, min_lr=min_lr))
+        lr_schedule = keras.callbacks.LearningRateScheduler(ml.class_scheduler(reduction=lr_reduction, min_lr=min_lr, offset=offset))
         callbacks = [reduce_lr_on_plateau, early_stopping, lr_schedule]
         #Training starten
         time4 = time.time()
         history = model.fit(x=train_features, y=train_labels, batch_size=batch_size, epochs=training_epochs, verbose=2,
                             callbacks=callbacks, shuffle=True)
+        if fine_tuning:
+            print(model.summary())
+            model.trainable = True
+            model.compile(optimizer=keras.optimizers.Adam(learning_rate= 5e-3 * learning_rate, clipvalue=1.5), loss=loss_fn)
+            print(model.summary())
+            fine_tuning_history = model.fit(x=train_features, y=train_labels, batch_size=batch_size, epochs=training_epochs, verbose=2,
+                            callbacks=callbacks, shuffle=True)
+            history = history.history["loss"] + fine_tuning_history.history["loss"]
         time5 = time.time()
         training_time += time5 - time4
 
         #Überprüfen wie gut es war
-        results = model(test_features)
+        results = model.predict(test_features)
         loss = loss_function(y_true=transformer.retransform(test_labels), y_pred=transformer.retransform(results))
         total_losses.append(float(loss))
         print("total loss von Durchgang Nr. ", i, ":", float(loss))

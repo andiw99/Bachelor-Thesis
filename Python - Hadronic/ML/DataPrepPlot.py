@@ -70,9 +70,9 @@ def main():
     print(eta.size)
 
     #Feste werte setzen
-    i=0
-    x_1_constant=0
-    x_2_constant=0
+    i = 0
+    x_1_constant = 0
+    x_2_constant = 0
     eta_constant = 0
     while x_1_constant < 0.1 or x_1_constant > 0.46:
         if i >= x_total:

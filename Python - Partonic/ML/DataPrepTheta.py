@@ -5,9 +5,9 @@ import os
 from matplotlib import pyplot as plt
 
 #Daten präparieren
-epsilon = 0.01
+epsilon = 0.163
 total = 10000
-name = "TrainingData10k_ep_0.01"
+name = "TestData10k_ep_0.163"
 importance_sampling = False
 offset = 0.4
 power = 4

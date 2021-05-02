@@ -787,12 +787,16 @@ def save_config(new_model, save_path, model, learning_rate, training_epochs, bat
         config = pd.concat([config, training_parameters], axis=1)
         index = True
     if not new_model:
-        config = pd.read_csv(read_path + "/config", index_col="property")
+        source_config = pd.read_csv(read_path + "/config", index_col="property")
+        config = source_config.copy()
         config = config.transpose()
-        i = 0
-        while pd.notna(config["learning_rate"][i]):
-            i += 1
-        config["learning_rate"][i] = learning_rate
+
+        config["layers"] = [model.get_config()]
+        config["total_losses"] = [total_losses]
+        config["avg validation loss"] = ["{:.5f}".format(float(avg_total_Loss))]
+        config["smallest loss"] = ["{:.5f}".format(float(smallest_loss))]
+        config["loss error"] = ["{:.5f}".format(float(loss_error))]
+        config["training time"] = ["{:.2f}".format(training_time)]
         index = True
 
     config = config.transpose()
@@ -955,7 +959,7 @@ def construct_optimizer(optimizer, learning_rate=None, momentum=None, nesterov=N
                     optimizer = optimizer
     return optimizer
 
-def load_model_and_transormer(model_path):
+def load_model_and_transformer(model_path):
     model = keras.models.load_model(filepath=model_path)
 
     config = pd.read_csv(model_path + "/config", index_col="property")
@@ -1151,15 +1155,23 @@ def scheduler(epoch, learning_rate, reduction = 0.1):
         return learning_rate * (1-reduction)
 
 
-def make_comparison_plot(names, losses, all_losses, avg_losses=None, losses_errors=None, save_path=None, comparison=None):
+def make_comparison_plot(names, all_losses, min_losses=None, avg_losses=None, losses_errors=None,
+                         save_path=None, comparison=None, colors=None):
+    if colors == None:
+        colors = ["C1", "C2", "C3", "C4"]
     x = list(np.arange(len(names)))
-    print(x, len(x))
-    print(all_losses, len(x))
-
     fig, ax = plt.subplots(figsize=(len(x) * 1.5, 4.8))
-    for xe, ye in zip(x, all_losses):
-        ax.scatter([xe] * len(ye), ye, marker=".", facecolors="None", edgecolors="C0")  # alle punkte plotten
-    ax.scatter(x, losses, marker="o", color="orange", label="Min")  # niedrigster punkt hervorheben
+    if type(all_losses[0]) == list:
+        for xe, ye in zip(x, all_losses):
+            ax.scatter([xe] * len(ye), ye, marker="o", facecolors="None", edgecolors="C0")
+    elif type(all_losses[0]) == dict:
+        for i,dataset in enumerate(all_losses[0]):
+            y = [model[dataset] for model in all_losses]
+            ax.scatter(x, y, marker="o", facecolors="None", edgecolors=colors[i], label=dataset)
+
+
+    if min_losses is not None:
+        ax.scatter(x, min_losses, marker="o", color="orange", label="Min")  # niedrigster punkt hervorheben
     ax.errorbar(x, avg_losses, yerr=losses_errors,
                 linewidth=0, elinewidth=1, color="C0",
                 capsize=30 /np.sqrt(len(x)))  # errobars zeigen
@@ -1183,37 +1195,39 @@ def make_MC_plot(x, analytic_integral, ml_integral, xlabel=None, ylabel=None, sa
     fig, (ax, ax_ratio) = plt.subplots(nrows=2, ncols=1, sharex=True, gridspec_kw={"height_ratios": [3,1], "hspace": 0.05}, figsize=(6.4, 7.2))
     # Integration plotten
     ax.step(x=x, y=analytic_integral,
-                label="analytic", where="mid")
-    ax.step(x=x, y=ml_integral, label="ML", where="mid", linestyle="dashed")
+                label="Analytic", where="mid", color="C1")
+    ax.step(x=x, y=ml_integral, label="Prediction", where="mid", linestyle="dashed", color="C0")
     if analytic_errors is not None:
-        ax.errorbar(x=x, y=analytic_integral, yerr=analytic_errors, linewidth=0, elinewidth=2, capsize=100/len(x), ecolor="C0")
+        ax.errorbar(x=x, y=analytic_integral, yerr=analytic_errors, linewidth=0, elinewidth=1, capsize=120/len(x), ecolor="C0")
     if ml_errors is not None:
-        ax.errorbar(x=x, y=ml_integral, yerr=ml_errors, linewidth=0, elinewidth=2, capsize=100/len(x), ecolor="orange")
+        ax.errorbar(x=x, y=ml_integral, yerr=ml_errors, linewidth=0, elinewidth=1, capsize=100/len(x), ecolor="orange")
 
-    ax.set_ylabel(ylabel)
+    ax.set_ylabel(ylabel, fontsize=15)
     ax.set_yscale(scale)
     ax.grid(True, color="lightgray")
     ax.legend()
     # ratio plotten
     ratio = analytic_integral/ml_integral
+    ratio_std = np.std(ratio)
+    mean_ratio = np.mean(ratio)
     ax_ratio.step(x=x, y=ratio, where="mid")
-    ax_ratio.set_ylabel("ratio")
-    ax_ratio.set_ylim(1-0.05, 1+0.05)
+    ax_ratio.set_ylim(mean_ratio - 2 * ratio_std, mean_ratio + 2 * ratio_std)
+    ax_ratio.set_ylabel("ratio", fontsize=15)
     ax_ratio.grid(True, color="lightgray")
-    ax_ratio.set_xlabel(xlabel)
-    plt.tight_layout()
+    ax_ratio.set_xlabel(xlabel, fontsize=15)
     if save_path:
         if not os.path.exists(save_path):
             os.mkdir(save_path)
-        plt.savefig(save_path + name + "mc")
+        plt.savefig(save_path + name + "mc", bbox_inches="tight")
 
 
 def make_reweight_plot(features_pd, labels, predictions,  keys, save_path=None,
                trans_to_pb=True, set_ylabel=None, set_ratio_yscale=None, autoscale_ratio=False, x_cut=True,
-                       yticks_ratio=None, ytick_labels_ratio=None, lower_x_cut=0.05, upper_x_cut=0.15):
+                       yticks_ratio=None, ytick_labels_ratio=None, lower_x_cut=0.05, upper_x_cut=0.15, heigth_ratios=[2.5, 1]):
     colors = ["C0", "C2", "C9", "C6", "deeppink"]
     linestyles = ["dashed", "dashdot", "dashed", "dashdot"]
     facecolors = ["C0", "None", "None", "None"]
+    alphas = [1, 0.75, 0.5, 0.25, 0.1]
     # Überprüfen, ob das feature konstant ist:
     if len(keys) == 1:
         for key in features_pd:
@@ -1244,21 +1258,20 @@ def make_reweight_plot(features_pd, labels, predictions,  keys, save_path=None,
                 fig, (ax_fct, ax_ratio) = plt.subplots(nrows=2, ncols=1,
                                                        sharex=True,
                                                        gridspec_kw={
-                                                           "height_ratios": [
-                                                               2.5, 1]},
+                                                           "height_ratios": heigth_ratios},
                                                        figsize=(6.4, 7.2))
                 ax_fct.plot(plot_features, plot_labels, label="MMHT2014nnlo",
                             linestyle="solid", color="C1")
                 for i, model_name in enumerate(plot_predictions):
                     ax_fct.plot(plot_features, plot_predictions[model_name],
                                 label=model_name, linewidth=2, color=colors[i],
-                                linestyle=linestyles[i])
+                                linestyle=linestyles[i], alpha=alphas[i])
                 s = ""
                 log_factor = 1  # skalierungsfaktor falls logarithmische skala
                 ylabel = r"$\frac{d^3\sigma}{d x_1 d x_2 d \eta} [pb]$"
                 if key == "x_1" or key == "x_2":
                     ax_fct.set_yscale("log")
-                    ax_fct.set_xlim((0.15, 0.3))
+                    ax_fct.set_xlim((lower_x_cut, upper_x_cut))
                     log_factor = 2
                     xlabel = "$" + key + "$"
                     s = (r"$x_1$ = " + "{:.2f}".format(

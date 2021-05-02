@@ -226,10 +226,7 @@ print(c, type(c))
 print(str(c), type(str(c)))
 """
 
-
-a = 6.414962718727940e-13
-b = 6.413485582743948e-13
-c = 9.039276679149045e-13
-d = 9.037195257722688e-13
-
-print(a/b, c/d)
+a = pd.DataFrame()
+a["test"] = []
+a["test"] = ["hallo"]
+print(a)

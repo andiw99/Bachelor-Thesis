@@ -15,15 +15,15 @@ import lhapdf as pdf
 
 def main():
     #Random Samples einlesen, und zwar alle und dann in bins einteilen:
-    dataset_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Data/MC30M_newgauss/"
+    dataset_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Data/MC100M_newgauss/"
     label_name = "WQ"
-    (data, features, labels, _, _, features_pd, labels_pd, _) = ml.data_handling(data_path=dataset_path + "all", label_name=label_name, return_pd=True)
+    features, labels = MC.data_handling(data_path=dataset_path + "all", label_name=label_name, return_pd=False)
 
     #Config der RandomSample generierung einlesen
     config = pd.read_csv(dataset_path + "config")
     #model einlesen
-    model_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Models/best_guess_4M"
-    save_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Plots/"
+    model_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Models/LastRandomSearch/best_model"
+    save_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Plots/finished/"
     (model, transformer) = ml.import_model_transformer(model_path=model_path)
 
     #Variablen initialisieren (der Verteilungen):
@@ -38,8 +38,8 @@ def main():
 
     # Aus den x_1-Werten Bins machen
     # bins festlegen, pro bin ca. 50000 Punkte
-    nr_bins = int(variables["total_data"]/200000)
-    x_1_interval = np.exp(np.linspace(start=np.log(np.min(features[:,0])), stop=0, num=nr_bins+1))
+    nr_bins = int(variables["total_data"]/750000)
+    x_1_interval = np.exp(np.linspace(start=np.log(np.min(features[:,1])), stop=0, num=nr_bins+1))
     print("nr_bins", nr_bins)
     print("x_1_interval", x_1_interval)
     for i in range(nr_bins):
@@ -65,15 +65,6 @@ def main():
                 er_fc(variables["eta_limit"]) - er_fc(-variables["eta_limit"]))
     gauss = MC.gaussian(mu=0, sigma=variables["stddev"], scaling=scaling_gauss)
 
-    # Vertilung plotten, warum auch immer
-    probabilities_x = loguni(features_pd["x_1"])
-
-    order = np.argsort(loguni(features_pd["x_1"]))
-    x_1 = np.array(features_pd["x_1"])[order]
-    probabilities_x = np.array(probabilities_x)[order]
-
-    plt.plot(x_1, probabilities_x)
-    plt.show()
 
     I2 = integrate.quad(loguni, a=variables["x_lower_limit"], b=variables["x_upper_limit"])
     print("Normierung loguni", I2)
@@ -126,7 +117,7 @@ def main():
     analytic_integral = np.array(analytic_integral)[order]
     ml_integral = np.array(ml_integral)[order]
     ml.make_MC_plot(x=x_1, analytic_integral=MC.gev_to_pb(analytic_integral), ml_integral=MC.gev_to_pb(ml_integral), xlabel=r"$x_1$",
-                    ylabel=r"$\frac{d\sigma}{d x_1}$", save_path=save_path, name="x_2_etaIntegration", scale="log")
+                    ylabel=r"$\frac{d\sigma}{dx_1}[pb]$", save_path=save_path, name="x_2_etaIntegration", scale="log")
     plt.show()
 
     # TODO funktioniert das hier schon?

@@ -19,9 +19,10 @@ def main():
               "charge": [-1/3,2/3, -1/3, 2/3]}
     PID = {1: "d", 2: "u", 3: "s", 4: "c"}
 
+
     #PDF initialisieren
-    PDF = pdf.mkPDF("CT14nnlo", 0)
-    #PDF = pdf.mkPDF("MMHT2014nnlo68cl", 0)
+    #PDF = pdf.mkPDF("CT14nnlo", 0)
+    PDF = pdf.mkPDF("MMHT2014nnlo68cl", 0)
 
     #for q in quarks["quark"]:
     #print("Quark ", PID[q], "hat Ladung ", quarks["charge"][q-1])
@@ -29,14 +30,14 @@ def main():
     #Variablen
     e = 1.602e-19
     E = 6500 #Strahlenergie in GeV, im Vornherein festgelegt?
-    x_total = int(30000000) #Anzahl an x Werten
-    eta_total = int(30000000) # Anzahl an eta Werten
+    x_total = int(50000) #Anzahl an x Werten
+    eta_total = int(50000) # Anzahl an eta Werten
     x_lower_limit = 0
     x_upper_limit = 1
     eta_limit = 2.37
     loguni_param=0.001 #alt 0.01
     stddev = 2
-    xMin = PDF.xMin
+    xMin = 1e-6
     eta_constant = False
     x_Grid = False
     cuts = True
@@ -44,16 +45,20 @@ def main():
     eta_gauss = True
     num_eta_values = 25
 
-    set_name = "MC30M_newgauss/"
+    set_name = "MMHT TestData50k/"
     root_name ="/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject"
     location = None #input("Welcher Rechner?")
     if location == "Taurus" or location == "taurus":
         root_name = "/home/s1388135/Bachelor-Thesis"
     if lfs:
         root_name = "/media/andiw/90D8E3C1D8E3A3A6/Users/andiw/Studium/Semester 6/Bachelor-Arbeit/LFS"
-    path = root_name + "/Files/Hadronic/Data/" + set_name
+    path = root_name + "/Files/Transfer/Data/" + set_name
 
 
+    #TODO random zeug wieder wegmachen
+    np.random.RandomState(seed=3)
+    np.random.seed(3)
+    random.seed(3)
 
     #Werte erzeugen
     x_2 = np.array([])
@@ -67,11 +72,11 @@ def main():
             x_1 = np.concatenate((x_1, x))
     else:
         while x_1.size < x_total:
-            x_1 = np.concatenate((x_1, (stats.loguniform.rvs(a=loguni_param, b=1+loguni_param, size=x_total - x_1.size) - loguni_param) * (x_upper_limit - x_lower_limit) + x_lower_limit))
+            x_1 = np.concatenate((x_1, (stats.loguniform.rvs(a=loguni_param, b=1+loguni_param, size=int(np.minimum(20e+6, x_total - x_1.size))) - loguni_param) * (x_upper_limit - x_lower_limit) + x_lower_limit), dtype="float32")
             x_1 = x_1[x_1 >= xMin]
 
         while x_2.size < x_total:
-            x_2 = np.concatenate((x_2, (stats.loguniform.rvs(a=loguni_param, b=1+loguni_param, size=x_total-x_2.size) - loguni_param) * (x_upper_limit - x_lower_limit) + x_lower_limit))
+            x_2 = np.concatenate((x_2, (stats.loguniform.rvs(a=loguni_param, b=1+loguni_param, size=int(np.minimum(20e+6, x_total-x_2.size))) - loguni_param) * (x_upper_limit - x_lower_limit) + x_lower_limit), dtype="float32")
             x_2 = x_2[x_2 >= xMin]
 
     plt.hist(x_1, bins=30, rwidth=0.8)
@@ -102,7 +107,7 @@ def main():
     else:
         if eta_gauss:
             while eta.size < eta_total:
-                eta = np.append(eta, stats.norm.rvs(scale=stddev, size=int(eta_total - eta.size)))
+                eta = np.concatenate((eta, stats.norm.rvs(scale=stddev, size=int(np.minimum(20e+6, int(eta_total - eta.size))))), dtype="float32")
                 eta = eta[np.abs(eta) < eta_limit]
         eta_upper=np.array([])
         eta_lower = np.array([])
@@ -114,13 +119,15 @@ def main():
             eta = np.append(eta_upper, eta_lower)
 
 
+    print("die daten wurden generiert")
 
     features = np.array([x_1, x_2, eta])
     features = np.transpose(features)
+    print("die daten wurden in features umgewandelt")
     if cuts:
         features = MC.pt_cut(features)
         features, eta_cut = MC.eta_cut(features=features, return_cut=True)
-
+    print("die daten wurden gecuttet")
 
     imposter_numbers=0
     imposter_check=False
