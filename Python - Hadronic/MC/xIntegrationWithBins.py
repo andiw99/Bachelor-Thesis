@@ -13,14 +13,18 @@ def main():
     dataset_paths = list()
     dataset_paths.append("/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Data/MC50M_I/")
     dataset_paths.append(
-        "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Data/MC50M_II/")
+       "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Data/MC50M_II/")
     dataset_paths.append(
-        "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Data/MC50M_III/")
+       "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Data/MC50M_III/")
+    dataset_paths.append(
+        "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Data/MC50M_IV/")
+    dataset_paths.append(
+       "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Data/MC50M_V/")
     label_name = "WQ"
     # Config der RandomSample generierung einlesen
     config = pd.read_csv(dataset_paths[0] + "config")
     # model einlesen
-    model_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Models/LastRandomSearch/best_model"
+    model_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Models/best_model"
     save_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Plots/"
     (model, transformer) = ml.import_model_transformer(model_path=model_path)
 
@@ -68,6 +72,10 @@ def main():
             # Die features in die bins aufteilen
             features_eta_constant["{:.2f}".format(eta_interval[i])] = features[(features[:,2] < eta_interval[i+1]) & (features[:,2] > eta_interval[i])]
             labels_eta_constant["{:.2f}".format(eta_interval[i])] = labels[(features[:,2] < eta_interval[i+1]) & (features[:,2] > eta_interval[i])]
+        print("Die Daten wurden in Bins eingeteilt, features, labels werden freigegeben")
+        del features
+        del labels
+        for i in range(nr_bins):
             try:
                 predictions["{:.2f}".format(eta_interval[i])] = transformer.retransform(model.predict(features_eta_constant["{:.2f}".format(eta_interval[i])]))
             except ValueError:
@@ -87,15 +95,7 @@ def main():
         I = integrate.quad(gauss, a=-variables["eta_limit"], b=variables["eta_limit"])
         print("ist gauß normiert?", I)
 
-        # Vertilung plotten, warum auch immer
-        probabilities_x = loguni(features[:,0])
 
-        order = np.argsort(loguni(features[:,0]))
-        x_1 = np.array(features[:,0])[order]
-        probabilities_x = np.array(probabilities_x)[order]
-
-        plt.plot(x_1, probabilities_x)
-        plt.show()
 
         I2 = integrate.quad(loguni, a=variables["x_lower_limit"], b=variables["x_upper_limit"])
         print("Normierung loguni", I2)
@@ -135,13 +135,17 @@ def main():
             if (i + 1) % 2 == 0:
                 print(i+1, "/", nr_bins)
 
-        analytic_stddev_mean = MC.gev_to_pb(analytic_stddev)
-        ml_stddev_mean = MC.gev_to_pb(ml_stddev)
+
         # Berechnungen den Listen hinzufuegen
         analytic_integrals.append(analytic_integral)
         analytic_stddevs.append(analytic_stddev)
         ml_integrals.append(ml_integral)
         ml_stddevs.append(ml_stddev)
+
+        #Speicher wieder freigeben
+        del features_eta_constant
+        del labels_eta_constant
+        del predictions
 
     print("analytic_integrals", analytic_integrals)
     print("ml_integrals", ml_integrals)
@@ -152,24 +156,33 @@ def main():
     ml_integral = np.mean(ml_integrals, axis=0)
     analytic_stddev = 1/len(analytic_stddevs) * np.sqrt(np.sum(np.square(analytic_stddevs), axis=0))
     ml_stddev = 1/len(ml_stddevs) * np.sqrt(np.sum(np.square(ml_stddevs), axis=0))
+    analytic_stddev_stat = np.std(analytic_integrals, axis=0, ddof=1) * 1/np.sqrt(len(analytic_integrals))
+    ml_stddev_stat = np.std(ml_integrals, axis=0, ddof=1)
+
+
+
+    print("ml_integral in pb ", MC.gev_to_pb(ml_integral), "stddev in pb", MC.gev_to_pb(ml_stddev), "statistical stddev in pb", MC.gev_to_pb(ml_stddev_stat))
+    print("analytic_integral in GeV", analytic_integral, "analytic integral in pb:", MC.gev_to_pb(analytic_integral), "stddev in pb", MC.gev_to_pb(analytic_stddev_stat))
 
     order = np.argsort(eta)
     eta = np.array(eta)[order]
     analytic_integral = np.array(analytic_integral)[order]
     ml_integral = np.array(ml_integral)[order]
+
     ml.make_MC_plot(x=eta, analytic_integral=MC.gev_to_pb(analytic_integral), ml_integral=MC.gev_to_pb(ml_integral), xlabel=r"$\eta$",
-                    ylabel=r"$\frac{d\sigma}{d\eta}$", save_path=save_path, name="xIntegration", analytic_errors=analytic_stddev, ml_errors=ml_stddev)
+                    ylabel=r"$\frac{d\sigma}{d\eta}$", save_path=save_path, name="xIntegration_correct_std",
+                    analytic_errors=MC.gev_to_pb(analytic_stddev), ml_errors=MC.gev_to_pb(ml_stddev), ylims=(0.98, 1.02))
+    plt.show()
+    ml.make_MC_plot(x=eta, analytic_integral=MC.gev_to_pb(analytic_integral), ml_integral=MC.gev_to_pb(ml_integral), xlabel=r"$\eta$",
+                    ylabel=r"$\frac{d\sigma}{d\eta}$", save_path=save_path, name="xIntegration_correct_stat_std",
+                    analytic_errors=MC.gev_to_pb(analytic_stddev_stat), ml_errors=MC.gev_to_pb(ml_stddev_stat), ylims=(0.98, 1.02))
     plt.show()
 
     # TODO funktioniert das hier schon?
 
 
-
-    ML_integral = 0
-
-    ML_integral = (1/variables["total_data"]) * ML_integral
-    print("ML_integral", ML_integral)
-    print("analytic_integral in GeV", analytic_integral, "analytic integral in pb:", MC.gev_to_pb(analytic_integral))
+    print("ml_integral in pb ", MC.gev_to_pb(ml_integral), "stddev in pb", MC.gev_to_pb(ml_stddev), "statistical stddev in pb", MC.gev_to_pb(ml_stddev_stat))
+    print("analytic_integral in GeV", analytic_integral, "analytic integral in pb:", MC.gev_to_pb(analytic_integral), "stddev in pb", MC.gev_to_pb(analytic_stddev_stat))
 
 
 if __name__ == "__main__":

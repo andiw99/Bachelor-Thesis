@@ -236,7 +236,7 @@ class x_power_dist():
     def cdf(self, x):
         y = (self.offset * (x-self.a) + 1/(self.power + 1) * \
             ((x - self.mean) ** (self.power + 1)  - (self.a - self.mean) ** (self.power + 1)))/self.scale
-        return y
+        return yF
 
     def rvs(self, size, interpol_nr=1000):
         try:

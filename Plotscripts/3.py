@@ -34,7 +34,7 @@ trans_to_pb = True
 models = dict()
 transformers = dict()
 for model_name in model_paths:
-    (models[model_name], transformers[model_name]) = ml.load_model_and_transormer(model_path=model_paths[model_name])
+    (models[model_name], transformers[model_name]) = ml.load_model_and_transformer(model_path=model_paths[model_name])
 show_3D_plots = False
 use_cut = False
 loss_function = keras.losses.MeanAbsoluteError(reduction=keras.losses.Reduction.NONE)

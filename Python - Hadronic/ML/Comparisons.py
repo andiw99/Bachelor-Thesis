@@ -19,21 +19,21 @@ import ml
 # Grid erstellen, pool für jeden Hyperparameter, so kann man dynamische einstellen in welchen Dimensionen das Grid liegt
 # wichtig: Standardmodell hat index 0 in jedem pool
 pools = dict()
-pools["batch_size"] = [256, 512, 768, 1024, 128]
-pools["units_nr_layers"] = [(256, 5), (512, 3), (64, 7), (1024, 2), (128, 6)]
-pools["learning_rate"] = [1e-2, 1e-3, 1e-4, 5e-3]
+pools["batch_size"] = [256, 512, 768,]
+pools["units_nr_layers"] = [(256, 5),(32, 10), (384, 4)]
+#pools["units"] = [256, 128, 64, 512]
+#pools["nr_layers"] = [5, 4]
+pools["learning_rate"] = [1e-2]
 pools["l2_kernel"] = [0.0]
 pools["l2_bias"] = [0.0]
-pools["loss_fn"] = [keras.losses.MeanAbsoluteError(),
-                    keras.losses.MeanSquaredError(), keras.losses.Huber()]
-pools["optimizer"] = [keras.optimizers.Adam, keras.optimizers.RMSprop, keras.optimizers.SGD]
+pools["loss_fn"] = [keras.losses.MeanAbsoluteError()]
+pools["optimizer"] = [keras.optimizers.Adam]
 pools["momentum"] = [0.1]
 pools["dropout"] = [False]
 pools["dropout_rate"] = [0]
 pools["kernel_initializer"] = [tf.keras.initializers.HeNormal()]
 pools["bias_initializer"] = [tf.keras.initializers.Zeros()]
-pools["hidden_activation"] = [tf.nn.leaky_relu, tf.nn.relu, tf.nn.elu,
-                              tf.nn.sigmoid, tf.nn.tanh]
+pools["hidden_activation"] = [tf.nn.leaky_relu]
 pools["output_activation"] = [ml.LinearActiavtion()]
 pools["feature_normalization"] = ["normalization"]
 pools["scaling_bool"] = [True]
@@ -44,17 +44,15 @@ pools["min_delta"] = [5e-6]
 pools["min_lr"] = [5e-8]
 pools["dataset"] = ["TrainingData2M"]
 # Festlegen, welche Hyperparameter in der Bezeichnung stehen sollen:
-names = {"loss_fn", "units_nr_layers", "optimizer", "hidden_activation",
-         "dataset", "batch_size",
-         "learning_rate", "units_nr_layers", "label_normalization", "base10",
-         "feature_normalization", }
+names = {"feature_normalization", "logarithm", "base10", "label_normalization"}
 
 vary_multiple_parameters = False
+architecture = True
 
 # Variablen...
 train_frac = 0.95
 training_epochs = 100
-size = 100
+size = 16
 lr_reduction = 0.05
 lr_factor = 0.5
 nesterov = True
@@ -78,10 +76,14 @@ for config in checked_configs:
     params = dict()
     for i, param in enumerate(pools):
         params[param] = config[i]
+    
+    if architecture:
+        params["units"] = params["units_nr_layers"][0]
+        params["nr_layers"] = params["units_nr_layers"][1]
 
     data_path = root_path + "/Files/Hadronic/Data/" + params["dataset"] + "/"
     data_name = "all"
-    project_path = root_path + "Files/Hadronic/Models/LastRandomSearch/"
+    project_path = root_path + "Files/Hadronic/Models/final_comparison_2/"
     if not vary_multiple_parameters:
         project_path += str(config[-1]) + "/"
     loss_name = "best_loss"
@@ -120,7 +122,7 @@ for config in checked_configs:
     (training_data, train_features, train_labels, test_features, test_labels,
      transformer) = ml.data_handling(
         data_path=data_path + data_name, label_name=label_name,
-        scaling_bool=params["scaling_bool"], logarithm=pools["logarithm"],
+        scaling_bool=params["scaling_bool"], logarithm=params["logarithm"],
         base10=params["base10"],
         label_normalization=params["label_normalization"],
         feature_rescaling=feature_rescaling,
@@ -150,8 +152,8 @@ for config in checked_configs:
     for i in range(repeat):
         # Modell initialisieren
         models.append(
-            ml.initialize_model(nr_layers=params["units_nr_layers"][1],
-                                units=params["units_nr_layers"][0],
+            ml.initialize_model(nr_layers=params["nr_layers"],
+                                units=params["units"],
                                 loss_fn=params["loss_fn"],
                                 optimizer=params["optimizer"],
                                 hidden_activation=params["hidden_activation"],
@@ -219,8 +221,8 @@ for config in checked_configs:
                                          "feature_normalization"],
                                      min_delta=params["min_delta"],
                                      nr_hidden_layers=
-                                     params["units_nr_layers"][1],
-                                     units=params["units_nr_layers"][0])
+                                     params["nr_layers"],
+                                     units=params["units"])
 
     # Überprüfen ob Fortschritt gemacht wurde
     ml.check_progress(model=models[np.argmin(total_losses)],

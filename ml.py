@@ -1084,7 +1084,7 @@ def plot_model(features_pd, labels, predictions,  keys, save_path=None,
                     ax_fct.legend()
                 else:
                     ax_fct.legend(loc=(0.75, 0.89))
-                if xticks:
+                if xticks is not None:
                     ax_fct.set_xticks(xticks)
                     ax_fct.set_xticklabels(xtick_labels, fontdict={'fontsize': 20})
 
@@ -1144,7 +1144,7 @@ def plot_model(features_pd, labels, predictions,  keys, save_path=None,
                 """
                 plt.tight_layout()
                 if save_path:
-                    plt.savefig(save_path + "_" + str(key) + "_ratio")
+                    plt.savefig(save_path + "_" + str(key) + ".pdf", format="pdf")
                 plt.show()
 
 
@@ -1160,8 +1160,8 @@ def make_comparison_plot(names, all_losses, min_losses=None, avg_losses=None, lo
     if colors == None:
         colors = ["C1", "C2", "C3", "C4"]
     x = list(np.arange(len(names)))
-    fig, ax = plt.subplots(figsize=(len(x) * 1.5, 4.8))
-    if type(all_losses[0]) == list:
+    fig, ax = plt.subplots(figsize=(len(x) * 1. + 0.5, 4.8))
+    if type(all_losses[0]) == list or type(all_losses[0] == tuple):
         for xe, ye in zip(x, all_losses):
             ax.scatter([xe] * len(ye), ye, marker="o", facecolors="None", edgecolors="C0")
     elif type(all_losses[0]) == dict:
@@ -1183,24 +1183,27 @@ def make_comparison_plot(names, all_losses, min_losses=None, avg_losses=None, lo
     ax.set_xticks(x)
     ax.set_xticklabels(names)
     ax.set_xlabel(comparison)
+    # negative werte für y lim verhindern
+    if ax.get_ylim()[0] < 0:
+        ax.set_ylim(bottom=0)
     fig.legend()
     fig.tight_layout()
     if save_path:
         if not os.path.exists(save_path):
             os.mkdir(save_path)
-        plt.savefig(save_path + str(comparison) + "_comparison")
+        plt.savefig(save_path + str(comparison) + "_comparison.pdf", format="pdf")
 
 
-def make_MC_plot(x, analytic_integral, ml_integral, xlabel=None, ylabel=None, save_path=None, name="", analytic_errors=None, ml_errors=None, scale="linear"):
+def make_MC_plot(x, analytic_integral, ml_integral, xlabel=None, ylabel=None, save_path=None, name="", analytic_errors=None, ml_errors=None, scale="linear", ylims=None):
     fig, (ax, ax_ratio) = plt.subplots(nrows=2, ncols=1, sharex=True, gridspec_kw={"height_ratios": [3,1], "hspace": 0.05}, figsize=(6.4, 7.2))
     # Integration plotten
     ax.step(x=x, y=analytic_integral,
                 label="Analytic", where="mid", color="C1")
     ax.step(x=x, y=ml_integral, label="Prediction", where="mid", linestyle="dashed", color="C0")
     if analytic_errors is not None:
-        ax.errorbar(x=x, y=analytic_integral, yerr=analytic_errors, linewidth=0, elinewidth=1, capsize=120/len(x), ecolor="C0")
+        ax.errorbar(x=x, y=analytic_integral, yerr=analytic_errors, linewidth=0, elinewidth=1, capsize=120/len(x), ecolor="C1")
     if ml_errors is not None:
-        ax.errorbar(x=x, y=ml_integral, yerr=ml_errors, linewidth=0, elinewidth=1, capsize=100/len(x), ecolor="orange")
+        ax.errorbar(x=x, y=ml_integral, yerr=ml_errors, linewidth=0, elinewidth=1, capsize=100/len(x), ecolor="C0")
 
     ax.set_ylabel(ylabel, fontsize=15)
     ax.set_yscale(scale)
@@ -1210,15 +1213,21 @@ def make_MC_plot(x, analytic_integral, ml_integral, xlabel=None, ylabel=None, sa
     ratio = analytic_integral/ml_integral
     ratio_std = np.std(ratio)
     mean_ratio = np.mean(ratio)
+    print("ratio", ratio)
+    print("ratio_std", ratio_std)
+    print("mean_ratio", mean_ratio)
     ax_ratio.step(x=x, y=ratio, where="mid")
-    ax_ratio.set_ylim(mean_ratio - 2 * ratio_std, mean_ratio + 2 * ratio_std)
+    if ylims is not None:
+        ax_ratio.set_ylim(ylims)
+    else:
+        ax_ratio.set_ylim(mean_ratio - 2 * ratio_std, mean_ratio + 2 * ratio_std)
     ax_ratio.set_ylabel("ratio", fontsize=15)
     ax_ratio.grid(True, color="lightgray")
     ax_ratio.set_xlabel(xlabel, fontsize=15)
     if save_path:
         if not os.path.exists(save_path):
             os.mkdir(save_path)
-        plt.savefig(save_path + name + "mc", bbox_inches="tight")
+        plt.savefig(save_path + name + "mc.pdf", bbox_inches="tight", format="pdf")
 
 
 def make_reweight_plot(features_pd, labels, predictions,  keys, save_path=None,
@@ -1357,7 +1366,7 @@ def make_reweight_plot(features_pd, labels, predictions,  keys, save_path=None,
                 if save_path:
                     if not os.path.exists(save_path):
                         os.makedirs(save_path)
-                    plt.savefig(save_path + "_" + str(key) + "_ratio")
+                    plt.savefig(save_path + "_" + str(key) + ".pdf", format="pdf")
                 plt.show()
 
 class class_scheduler():

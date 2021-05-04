@@ -26,6 +26,7 @@ def main():
     #model_paths["best model "] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Models/Loss_comparison/best_model"
     model_paths["No Fine Tuning"] = project_path + "transfer_no_tuning"
     model_paths["Fine Tuning"] = project_path + "transfer_fine_tuning_faster_training"
+    model_paths["Source Model \n reweighted"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Results/Reweight/"
     #model_paths["Source Model"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Models/LastRandomSearch/best_model"
     #model_paths["IS\n10k"] = project_path + "theta_model_full_range_IS_less_data"
 

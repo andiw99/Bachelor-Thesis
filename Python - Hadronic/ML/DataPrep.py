@@ -21,17 +21,16 @@ def main():
 
 
     #PDF initialisieren
-    #PDF = pdf.mkPDF("CT14nnlo", 0)
-    PDF = pdf.mkPDF("MMHT2014nnlo68cl", 0)
+    PDF = pdf.mkPDF("CT14nnlo", 0)
+    #PDF = pdf.mkPDF("MMHT2014nnlo68cl", 0)
 
     #for q in quarks["quark"]:
     #print("Quark ", PID[q], "hat Ladung ", quarks["charge"][q-1])
 
     #Variablen
-    e = 1.602e-19
     E = 6500 #Strahlenergie in GeV, im Vornherein festgelegt?
-    x_total = int(50000) #Anzahl an x Werten
-    eta_total = int(50000) # Anzahl an eta Werten
+    x_total = int(50000000) #Anzahl an x Werten
+    eta_total = int(50000000) # Anzahl an eta Werten
     x_lower_limit = 0
     x_upper_limit = 1
     eta_limit = 2.37
@@ -45,7 +44,7 @@ def main():
     eta_gauss = True
     num_eta_values = 25
 
-    set_name = "MMHT TestData50k/"
+    set_name = "MC50M_V/"
     root_name ="/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject"
     location = None #input("Welcher Rechner?")
     if location == "Taurus" or location == "taurus":
@@ -53,12 +52,6 @@ def main():
     if lfs:
         root_name = "/media/andiw/90D8E3C1D8E3A3A6/Users/andiw/Studium/Semester 6/Bachelor-Arbeit/LFS"
     path = root_name + "/Files/Transfer/Data/" + set_name
-
-
-    #TODO random zeug wieder wegmachen
-    np.random.RandomState(seed=3)
-    np.random.seed(3)
-    random.seed(3)
 
     #Werte erzeugen
     x_2 = np.array([])

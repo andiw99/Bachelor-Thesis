@@ -1,0 +1,23 @@
+property,0
+name,sequential_61
+layers,"[{'class_name': 'InputLayer', 'config': {'batch_input_shape': (None, 3), 'dtype': 'float32', 'sparse': False, 'ragged': False, 'name': 'normalization_61_input'}}, {'class_name': 'Normalization', 'config': {'name': 'normalization_61', 'trainable': True, 'dtype': 'float32', 'axis': (-1,)}}, {'class_name': 'Dense', 'config': {'name': 'Layer_0', 'trainable': True, 'dtype': 'float32', 'units': 256, 'activation': 'leaky_relu', 'use_bias': True, 'kernel_initializer': {'class_name': 'HeNormal', 'config': {'seed': None}}, 'bias_initializer': {'class_name': 'Zeros', 'config': {}}, 'kernel_regularizer': {'class_name': 'L2', 'config': {'l2': 0.0}}, 'bias_regularizer': {'class_name': 'L2', 'config': {'l2': 0.0}}, 'activity_regularizer': None, 'kernel_constraint': None, 'bias_constraint': None}}, {'class_name': 'Dense', 'config': {'name': 'Layer_1', 'trainable': True, 'dtype': 'float32', 'units': 256, 'activation': 'leaky_relu', 'use_bias': True, 'kernel_initializer': {'class_name': 'HeNormal', 'config': {'seed': None}}, 'bias_initializer': {'class_name': 'Zeros', 'config': {}}, 'kernel_regularizer': {'class_name': 'L2', 'config': {'l2': 0.0}}, 'bias_regularizer': {'class_name': 'L2', 'config': {'l2': 0.0}}, 'activity_regularizer': None, 'kernel_constraint': None, 'bias_constraint': None}}, {'class_name': 'Dense', 'config': {'name': 'Layer_2', 'trainable': True, 'dtype': 'float32', 'units': 256, 'activation': 'leaky_relu', 'use_bias': True, 'kernel_initializer': {'class_name': 'HeNormal', 'config': {'seed': None}}, 'bias_initializer': {'class_name': 'Zeros', 'config': {}}, 'kernel_regularizer': {'class_name': 'L2', 'config': {'l2': 0.0}}, 'bias_regularizer': {'class_name': 'L2', 'config': {'l2': 0.0}}, 'activity_regularizer': None, 'kernel_constraint': None, 'bias_constraint': None}}, {'class_name': 'Dense', 'config': {'name': 'Layer_3', 'trainable': True, 'dtype': 'float32', 'units': 256, 'activation': 'leaky_relu', 'use_bias': True, 'kernel_initializer': {'class_name': 'HeNormal', 'config': {'seed': None}}, 'bias_initializer': {'class_name': 'Zeros', 'config': {}}, 'kernel_regularizer': {'class_name': 'L2', 'config': {'l2': 0.0}}, 'bias_regularizer': {'class_name': 'L2', 'config': {'l2': 0.0}}, 'activity_regularizer': None, 'kernel_constraint': None, 'bias_constraint': None}}, {'class_name': 'Dense', 'config': {'name': 'Layer_4', 'trainable': True, 'dtype': 'float32', 'units': 256, 'activation': 'leaky_relu', 'use_bias': True, 'kernel_initializer': {'class_name': 'HeNormal', 'config': {'seed': None}}, 'bias_initializer': {'class_name': 'Zeros', 'config': {}}, 'kernel_regularizer': {'class_name': 'L2', 'config': {'l2': 0.0}}, 'bias_regularizer': {'class_name': 'L2', 'config': {'l2': 0.0}}, 'activity_regularizer': None, 'kernel_constraint': None, 'bias_constraint': None}}, {'class_name': 'Dense', 'config': {'name': 'Output_layer', 'trainable': True, 'dtype': 'float32', 'units': 1, 'activation': 'linear', 'use_bias': True, 'kernel_initializer': {'class_name': 'HeNormal', 'config': {'seed': None}}, 'bias_initializer': {'class_name': 'Zeros', 'config': {}}, 'kernel_regularizer': {'class_name': 'L2', 'config': {'l2': 0.0}}, 'bias_regularizer': {'class_name': 'L2', 'config': {'l2': 0.0}}, 'activity_regularizer': None, 'kernel_constraint': None, 'bias_constraint': None}}]"
+learning_rate,0.01
+epochs,92
+batch_size,256
+total_losses,"[0.1382439285516739, 0.09591299295425415, 0.21986712515354156, 0.15602953732013702, 0.11730501800775528]"
+avg validation loss,0.14547
+smallest loss,0.09591
+loss error,0.04230
+transformer_config,"{'scaling': True, 'logarithm': [True, False], 'base10': True, 'shift': False, 'label_normalization': False, 'feature_rescaling': False, 'scale': 3.758365239853851e+19}"
+training time,569.10
+Custom,False
+loss_fn,mean_absolute_error
+feature_rescaling,normalization
+min_delta,5e-06
+nr_hidden_layers,5
+units,256
+lr_reduction,
+lr_factor,
+fine_tuning,
+source_model,
+offset,

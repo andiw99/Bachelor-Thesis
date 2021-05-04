@@ -30,13 +30,13 @@ def main():
 
     time1 = time.time()
     #Daten einlesen
-    data_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Data/TrainingData8M/"
+    data_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Data/TrainingData2M/"
     data_name = "all"
     project_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Models/"
     loss_name = "Source_loss"
     project_name = ""
 
-    read_name = "last_random_search_best" #"best_guess_important_range" #
+    read_name = "RMSprop" #"best_guess_important_range" #
     label_name = "WQ"
     read_path =project_path + project_name + read_name
     transferred_transformer = None
@@ -61,7 +61,7 @@ def main():
     train_frac = 0.95
     batch_size = 256
     training_epochs = 100
-    repeat=3
+    repeat= 5
     nr_layers = 5
     units = 256
     learning_rate = 1e-2
