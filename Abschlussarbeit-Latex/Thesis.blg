@@ -1,9 +1,7 @@
-This is BibTeX, Version 0.99d
+This is BibTeX, Version 0.99d (TeX Live 2019/Debian)
 Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
 The top-level auxiliary file: Thesis.aux
-Reallocating 'name_of_file' (item size: 1) to 22 items.
 A level-1 auxiliary file: chapters/title_de.aux
-Reallocating 'name_of_file' (item size: 1) to 21 items.
 A level-1 auxiliary file: chapters/back_de.aux
 I found no \citation commands---while reading file Thesis.aux
 I found no \bibdata command---while reading file Thesis.aux

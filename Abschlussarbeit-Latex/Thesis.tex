@@ -425,9 +425,15 @@ Das Training an sich wird von den in Keras leicht einzubauenden Callbacks bestim
 \end{itemize}
 Die Wahl der genauen Konfiguration der Callbacks ist in \textit{\autoref{text}} festgehalten.
 Die gelernte Funktion im Vergleich mit den analytischen Werten ist in \textit{\autoref{}} gezeigt. Die Werte überlagern sich recht gut, sodass man auf den ersten Blick keinen Unterschied feststellen kann. Betrachtet man das Verhältnis, erkennt man dass sich der Unterschied auf ca. $0.1\%$. Diese Genauigkeit ist mit den hier verwendeten State-of-the-Art Hyperparametern für das einfache Problem auch zu erwarten.
-\\
-\\
-\textbf{Modell für $\mathbf{\frac{d\sigma}{d\theta}}$:}
+\begin{figure}[tbp]
+	\centering
+	\includegraphics[width=8cm]{graphics/partonic_eta_model_eta_ratio}
+	\caption{machine learning predictions vs analtisch berechnete Werte Eta}
+	\label{partonic_eta_model}
+\end{figure}
+ \\
+ \\
+\textbf{Modell für $\mathbf{\frac{d\sigma}{d\theta}}$:} \\
 Der Wirkungsquerschnitt in Abhängigkeit von $\theta$ unterscheidet sich vom vorherigen Modell durch seine Polstellen. Da Computer schlecht mit Polstellen umgehen können, müssen wir den Trainingsbereich auf $[\epsilon, \pi-\epsilon]$ einschränken. Aus physikalischer Sicht ist das legitim, da die Polstellen im Strahlengang des Speicherrings liegen und damit nicht messbar sind. Viele Detektoren können Pseudo-Rapiditäten bis zu $\abs{\eta} \leq 2.5$ messen, was einem $\epsilon \approx 0.163$ entspricht. Man kann dem Modell den Umgang mit den Polstellen erleichtern, in dem man die Labels(also den differentiellen Wirkungsquerschnitt) auf das Intervall $[-1, 1]$ normiert. Da gute Modelle hier nicht mehr trivial gefunden werden können, greifen wir auf eine automatische, zufällige Suche zurück (Random-Search), um nicht einzelne Hyperparameter per Hand ausprobieren zu müssen. Die Such-Parameter mit Ergebnis sind in \textit{\autoref{text}} festgehalten.
 \begin{table}
 	\centering
@@ -450,31 +456,20 @@ Der Wirkungsquerschnitt in Abhängigkeit von $\theta$ unterscheidet sich vom vor
 	\end{tabular}
 	\caption{Parameter der Random-Search für $\frac{d\sigma}{d\theta}$ mit Ergebnis}
 \end{table}
-Es fällt auf, dass die Architektur des Modells um ein vielfaches komplizierter ist, als die vorhergehende. Einerseits ist dies aufgrund der Polstellen zu erwarten und andererseits ist die Möglichkeit des Overfitten durch die große Anzahl an Trainingspunkten weitgehend ausgeschlossen und daher nur natürlich, dass komplexere Modelle genauere Ergebnisse erzielen. Die Performance des Modells ist in \textit{}\autoref{label} gezeigt. Die Präzision ist trotz der komplizierteren Funktion mit \textit{\autoref{text}} zu vergleichen. Durch den Random-Search konnte also ein vergleichsweise passendes Modell gefunden werden. 
-Wir wollen nun betrachten, wie sich das Modell auf einem Interval $[\epsilon', \pi-\epsilon']$ mit $\epsilon' < \epsilon$ schlägt. Wir vergleichen dies mit einem Modell, dass zwar mit den gleichen Hyperparametern, jedoch auf $[\epsilon', \pi-\epsilon']$ trainiert wurde. Für ein drittes Modell sind die Trainingsdaten nach einer Verteilung generiert, die der Form von $\frac{d\sigma}{d\theta}$ ähnelt (Importance Sampling). Die Vergleiche sind in \textit{\autoref{text}} und in \textit{\autoref{text}} für $\epsilon' = 0.01$ gezeigt. Wie zu erwarten weicht das ursprüngliche schnell von der analytischen Funktion ab. Man erkennt, dass dem Modell zwar die Tendenz bekannt ist, der genaue Verlauf jedoch rasch unbekannt wird. Man könnte vermuten, dass der Maschine zwar die Steigung bekannt ist, alle weiteren Ableitungen jedoch die Komplexität des Modells übertreffen. Die beiden anderen Modelle zeigen akzeptable Leistung auch nahe an den Polstellen. In \textit{\autoref{text}} lässt sich schlecht beurteilen, ob das importance Sampling Wirkung zeigt. Lediglich im Verhältnis kann man erahnen, dass das mit importance gesampelten Trainingsdaten trainierte Netz an den Polstellen besser und im Zentrum schlechter angepasst ist. In \textit{\autoref{text}} a) wird diese Vermutung bestätigt, auch wenn die Auswirkungen nur vergleichsweise klein sind. Einen größeren Effekt sieht man in \textit{\autoref{text}} b). Durch die große Zahl an Trainingsdaten in a) sind schon genug Punkte nahe an der Polstelle vorhanden und die zusätzlichen Werte bringen nur einen kleinen (absoluten) Mehrwert. Ist man jedoch begrenzt in seiner Verfügung über Trainingsdaten oder möchte die Trainigszeit minimieren und trotzdem brauchbare Ergebnisse erhalten, kann importance sampling jedoch helfen. Man sollte jedoch im Hinterkopf behalten, dass man hierbei einen Kompromiss eingeht und die Verlässlichkeit in den Bereichen, die durch das sampling vernachlässigt werden, abnimmt. In \textit{\autoref{text}} sind noch einmal der MAPE (Mean-Absolute-Percentage-Error) der verschiedenen Modell für verschiende Testdatensets gezeigt. Hier wird noch einmal deutlich, dass das importance sampling vor allem nützlich ist, wenn die Bereiche von Funktionen besonders wichtig sind, in denen die Funktion auch einen hohen Funktionswert besitzt. Da wir den differentiellen Wirkungsquerschnitt letztendlich benutzen wollen, um den totalen Wirkungsquerschnitt zu berechnen, ist dies für uns genau der Fall. Allgemein geht das Annähern eines beliebigen Integranden mittels maschinellem Lernen Hand in Hand mit anschließender Monte-Carlo Integration. 
- 
-
-
-\begin{figure}[tbp]
-	\centering
-	\includegraphics[width=8cm]{graphics/partonic_eta_model_eta_ratio}
-	\caption{machine learning predictions vs analtisch berechnete Werte}
-	\label{partonic_eta_model}
-\end{figure}
-
+Es fällt auf, dass die Architektur des Modells um ein vielfaches komplizierter ist, als die vorhergehende. Einerseits ist dies aufgrund der Polstellen zu erwarten und andererseits ist die Möglichkeit des Overfitten durch die große Anzahl an Trainingspunkten weitgehend ausgeschlossen und daher nur natürlich, dass komplexere Modelle genauere Ergebnisse erzielen. Die Performance des Modells ist in \textit{}\autoref{label} gezeigt. Die Präzision ist trotz der komplizierteren Funktion mit \textit{\autoref{text}} zu vergleichen. Durch den Random-Search konnte also ein vergleichsweise passendes Modell gefunden werden. \\
 \begin{figure}[tbp]
 	\centering
 	\includegraphics[width=8cm]{graphics/2}
 	\caption{Predictions vs Analytisch auf relevantem Theta-Intervall}
 \end{figure}
-
+Wir wollen nun betrachten, wie sich das Modell auf einem Interval $[\epsilon', \pi-\epsilon']$ mit $\epsilon' < \epsilon$ schlägt. Wir vergleichen dies mit einem Modell, dass zwar mit den gleichen Hyperparametern, jedoch auf $[\epsilon', \pi-\epsilon']$ trainiert wurde. Für ein drittes Modell sind die Trainingsdaten nach einer Verteilung generiert, die der Form von $\frac{d\sigma}{d\theta}$ ähnelt (Importance Sampling). Die Vergleiche sind in \textit{\autoref{text}} und in \textit{\autoref{text}} für $\epsilon' = 0.01$ gezeigt. Wie zu erwarten weicht das ursprüngliche schnell von der analytischen Funktion ab. Man erkennt, dass dem Modell zwar die Tendenz bekannt ist, der genaue Verlauf jedoch rasch unbekannt wird. Man könnte vermuten, dass der Maschine zwar die Steigung bekannt ist, alle weiteren Ableitungen jedoch die Komplexität des Modells übertreffen. Die beiden anderen Modelle zeigen akzeptable Leistung auch nahe an den Polstellen. In \textit{\autoref{text}} lässt sich schlecht beurteilen, ob das importance Sampling Wirkung zeigt. Lediglich im Verhältnis kann man erahnen, dass das mit importance gesampelten Trainingsdaten trainierte Netz an den Polstellen besser und im Zentrum schlechter angepasst ist. In \textit{\autoref{text}} a) wird diese Vermutung bestätigt, auch wenn die Auswirkungen nur vergleichsweise klein sind. Einen größeren Effekt sieht man in \textit{\autoref{text}} b). Durch die große Zahl an Trainingsdaten in a) sind schon genug Punkte nahe an der Polstelle vorhanden und die zusätzlichen Werte bringen nur einen kleinen (absoluten) Mehrwert. Ist man jedoch begrenzt in seiner Verfügung über Trainingsdaten oder möchte die Trainigszeit minimieren und trotzdem brauchbare Ergebnisse erhalten, kann importance sampling jedoch helfen. Man sollte jedoch im Hinterkopf behalten, dass man hierbei einen Kompromiss eingeht und die Verlässlichkeit in den Bereichen, die durch das sampling vernachlässigt werden, abnimmt. 
+In \textit{\autoref{text}} sind noch einmal der MAPE (Mean-Absolute-Percentage-Error) der verschiedenen Modell für verschiende Testdatensets gezeigt. Hier wird noch einmal deutlich, dass das importance sampling vor allem nützlich ist, wenn die Bereiche von Funktionen besonders wichtig sind, in denen die Funktion auch einen hohen Funktionswert besitzt. Da wir den differentiellen Wirkungsquerschnitt letztendlich benutzen wollen, um den totalen Wirkungsquerschnitt zu berechnen, ist dies für uns genau der Fall. Allgemein geht das Annähern eines beliebigen Integranden mittels maschinellem Lernen Hand in Hand mit anschließender Monte-Carlo Integration. Die Verteilung, die wir benutzen, um die Form des Wirkungsquerschnittes anzunähern, ist die ein Polynom vierten Grades und in \textit{\autoref{text}} gezeigt.
 \begin{figure}[tbp]
 	\centering
 	\includegraphics[width=9cm]{graphics/3}
 	\caption{machine learning predictions vs analtisch berechnete Werte}
 	\label{partonic_theta_model}
 \end{figure}
-
 \begin{figure}[tbp]
 	\centering
 	\subfloat[Modelle mit 60000 Traningspunkten]{\includegraphics[width=7cm]{graphics/3.1}}
@@ -482,22 +477,88 @@ Wir wollen nun betrachten, wie sich das Modell auf einem Interval $[\epsilon', \
 	\caption{Performance des Netzes für Randpunkte}
 	\label{3.1 / 3.2}
 \end{figure}
-
 \begin{figure}
 	\centering
 	\includegraphics[width=8cm]{graphics/4}
 	\caption{simples Importance Sampling, das die analytische Funktion annähern soll}
 \end{figure}
-
 \begin{figure}
 	\centering
 	\includegraphics[width=9cm]{graphics/26}
 	\caption{Vergleich der Performance von verschiedenen Theta-Modellen, die mit verschiedenen Datenmengen trainiert wurden. IS: Importance sampling. Auf der x-Achse sind die Trainings-Datenmengen und in der Legende die Test-Datenmengen}
 \end{figure}
-
 \section{Hadronischer Diphoton-Prozess}
-\subsection{...}
-% TODO Umrechnung in pb für Grafik 8
+\subsection{cuts and stuff}
+Im Gegensatz zu den im Vorhergehenden betrachteten Prozessen, ist die Reaktion $pp \rightarrow \gamma \gamma$ beobachtbar und messbar. Wir wollen den Wirkungsquerschnitt am Beispiel einer Messung im ATLAS-Detektor behandeln. Da kein Detektor perfekt ist, müssen wir die Events nach messbaren und nicht-detektierbaren Ereignissen einteilen. Wir wenden also Cuts auf unsere generierten Phasenraumpunkte an und trainieren unseren Algorithmus nur an solchen Messpunkten, die auch praktisch detektierbar wären. Die verwendeten Cuts sind angelehnt an \textit{\autoref{Siegert}} und aufgelistet in \textit{\autoref{label}}.
+\begin{table}
+	\centering
+	\begin{tabular}{|c|c|}
+		\hline
+		Bereich & Cut \\
+		\hline
+		Photon-Energie & $\abs{p_T} > 40$ GeV \\
+		Photon Winkel & $\abs{\eta_{\gamma, \tilde{\gamma}}} < 2.37$ ohne $¸1.37 < \abs{\eta_{\gamma, \tilde{\gamma}}} < 1.52$ \\
+		Impulsbruchteil & $x_{1,2} < 0.7 $\\
+		\hline
+	\end{tabular}
+	\caption{Event-Selektion für den Diphoton-Prozess in Leading-Order am ATLAS - Detektor}
+\end{table}
+Dabei sind $\gamma$ und $\tilde{\gamma}$ die Bezeichnungen für die beiden Photonen. $p_T$ bezeichnet dabei den Impuls der produzierten Photonen transversal zum Strahlengang. Da die Quarks, die im Prozess beteiligt sind in unserem Modell nur einen Impuls in Strahlrichtung haben, folgt aus der Impulserhaltung direkt $p_{T,\gamma} = p_{T,\tilde{\gamma}}$. ATLAS kann keine beliebig spitzen Winkel messen, daher betrachten wir nur Photonen mit einer Pseudo-Rapidität von $\eta < 2.37$. Der Detektor besteht aus zwei Teilen, wobei sich der eine Teil wie ein Zylindermantel um den Strahl legt und der andere die Deckel darstellt. Zwischen diesen Teilen befindet sich ein Spalt, in dem nicht gemessen werden kann, daher verwerfen wir auch Ereignisse mit $1.37 < \abs{\eta_{\gamma, \tilde{\gamma}}} < 1.52$. Wie wir später sehen werden, machen die Partondichtefunktionen und damit auch der dreifach differentielle Wirkungsquerschnitt ab ca. $x \approx 0.7$ einen Bogen und fällt extrem schnell zu Null hin ab. Zum totalen Wirkunsquerschnitt, der letztendlich unser Ziel darstellt, trägt dieser Bereich so gut wie nicht mehr bei. Weiterhin vereinfacht es es dem neuronalen Netz extrem, wenn er diesen Phasenraumbereich mit extrem kleinen Labels nicht mehr erlernen muss.
+\newline
+%TODO graph der deine eta Rechnung erklärt?
+Wir müssen weiterhin beachten, dass wir beide Photonen messen können müssen, damit wir den Prozess identifizieren können. Da wir im Schwerpunktsystem der Protonen messen, unterscheiden sich die Pseudo-Rapiditäten der beiden Photonen. Wir müssen die Cuts in $\eta$ also für beide Photonen sicherstellen. Messen wir sowohl $\eta_{\gamma}$ als auch $\eta_{\tilde{\gamma}}$ in Bewegungsrichtung des Quarks mit Impulsbruchteil $x_1$, berechnet sich $\eta_{\gamma}$ aus dem $\eta'$ der Photonen im Schwerpunktsystem der Quarks nach \textit{\autoref{text}}.
+\begin{equation}
+	\eta_{\gamma} = \eta' -\frac{1}{2}\ln(\frac{x_2}{x_1}) \quad \text{sowie} \quad \eta_{\tilde{\gamma}} = -\eta’ - \frac{1}{2}\ln(\frac{x_2}{x_1})
+\end{equation}
+Intuitiver ist es jedoch, wenn $\eta_{\gamma} = \eta_{\tilde{\gamma}} für x_1 = x_2$ gelten würde, anstatt $\eta_{\gamma} = - \eta_{\tilde{\gamma}}$, sprich wenn wir $\eta_{\tilde{\gamma}}$ in Bewegungsrichtung von $x_2$ messen würden. Dabei transformiert sich $\eta_{\tilde{\gamma}} \rightarrow -\eta_{\tilde{\gamma}}$ und wir finden \textit{\autoref{text}}.
+\begin{equation}
+	\eta_{\tilde{\gamma}} = \eta’ + \frac{1}{2}\ln(\frac{x_2}{x_1}) \quad \Rightarrow \quad \eta_{\tilde{\gamma}} = \eta_{\gamma} + \frac{1}{2}  \ln(\frac{x_2^2}{x_1^2})
+\end{equation}
+\subsection{Suchprozess}
+Den Integranden den wir nun erlernen möchten (\textit{\autoref{text}}) ist nun nicht mehr eindimensional, sondern dreidimensional. Dieser Unterschied fällt zwar zunächst als erstes auf, es ist jedoch ein anderer Faktor, der das neuronale Netz stärker beeinflusst. Die Partondichtefunktionen, die den dreidimensionalen Wirkungsquerschnitt bestimmen, fallen exponentiell mit ihren Impulsbruchteilen $x_1$ und $x_2$ ab und besitzen Polstellen für $x \rightarrow 0$. Damit man numerisch mit den Partondichtefunktionen auch noch an der Stelle Null arbeiten kann, werden diese ab einem gewissen $x_{min} \approx 10^{-9}]$ eingefroren. Praktisch heißt das jetzt, dass sich unsere Labels zwischen ca 30 Größenordnungen bewegen. Mit derartigen Veränderungen können neuronale Netze nicht arbeiten, da diese Formen allein schon konzeptionell nicht zu erreichen sind. Das wird intuitiv, wenn man sich das neuronale Netz als eine Reihe an hintereinander ausgeführten Matrixmultiplikationen vorstellt, die nur ihre Linearität dank den Aktivierungsfunktionen verlieren. Die Sensitivität auf kleine Veränderungen in $x$ ist so nur begrenzt zu reproduzieren. Hinzu kommt, dass eine gängige Loss-Funktion wie der Mean-Squared- oder Mean-Absolute-Error offensichtlich nur Punkte mit hohen Wirkungsquerschnitten berücksichtigen und damit die Ergebnisse schon ab einem kleinen $x$ unbrauchbar werden würden. Abhilfe kann hierbei die oft für ähnliche Probleme verwendete Loss-Funktion \glqq Mean-Squared-Logarithmic-Error(MSLE)\grqq~ schaffen (siehe \textit{\autoref{text}}). Wir sehen, dass es beim MSLE nicht mehr auf die Größe der Abweichung ankommt, sondern das Verhältnis der Werte. Damit ist gesichert, dass keine Bereiche des Phasenraumes komplett vernachlässigt werden. Um nicht mit negativen Werten zu arbeiten, transformiert man meistens $y \rightarrow y + 1$. Diese Form hilft uns jedoch nicht weiter, da der Großteil unserer numerischen Werten in herkömmlich verwendeten Einheiten sprich $1/\text{GeV}^2$ und $\text{pb}$ viel kleiner als eins ist. Bemühen wir die Taylor-Entwicklung des Logarithmus um eins, fällt auf, dass $\ln(1+x) \approx x$ gilt und wir somit effektiv nur einen ineffizienteren Mean-Squared-Error implementieren. 
+\begin{equation}
+	C\left(\mathbf{M}, \mathbf{b}\right) = \frac{1}{N} \sum_{i=1}^{N} \left(\ln(y^{(i)}) - \ln(\tilde{y}^{(i)})\right)^2 = \frac{1}{N} \sum_{i=1}^{N} \left(\ln(\frac{y^{(i)})}{\tilde{y}^{(i)}})\right)^2
+\end{equation}
+Hier kommt die Skalierung, die wir in den beiden vorhergehenden Modellen bereits verwendet haben, ins Spiel. Die Skalierung beseitigt außerdem das \glqq Dying-ReLU\grqq- Problem, dass im Zusammenhang mit numerisch kleinen Labels auftreten kann. Es geht hierbei um einen großen Gradienten nach Überschätzung der Funktionswerte seitens des Netzes, der auf die Neuronen angewendet wird und die Parameter so verändert, dass das Neuron in der Zukunft nur noch Null zurückgeben wird. Da im Bereich der ReLU unter Null auch die Ableitung der Loss-Funktion Null ist, kann sich die Node somit nicht regenerieren. Das passiert bei sehr kleinen Labels schon nach den ersten Batches, da die durch Initialisierung der Gewichte der Layer, das Modell zu Beginn des Trainings einen mehr oder weniger zufälligen Wert zurückgibt. Man müsste also die Initialisierung der Gewichte perfekt auf die vorliegenden Daten abstimmen, falls das überhaupt im vorliegenden Fall möglich ist. Es ist also naheliegend auf die Skalierung der Funktionswerte zurückzugreifen. Praktisch wird das bei uns durch einen Transformator-Objekt realisiert, der die vorliegenden Labels so skaliert, dass der kleinste Funktionswert auf eins abgebildet wird. Die Skalierungskonstante hängt offensichtlich von den vorliegenden Phasenraumpunkten ab und ist damit von Datenset zu Datenset unterschiedlich. Daher erstellen wir im folgenden für jeden für jedes Modell einen zugehörigen Transformator, der nach dem Training mit dem Modell abgespeichert wird und bei Bedarf wieder initialisiert werden kann. Die Skalierungskonstante ist wichtig, damit wir später unabhängig vom Trainingsdatenset die Predictions unseres Modells auf die wirklichen Werte zurückskalieren können. Weitere Möglichkeiten um mit dem \glqq Dying-ReLU\grqq-Problem umzugehen sind die Verwendung von Aktivierungsfunktionen mit nicht-verschwindender Ableitung wie Leaky-ReLU oder ELU, die den Nodes ermöglichen soll, sich zu regenerieren, oder die Übergabe eines \glqq  Clipvalue/Clipnorm\grqq-Parameters an den Optimizer, der den Gradienten reguliert. 
+Die Skalierung in Kombination mit dem Mean-Squared-Logarihmic-Error macht eine Anwendung von tiefen neuronalen Netzen auf das vorliegende Problem überhaupt erst möglich. Wir werden später die Transformation der vorliegenden Daten und deren Effekt auf das Lernverhalten der Netze genauer untersuchen. Da wir nun bereits einen Transformator verwenden, müssen wir das bilden des Logarithmus auch nicht mehr auf die Loss-Function abwälzen. Wir können nun das Netz direkt den Logarithmus der Wirkungsquerschnitte lernen lassen und haben alle nötigen Informationen zur Rücktransformation der Ausgaben des Netzes im Transformator gespeichert. So können wir den Komfort der in Keras implementierten Loss-Funktionen verwenden und müssen keine eigenen Implementationen kreieren, sobald wir beispielsweise einen Mean-Absolute-Logarithmic-Error verwenden wollen. Die Label-Normalisierung aus dem vohergehenden Modell wurde praktisch auch im Transformator umgesetzt.
+\newline
+Selbst mit den eingeführten Transformierungen ist das Erlernen jedoch immer noch keine triviale Aufgabe. Zur Hyperparameteroptimierung verwenden wir wieder einen Random Search. Für die Hyperparameter wurden mittlereweile zwar Algorithmen entwickelt, die effizienter sein sollen als ein Random Search, in dieser Arbeit konnte jedoch keine Verbesserung festgestellt werden. Konkret ausprobiert wurden ein "Bayesian Search" und der "Hyperband-Tuner", wobei die Implementierung mit Keras-Tuner vollzogen wurde. Bayesian Search benutzt eine Objecitv-Funktion, die aus den bereits getesteten Hyperparametern eine Vorhersage für vielversprechende neue Hyperparameter-Kombinationen abgibt. Hyperband trainiert eine große Zahl an Modellen für wenige Epochen und sucht aus diesen die besten Kandidaten zum Weitertrainieren aus. Dies wird stufenweise durchgeführt, bis man in der Theorie mit einer Hand voll gut funktionierender Hyperparameter zurückbleibt. Die Hyperparameter einer erfolgreichen Suche sind in \textit{\autoref{text}} aufgelistet.
+\begin{table}
+	\centering
+	\begin{tabular}{|l|l|l|}
+		\hline
+		Hyperparameter & Pool & Best Config \\
+		\hline
+		(Units, Nr. of Layers) &$\left\lbrace (256,5), (512,3), (64,7), (1024, 2), (128, 6) \right\rbrace $ & $(256, 5)$ \\
+		Loss-Funktion & MAE, MSE, Huber & MAE \\
+		Optimizer & Adam, RMSprop  & Adam\\
+		Aktivierungsfunktion & ReLU, Leaky-ReLU, Sigmoid, ELU, tanh & Leaky-ReLU \\
+		Learning-rate & $\left\lbrace 10^{-2}, 5 \cdot 10^{-3}, 10^{-3}, 10^{-4} \right\rbrace $ & $10^{-2}$\\
+		Batch-Größe & $\left\lbrace 256, 128, 512, 768, 1024 \right\rbrace $ & 256\\
+		Basis 10 & True, False  & True \\
+		Label-Normalisierung & $\left\lbrace \text{keine}, [-1,1]\right\rbrace $ & keine\\
+		Feature-Normal. & True, False & True \\
+		\hline
+		Skalierung & \multicolumn{2}{c|}{True} \\
+		Logarithmus & \multicolumn{2}{c|}{True} \\ 
+		Max. Epochen & \multicolumn{2}{c|}{100}\\
+		Trainingspunkte & \multicolumn{2}{c|}{4.000.000} \\
+		\hline
+	\end{tabular}
+	\caption{Hyperparameter Pools eines erfolgreichen Random-Search mit bester Konfiguration für den dreidimensionalen differentiellen Wirkungsquerschnitt des Diphoton Prozesses}
+\end{table}
+Hierbei muss man beachten, dass die Trainingspunkte zufällig generiert sind nach den Verteilungen in \textit{\autoref{text}}. 
+\begin{equation}
+	\begin{aligned}
+	\rho(x) &= \frac{1}{(x + \alpha)\ln(\frac{x_{max} + \alpha}{x_{min}+ \alpha})} \qquad \text{mit} \qquad \alpha = 0.005 \\
+	\rho(\eta) &= \begin{cases}
+	\frac{1}{\sqrt{2\pi \sigma^2}} \exp(-\frac{(\eta - \eta_{max})^2}{2\sigma^2}) \quad & \text{für} \qquad 0 \leq \eta \leq \eta_{max}\\
+	\frac{1}{\sqrt{2\pi \sigma^2}} \exp(-\frac{(\eta + \eta_{max})^2}{2\sigma^2}) \quad & \text{für} \quad -\eta_{max} \leq \eta < 0
+	\end{cases} \quad \text{mit} \quad \sigma = 1.5
+	\end{aligned}
+\end{equation}
+Nach der Generation müssen wir jedoch die Cuts aus \textit{\autoref{text}} anwenden. Bei gegebenen Parametern und Cuts beläuft sich dabei die Sample-Effizienz auf $\approx 40\%$. Wir trainieren also mit weniger Daten, als es auf den ersten Blick wirkt. Das Sampling entspricht einem Importance-Sampling, dessen Nutzen schon im vorigen Abschnitt besprochen wurde. 
+%TODO Umrechnung in pb für Grafik 8
 \begin{figure}[tbp]
 	\centering
 	\subfloat[]{\includegraphics[width=7cm]{graphics/5}}
@@ -505,7 +566,6 @@ Wir wollen nun betrachten, wie sich das Modell auf einem Interval $[\epsilon', \
 	\caption{Schnitte des differentiellen Wirkungsquerschnitts in $\eta$}
 	\label{5,8}
 \end{figure}
-
 \begin{figure}[tbp]
 	\centering
 	\subfloat[]{\includegraphics[width=7cm]{graphics/6}}
@@ -513,7 +573,6 @@ Wir wollen nun betrachten, wie sich das Modell auf einem Interval $[\epsilon', \
 	\caption{Schnitte des differentiellen Wirkungsquerschnitts in $x_1$}
 	\label{6,9}
 \end{figure}
-
 \begin{figure}[tbp]
 	\centering
 	\subfloat[]{\includegraphics[width=7cm]{graphics/7}}
@@ -521,17 +580,48 @@ Wir wollen nun betrachten, wie sich das Modell auf einem Interval $[\epsilon', \
 	\caption{Schnitte des differentiellen Wirkungsquerschnitts in $x_2$}
 	\label{7,10}
 \end{figure}
+In den Abbildungen \textit{\autoref{text}}, \textit{\autoref{text}},... sind Schnitte des dreidimensionalen Wirkungsquerschnittes an verschiedenen Phasenpunkten gezeigt. Wir sehen, dass sich unsere intensive Behandlung der Hyperparameter und der Daten-Transformationen bezahlt gemacht hat. Wir verzeichnen an den meisten Stellen eine maximale Abweichung von lediglich $0.5\%$. Für Ausnahmefälle beträgt die Abweichung bis zu $\approx 1\%$. Es lässt sich leicht der Moment erkennen, ab dem die x-Werte gefiltert wurden. Wie schon im Modell für $\frac{d\sigma}{d\theta}$, verläuft die Vorhersage des Modells linear weiter und entfernt sich somit von den analytischen Werten. Für große $x$ wird unser Modell also den Wirkungsquerschnitt gegebenenfalls um Größenordnungen überschätzen. Da jedoch nur der integrierte Wirkungsquerschnitt über $x_1, x_2$ überhaupt messbar ist und dieser sich nicht merklich durch diese Abweichung beeinflussen lässt, ist es gerechtfertigt in diesem Phasenraumbereich eine so große Abweichung zu besitzen. 
 \subsection{Vergleiche}
+Wir wollen nun noch einmal direkt die Performance der einzelnen Hyperparameter an unserem Problem untersuchen. Dafür benutzen wir die Konfiguration, die wir im Vorhergehenden durch den Random Search gefunden haben und variieren für jedes Training nur ein Hyperparameter. Für die Anzahl an Neuronen und Layern, die stark korreliert sind, ist die Veränderung eines einzelnen der beiden Parameter nur bedingt interessant. Daher vergleichen wir auch verschiedene Formen bzw. Architekturen des Netzes, sprich verschiedene Kombinationen von Anzahl an Layern und Units. Die Modell werden nach dem Mean-Absolute-Percentage Error eines Test-Datestets beurteilt, das genauso gesampelt ist wie die Trainingsdaten. Wir trainieren jedes Modell fünf mal mit unterschiedlichen Initialisierungen an zwei Millionen gesampelten Phasenraumpunkten, um die statistische Schwankung der Güte des Modells einschätzen zu können. Die eingezeichneten Fehlerbalken sollen die Schwankung verdeutlichen und sind kein Maß dafür, welchen Fehler das Netz in der Praxis erreichen kann. Ausreißer sind aus den Messungen herausfiltert, um die Lesbarkeit der Graphen zu gewährleisten. \\
+\newline
+\textbf{Loss-Funktion:}
+In \textit{\autoref{text}} a) ist der Vergleich von drei verschiedenen Kostenfunktionen gezeigt. Für Probleme mit stark variierenden Labels setzt sich der Mean-Absolute-Error durch, da dieser nicht so sensitiv auf Ausreißer oder, in unserem Fall, Polstellen ist. Der Huber-Loss, der eine Kombination des linearen Fehlers und des quadratischen Fehlers darstellt, schlägt sich insgesamt besser als der reine quadratische Fehler, kann insgesamt jedoch nicht mit dem linearen Fehler mithalten. Das quadratische Verhalten des Fehlers für kleine Abweichungen scheint für unser Problem nicht von Vorteil zu sein.\\
+\newline
+\textbf{Optimizer:}
+Der Vergleich des Optimizers \textit{\autoref{text}} b) überrascht, da generell der Adam-Optimizer in Literatur und auch erfahrungsgemäß die besten Ergebnisse liefert. Betrachtet man die Fehlerbalken, scheint es als, als würde für unser Problem RMSprop konstant etwas bessere Ergebnisse erzielen. Allerdings zeigt unsere Trainingsreihe für Adam einen Ausreißer. Um ein definites Ergebnis zu erhalten, welcher Optimizer für unser vorliegendes Problem besser geeignet is, müsste man größere Versuchsreihen aufnehmen. Nichtsdestotrotz sollte man RMSprop nicht von vornherein abschreiben, denn er ist ein Versuch Wert. Der normale Stochastic-Gradient-Descent erzielt signifikant schlechtere Ergebnisse. \\
+\newline
+\textbf{Trainingsdaten:}
+Die Größe des Sets an Trainingsdaten ist in \textit{\autoref{text}} c) verglichen. Wie erwartet nimmt der Fehler des Modells mit der Zahl an vorhandenen Trainingsdaten ab. Das gleiche gilt voraussichtlich für die Unsicherheit auf dem Ergebnis, auch wenn in unserem Fall das Modell, das mit den meisten Trainingsdaten einen Ausreißer zeigt. Man erkennt jedoch auch, dass die Performance des Modells konvergiert und mehr als vier Millionen gesampelte Daten keinen signifikanten Beitrag mehr leisten. \\
+\newline
+\textbf{Learning-Rate:}
+An dem Vergleich der Learning-Rates, der in \textit{\autoref{text}} gezeigt ist, kann man ein interessantes Verhalten des Netzes erkennen. Für eine Learning-Rate von $1 \cdot 10^{-3}$ verändert sich der mittlere Fehler so gut wie überhaupt nicht. Das deutet darauf hin, dass wir unabhängig von unserer Initialisierung bei dieser Learning-Rate das gleiche lokale Minimum finden. Die Abweichung der Performance wird danach mit der Learning-Rate größer, wir finden nun höhere und tiefere lokale Minima. Bei einer zu kleinen anfänglichen Lernrate, bleiben wir schon früh in einem hohen Minima stecken und können keine brauchbaren Ergebnisse erzielen. Wir können daraus schlussfolgern, dass es gut sein kann, seine anfängliche Learning-Rate etwas größer zu initialisieren, als man intuitiv für richtig halten würde. Dadurch kann man eine größere Menge an lokalen Minima erkunden, insofern man über die benötigte Rechenleistung verfügt. Beachte jedoch, dass dieser Ansatz nur in Kombination mit einem Zeitplan zur Reduzierung der Lernrate funktioniert und das \grqq Dying-ReLU\glqq~verstärken oder sogar auslösen kann. \\
+\newline
+\textbf{Daten-Transformationen:}
+Welche Daten-Transformationen für unser Problem funktionieren, ist in \textit{\autoref{text}} gezeigt. Ich möchte an dieser Stelle noch einmal die Wichtigkeit dieser Transformationen hervorheben. Während man in der Literatur viel über die Normalisierung oder das Reskalieren der Features liest, werden die Labels oft von Transformationen ausgenommen. Für spezielle Regressionsprobleme, wie es bei uns vorliegt, können diese jedoch der Schlüssel dazu sein, überhaupt konvergierende Modelle zu erhalten. \textit{\autoref{text}} zeigt, dass verschiedene Implementationen brauchbare Ergebnisse liefern und es wichtiger ist, überhaupt die Skalierung und die Anwendung des Logarithmus zu verwenden. Trainingsläufe ohne Skalierung und Logarithmus sind nicht aufgeführt, da der Fehler nicht vergleichbar ist. Ein konvergierendes Modell ohne Logarithmus kann erhalten werden, wenn man anstelle des Logarithmus die Label-Normalisierung verwendet. \\
+\newline
+\textbf{Achitektur:} %TODO nr of layers ist nr der hidden layers ohne output oder normalisierung
+Die Architektur in \textit{\autoref{text}} zu vergleichen ist interessant, da man sehen kann, dass eine passende Architektur zum Problem effektiver ist als die Komplexität des Modells. Das Modell mit den wenigsten zu trainierenden Parametern zeigt im Vergleich bessere Leistung als das komplexeste Modell. Die Modelle (128, 6), (256,5), (384, 4) zeigen unabhängig von ihren trainierbaren Parameter sehr gute Genauigkeit. Wir konnten also durch Orientierung am besten gefundenen Modell ein effizienteres finden, indem wir die Architektur ein wenig variiert haben. Das Modell (64, 7) zeigt trotz wenigen Freiheitsgraden akzeptable Genauigkeit. \\
+% TODO trainable params unter die Architektur der Modelle
+\newline
+\textbf{Anzahl an Layer und Units pro Layer:} %TODO 64 als erstes bei units dann sieht es aus wie kurve
+Sowohl für die Anzahl an Layer und der Units pro Layer verläuft nach einer Kurve, die ihr Minimum bei unseren optimalen Parametern hat. Der Schritt zum jeweils simpleren Modell ist klein und kann bei Bedarf einen Kompromiss zwischen Geschwindigkeit und Genauigkeit darstellen. \\
+\newline
+\textbf{Aktivierungsfunktionen:} %TODO Link zu den Abbildungen hier?
+Die Abwandlungen der ReLU-Funktion zeigen sehr gute Ergebnisse, einsehbar in \textit{\autoref{text}}. Die gewöhnliche ReLU ist überraschenderweise etwas abgeschlagen. Eine plausible Erklärung hierfür liefert wiederum das \grqq Dying ReLU\grqq-Problem in Kombination mit unserer vergleichsweise hohen anfänglichen Lernrate.  \\
+\newline
+\textbf{Batch-Sizes:}
+Auch die Batch-Sizes (siehe \textit{\autoref{text}}) haben große Auswirkungen auf das Lernverhalten des Modells. Ein Trainingsvorgang ist bei größerer Batch-Size mit passender Hardware zwar schneller, zeigt jedoch eindeutig größere Abweichungen. Aufgrund von zu wenigen Messdaten ist nicht klar, ob ein Modell, das mit großen Batches trainiert wird, in der gleichen Zeit, oder überhaupt, so tiefe Minima wie die kleineren erreichen können. 
+
+
 \begin{figure}[tbp]
 	\centering
 	\subfloat[Vergleich für verschiedene Loss-Funktionen]{\includegraphics[width=7cm]{graphics/12}}
-	\subfloat[Vergleich für verschiedene Optimizer]{\includegraphics[width=7cm]{graphics/13}} \\
+	\subfloat[Vergleich für verschiedene Optimizer \newline RMSprop,SGD mit $\text{momentum}= 0.1$]{\includegraphics[width=7cm]{graphics/13}} \\
 	\subfloat[Vergleich für verschiedene Anzahl an Trainigspunkten]{\includegraphics[width=7cm]{graphics/16}}
 	\subfloat[Vergleich für verschiedene Anfangs-Lernraten]{\includegraphics[width=7cm]{graphics/36}}
 	\caption{Vergleich von Hyperparametern (I), MAPE: Mean-Absolute-Percentage-Error}
 	\label{12,13,16,36}
 \end{figure}
-
 \begin{figure}[tbp]
 	\centering
 	\includegraphics[width=14cm]{graphics/17,18}
@@ -548,7 +638,6 @@ Wir wollen nun betrachten, wie sich das Modell auf einem Interval $[\epsilon', \
 	\caption{Vergleich für verschiedene Modell-Architekturen. \newline
 		x-Labels in (Units, Nr of Layers)}
 \end{figure}
-
 \begin{figure}[tbp]
 	\centering
 	\subfloat[Vergleich für verschiedene Zahlen an Layern]{\includegraphics[width=7cm]{graphics/14}}
@@ -558,8 +647,6 @@ Wir wollen nun betrachten, wie sich das Modell auf einem Interval $[\epsilon', \
 	\caption{Vergleich von Hyperparametern (II), MAPE: Mean-Absolute-Percentage-Error}
 	\label{14,15,19,20}
 \end{figure}
-
-
 \section{Reweweight zwischen Fits der Partondichtefunktionen}
 \subsection{...}
 
