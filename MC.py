@@ -236,9 +236,9 @@ class x_power_dist():
     def cdf(self, x):
         y = (self.offset * (x-self.a) + 1/(self.power + 1) * \
             ((x - self.mean) ** (self.power + 1)  - (self.a - self.mean) ** (self.power + 1)))/self.scale
-        return yF
+        return y
 
-    def rvs(self, size, interpol_nr=1000):
+    def rvs(self, size, interpol_nr=10000):
         try:
             custom_samples = self.inverse_cdf(stats.uniform.rvs(loc=0, scale=1, size=size))
         except:

@@ -247,7 +247,11 @@ Setzen wir \textit{\autoref{text}} rekursiv in \textit{\autoref{text}},\textit{\
 \begin{equation}
 	\frac{\text{d}^3\sigma}{\text{d}x_1\text{d}x_2\text{d}\eta} = \sum_{q} \left[f_q(x_1, Q^2)f_{\overline{q}}(x_2, Q^2) +f_{\overline{q}}(x_1, Q^2)f_{q}(x_2, Q^2) \right] \derivative{\sigma_p}{\eta} 
 \end{equation}
-
+\section{Reweightening zwischen PDF-Sets}
+Das genaue Ergebnis von \textit{\autoref{???}} hängt von dem verwendeten Fit an die Partondichtefunktionen ab. Wie bereits angesprochen, können die PDFs nicht aus erster Hand hergeleitet werden und müssen über die Messung bestimmt werden. Je nach Messung und Anpassung ergeben sich dabei kleine Unterschiede zwischen den verschiedenen Sets. Das Reweight entspricht nun dem Faktor mit dem man \textit{\autoref{text}}, berechnet mit dem ersten PDF-Set, multiplizieren müsste, um den gleichen Wert zu erhalten, als hätte man den Wirkungsquerschnitt mit dem zweiten Fit berechnet. Wir können in \textit{\autoref{???}}, bis auf die Quarkladung,  $\derivative{\sigma_p}{\eta}$ aus der Summer herausziehen und erhalten damit für die Gewichte zwischen $f^{(1)}$ und $f^{(2)}$ \textit{\autoref{text}}.
+\begin{equation}
+	w\left(x_1, x_2\right) = \frac{ \sum_{q} Q_q^4 \left[f_q^{(1)}(x_1, Q^2)f_{\overline{q}}^{(1)}(x_2, Q^2) +f_{\overline{q}}^{(1)}(x_1, Q^2)f_{q}^{(1)}(x_2, Q^2) \right]}{\sum_{q} Q_q^4 \left[f_q^{(2)}(x_1, Q^2)f_{\overline{q}}^{(2)}(x_2, Q^2) +f_{\overline{q}}^{(2)}(x_1, Q^2)f_{q}^{(2)}(x_2, Q^2) \right]}
+\end{equation}
 
 \chapter{Maschinelles Lernen und tiefe neuronale Netzwerke}
 \section{Motivation}
@@ -389,6 +393,7 @@ Wir werden im Folgenden simple Monte-Carlo-Methoden und das Importance Sampling 
 \chapter{Anwendung von Maschinellem auf den Diphoton Prozess}
 \section{Partonischer Diphoton-Prozess}
 \subsection{Modell und Hyperparameter}
+% TODO wir verwenden überall den gleichen Initializer HE-Normal etc
 Wir beginnen damit den ML-Algorithmus auf das einfache Beispiel des partonischen Diphoton-Prozess aus \textit{\autoref{text}} anzuwenden. Wie wir gesehen haben, lässt sich der Wirkungsquerschnitt auch prima analytisch berechnen. Die Näherung mit machine-learning dient in diesem Falle also eher dem Lerneffekt und der Veranschaulichung. 
 Da wir den analytischen Ausdruck des differtiellen Wirkungsquerschnitts kennen (siehe \textit{\autoref{text}} und \textit{\autoref{text}}), können wir uns unsere Trainings- und Testdaten sehr simpel selbst generieren. Wir nutzen hierbei die Python-Bibliothek Pandas, um die generierten Arrays für $\frac{\text{d}\sigma}{\text{d} \theta}$ und $\frac{\text{d}\sigma}{\text{d} \eta}$ abzuspeichern und einzulesen. Wir trainieren den ML-Algorithmus mit ca. 60000 Daten in geeigneten Wertebereichen. Explizit sind das für $\theta$ der Bereich $[\epsilon, \pi - \epsilon]$ und für $\eta$ der Bereich $[-3, 3]$. Wir werden die Performance der Modelle für verschiedene $\epsilon$ evaluieren, da die analytische Funktion an den Rändern des Intervalls für $\epsilon = 0$ Polstellen hat und eine Ausgabe des Netzes von $\infty$ allein schon konzeptionell nicht möglich ist und sich auch nicht mit der numerischen Natur von Computern verträgt. Was die Architektur des neuronalen Netzes angeht, entscheiden wir uns für ein simples Netz mit einer bestimmten Anzahl an hidden Layers mit der gleichen Anzahl an Neuronen.
 \\
@@ -648,8 +653,33 @@ Auch die Batch-Sizes (siehe \textit{\autoref{text}}) haben große Auswirkungen a
 	\label{14,15,19,20}
 \end{figure}
 \section{Reweweight zwischen Fits der Partondichtefunktionen}
-\subsection{...}
-
+Eine weitere Anwendung von maschinellem Lernen, die wir besprechen wollen, ist das Reweighting von verschiedenen Anpassungen der Partondichtefunktionen. Konkret wollen wir im folgenden das Set \glqq CT14nnlo\grqq~auf \glqq MMHT2014nnlo\grqq~abbilden. Die Reweights schwanken um eins und stellen damit ein viel kleineres Problem für das Netz dar, als das vorhergegangene Modell. Auch gibt es dieses mal keine Polstellen oder Ähnliches. Für sehr hohe $x$ beginnen die Fits jedoch stark voneinander abzuweichen und die Gewicht beginnen zu oszillieren und um Größenordnungen zu fluktuieren. Es liegt daher nahe den Impulsbruchteil-Cut aus \textit{\autoref{text}} zu verwenden. Da die starken Abweichungen hier jedoch erst etwas später beginnen, entscheiden wir uns das Modell bis $x_max=0.8$ zu trainieren. \\
+Der Random-Search mit den besten Parametern ist in \textit{\autoref{text}} zu sehen.
+\begin{table}
+	\centering
+	\begin{tabular}{|l|l|l|}
+		\hline
+		Hyperparameter & Pool & Best Config \\
+		\hline
+		Anzahl Layer & $\left\lbrace 1,2,3,4\right\rbrace$ & 2 \\
+		Units &$\left\lbrace 32, 64, 128, 256\right\rbrace$ & 256 \\
+		Loss-Funktion & MAE, MSE & MAE \\
+		Optimizer & Adam, RMSprop, SGD  & Adam\\
+		Aktivierungsfunktion & ReLU, Leaky-ReLU, Sigmoid & Leaky-ReLU \\
+		Learning-rate & $\left\lbrace 10^{-2}, 5 \cdot 10^{-3}, 10^{-3}, 10^{-4} \right\rbrace $ & $5 \cdot 10^{-3}$\\
+		Batch-Größe & $\left\lbrace 256, 128, 512, 768, 1024 \right\rbrace $ & 512\\
+		Label-Normalisierung & $\left\lbrace \text{keine}, [-1,1]\right\rbrace $ & keine\\
+		Feature-Normal. & True, False & True \\
+		\hline
+		Skalierung & \multicolumn{2}{c|}{False} \\
+		Logarithmus & \multicolumn{2}{c|}{False} \\ 
+		Max. Epochen & \multicolumn{2}{c|}{100}\\
+		Trainingspunkte & \multicolumn{2}{c|}{1.000.000} \\
+		\hline
+	\end{tabular}
+	\caption{Hyperparameter Pools eines Random-Search mit bester Konfiguration für ein Reweighting des differentiellen Wirkungsquerschnitt des Diphoton Prozesses}
+\end{table}
+Wie erwartet, ist die Genauigkeit des Modells sehr gut, wie wir in \textit{\autoref{text}} beobachten können. Die Abweichung beträgt generell weniger als $0.1\%$ und ist somit praktisch kaum von den analytisch berechneten Werten zu unterscheiden. Wie das gelernte Reweight in der Praxis funktioniert, ist in \textit{\autoref{text}} dargestellt. Auch hier können wir nur minimale Abweichungen verzeichnen. Wir betrachten nur kleine Bereiche in $x$, um den Unterschied zwischen den PDF-Sets aufzulösen. Das Ratio in \textit{\autoref{text}} c) ist wie erwartet konstant, da das Reweight nicht von $\eta$ abhängt (siehe \textit{\autoref{text}}). 
 \begin{figure}[tbp]
 	\centering
 	\subfloat[Schnitt in $x_1$]{\includegraphics[width=7cm]{graphics/32}}
@@ -665,16 +695,35 @@ Auch die Batch-Sizes (siehe \textit{\autoref{text}}) haben große Auswirkungen a
 	\caption{Reweight von CT14nnlo auf MMHT2014nnlo mittels gelernten Weigths}
 	\label{21,22,23}
 \end{figure}
-
-\begin{figure}
-	\centering
-	\includegraphics[width=6cm]{graphics/25,29}
-	\caption{Vergleich von Transfer Learning mit und ohne Fine-Tuning, Vergleich mit gereweithenem source model kommt noch}
-\end{figure}
-
-
-
 \section{Transfer-Learning zwischen verschiedenen Fits der Partondichtefunktionen}
+Eine weitere Möglichkeit, den Wirkungsquerschnitt, der mit einem anderen PDF-Set berechnet wurde, zu erhalten, ist Transfer-Learning. Wie wir gesehen haben, unterscheiden sich die Wirkungsquerschnitte von den verschiedenen Fits in den relevanten Phasenraumbereichen nur minimal. Mit Transfer-Learning können wir diesen Unterschied ausgleichen und mit wenig Aufwand gut Modelle für andere PDF-Fits erhalten. Das Grundprinzip von Transfer-Learning ist bereits in \textit{\autoref{??}} festgehalten. Wir nutzen wieder einen Random-Search, um gute Hyperparameter für den Transfer zu finden. Diese können in \textit{\autoref{label}} nachgelesen werden.\\
+\begin{table}
+	\centering
+	\begin{tabular}{|l|l|l|}
+		\hline
+		Hyperparameter & Pool & Best Config \\
+		\hline
+		Anzahl entfernte Layer & $\left\lbrace  1, 2 \right\rbrace $ & 1 \\
+		Anzahl hinzugefügte Layer & $\left\lbrace  0, 1, 2 \right\rbrace $ & 1 \\
+		Units(hinzugefügte Layer) &$\left\lbrace 64, 128, 512\right\rbrace$ & 128\\
+		Aktivierungsfunktion & ReLU, Leaky-ReLU, Sigmoid & ReLU \\
+		Learning-Rate & $\left\lbrace 10^{-2}, 5 \cdot 10^{-3}, 10^{-3}, 10^{-4} \right\rbrace $ & $5 \cdot 10^{-3}$\\
+		Batch-Größe & $\left\lbrace 128, 512, 768, 2048, 8196 \right\rbrace $ & 768\\
+		Fine-Tuning & True, False & True \\
+		\hline
+		Learning-Rate
+		Loss-Funktion & \multicolumn{2}{c|}{MAE} \\
+		Optimizer & \multicolumn{2}{c|}{Adam} \\
+		Max. Epochen & \multicolumn{2}{c|}{100}\\
+		Trainingspunkte & \multicolumn{2}{c|}{1.000.000} \\
+		\hline
+	\end{tabular}
+	\caption{Hyperparameter Pools eines Random-Search mit bester Konfiguration für Transfer-Learning zwischen Wirkungsquerschnitten verschiedener PDF-Sets}
+\end{table}
+In \textit{\autoref{label}} sind Schnitte des differentiellen Wirkungsquerschnitts mit transferiertem Modell, dem Modell das als Quelle gedient hat, und den analytischen Werten gezeigt. Wir können beobachten, dass die Genauigkeit des transferierten Modells fast identisch mit der des Source-Modells in \textit{\autoref{text}} ist. Das Modell verliert also beim Transfer nicht signifikant an Genauigkeit. Wir beobachten jedoch auch keine Verbesserung der Performance, was dem Transfer-Learning manchmal zugesprochen wird.  \\
+Eindeutig können wir sehen, dass sich die Menge an Trainigsdaten und damit auch die Trainingsdauer stark verringert. Es konnte mit einfachen Mitteln eine Reduktion um den Faktor vier an Trainingsdaten erreicht werden. Automatisch verkürzt sich hiermit auch die Trainingszeit, wie in \textit{\autoref{text}} aufgeführt ist. %TODO Tabelle mit Trainingszeiten für transfer,transfer-fine-tuning, source-modell, souce-modell, reweight+source_modell mit größerer Batch-Size, time-per-million, trainingsdaten,
+Sowohl das Transfer-Learning, als auch das Reweighting sind also legitime Methoden um den Wirkungsquerschnitt von einem PDF-Set auf das nächste zu übertragen. Es stellt sich nun die Frage, welche Methode besser geeignet ist und wo jede Methode seine stärken und Schwächen hat. Zunächst sind in \textit{\autoref{text}} noch einmal Schnitte des Wirkungsquerschnitts gezeigt. In den Ratios lässt sich ?vermuten?, dass das neu gewichtete Source-Model etwas bessere Vorhersagen trifft. 
+ 
 \subsection{...}
 \begin{figure}[tbp]
 	\centering
@@ -694,8 +743,17 @@ Auch die Batch-Sizes (siehe \textit{\autoref{text}}) haben große Auswirkungen a
 		rw: reweighted}
 	\label{34,35,24,reweight}
 \end{figure}
-
-
+\begin{figure}
+	\centering
+	\includegraphics[width=6cm]{graphics/25,29}
+	\caption{Vergleich von Transfer Learning mit und ohne Fine-Tuning, Vergleich mit gereweithenem source model kommt noch}
+\end{figure}
+\section{Monte-Carlo-Integration}
+\subsection{Partonischer Wirkungsquerschnitt}
+Wir nutzen Monte-Carlo-Methoden zur Integration von \textit{\autoref{text}}, \textit{\autoref{text}} und deren zugehörigen Machine Learning Modellen. Zur Integration von \textit{\autoref{text}} nutzen wir das Importance Sampling aus \textit{\autoref{text}}, um die Konvergenz des Integrals zu beschleunigen. Der Prozess $qq \rightarrow \gamma \gamma$ ist zwar nicht messbar, jedoch müssen wir trotzdem einen Cut in $\eta$ festlegen, da der totale Wirkungsquerschnitt sonst divergiert. Wir entscheiden uns für die Beschränkungen \textit{\autoref{text}}.
+\begin{equation}
+	\abs{\eta} \leq 2.5 \qquad \Rightarrow \qquad \theta \in \left[\epsilon, \pi - \epsilon \right] \quad \text{mit} \quad \epsilon = 0.1638
+\end{equation}
 \begin{figure}[tbp]
 	\centering
 	\subfloat[]{\includegraphics[width=7cm]{graphics/27}} 
@@ -713,6 +771,7 @@ Auch die Batch-Sizes (siehe \textit{\autoref{text}}) haben große Auswirkungen a
 
 \appendix
 \chapter{Anhang}
+% TODO gar nicht wahr, die dinger sind abh. von batch size
 \begin{table}
 	\centering
 	\begin{tabular}{|l|l|}
@@ -752,3 +811,5 @@ Auch die Batch-Sizes (siehe \textit{\autoref{text}}) haben große Auswirkungen a
 Um die Hyperparameter festzulegen, nutzen wir ein Grid-Search und überprüfen nach jedem Trainingsdurchgang, ob sich das Ergebnis des Algorithmus verbessert hat. Wir variieren dabei die folgenden Werte in den Bereichen:
 
 Wir beurteilen am Ende jedes Durchgangs das Modell nach den folgenden Kriterien: Genauigkeit, Trainingszeit, Performance. Genauigkeit und Trainingszeit sind dabei selbsterklärend, Performance meint die Rechenaufwändigkeit eines fertigen Modells bei der Anwendung auf Testdaten. Wir können so ein systematisches Modell zur Erstellung und Bewertung von neuronalen Netzen erhalten, das wir auf zukünftige Probleme übertragen können.
+
+%TODO Faktor 1/2 bei partonischem WQ

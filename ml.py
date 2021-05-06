@@ -1161,17 +1161,25 @@ def make_comparison_plot(names, all_losses, min_losses=None, avg_losses=None, lo
         colors = ["C1", "C2", "C3", "C4"]
     x = list(np.arange(len(names)))
     fig, ax = plt.subplots(figsize=(len(x) * 1. + 0.5, 4.8))
-    if type(all_losses[0]) == list or type(all_losses[0] == tuple):
+    if type(all_losses[0]) == list or type(all_losses[0]) == tuple:
         for xe, ye in zip(x, all_losses):
             ax.scatter([xe] * len(ye), ye, marker="o", facecolors="None", edgecolors="C0")
     elif type(all_losses[0]) == dict:
         for i,dataset in enumerate(all_losses[0]):
+            print(all_losses)
             y = [model[dataset] for model in all_losses]
+            print(y)
             ax.scatter(x, y, marker="o", facecolors="None", edgecolors=colors[i], label=dataset)
 
 
     if min_losses is not None:
-        ax.scatter(x, min_losses, marker="o", color="orange", label="Min")  # niedrigster punkt hervorheben
+        if type(min_losses[0]) == dict:
+            for i,dataset in enumerate(min_losses[0]):
+                y = [model[dataset] for model in min_losses]
+                ax.scatter(x, y, marker="o", color="orange",
+                       label="Min")  # niedrigster punkt hervorheben
+        else:
+            ax.scatter(x, min_losses, marker="o", color="orange", label="Min")  # niedrigster punkt hervorheben
     ax.errorbar(x, avg_losses, yerr=losses_errors,
                 linewidth=0, elinewidth=1, color="C0",
                 capsize=30 /np.sqrt(len(x)))  # errobars zeigen

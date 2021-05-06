@@ -5,6 +5,8 @@ import tensorflow as tf
 from tensorflow import keras
 from matplotlib import pyplot as plt
 from matplotlib import cm
+
+import MC
 import ml
 import time
 import os
@@ -32,7 +34,8 @@ def main():
     #Daten einlesen
     data_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Data/TransferData1M/"
     data_name = "all"
-    project_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Models/LastRandomSearch/"
+    test_data_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Data/MMHT TestData50k/all"
+    project_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Models/"
     save_path = project_path
     loss_name = "Source_loss"
     project_name = ""
@@ -46,7 +49,7 @@ def main():
     if transfer:
         save_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Models/"
 
-        save_name = "transfer_tuning_scnd"
+        save_name = "test_without_fine_tuning"
         save_path = save_path + project_name + save_name
         add_layers = int(input("add layers: "))
         fine_tuning = ast.literal_eval(input("fine tuning:"))
@@ -74,7 +77,6 @@ def main():
         learning_rate = 5e-6
         print("learning_rate für fine tuning reduziert!")
     rm_layers = 1
-    add_layers = 1
     loss_fn = keras.losses.MeanAbsoluteError()
     optimizer = keras.optimizers.Adam
     print("optimizer")
@@ -100,6 +102,8 @@ def main():
     feature_normalization = True
     feature_rescaling= False
 
+    save_all_models = False
+
     #ggf Losses einlesen
     if best_losses is not None:
         best_percentage_loss = best_losses["best_percentage_loss"]
@@ -120,12 +124,16 @@ def main():
 
     #best_total_loss = best_losses
     time2= time.time()
+    if test_data_path:
+        train_frac = 1
     (training_data, train_features, train_labels, test_features, test_labels, transformer) =\
             ml.data_handling(data_path=data_path+data_name,
             train_frac=train_frac,batch_size=batch_size,
             label_name=label_name, scaling_bool=scaling_bool, logarithm=logarithm, base10=base10,
             shift=shift, label_normalization=label_normalization, feature_rescaling=feature_rescaling,
                              transformer=transferred_transformer)
+    if test_data_path:
+        (_, test_features, test_labels, _,_,_) = ml.data_handling(data_path = test_data_path, label_name=label_name, transformer=transformer)
     time3 = time.time()
     print("Zeit, um Daten vorzubereiten:", time3-time1)
     models = []
@@ -140,7 +148,6 @@ def main():
                                     kernel_initializer=kernel_initializer, bias_initializer=bias_initializer, l2_kernel=l2_kernel, l2_bias=l2_bias, dropout=dropout, dropout_rate=dropout_rate,
                                     new_model=new_model, custom=custom, transfer=transfer, rm_layers=rm_layers, read_path=read_path, freeze=freeze, feature_normalization=feature_normalization, add_layers=add_layers)
                       )
-    for i, model in enumerate(models):
         #callbacks initialisieren
         reduce_lr_on_plateau = keras.callbacks.ReduceLROnPlateau(monitor="loss", factor=0.5, patience=lr_patience,
                                                                  min_delta=min_delta, min_lr=min_lr)
@@ -150,21 +157,21 @@ def main():
         callbacks = [reduce_lr_on_plateau, early_stopping, lr_schedule]
         #Training starten
         time4 = time.time()
-        history = model.fit(x=train_features, y=train_labels, batch_size=batch_size, epochs=training_epochs, verbose=2,
+        history = models[i].fit(x=train_features, y=train_labels, batch_size=batch_size, epochs=training_epochs, verbose=2,
                             callbacks=callbacks, shuffle=True)
         if fine_tuning:
-            print(model.summary())
-            model.trainable = True
-            model.compile(optimizer=keras.optimizers.Adam(learning_rate= 5e-3 * learning_rate, clipvalue=1.5), loss=loss_fn)
-            print(model.summary())
-            fine_tuning_history = model.fit(x=train_features, y=train_labels, batch_size=batch_size, epochs=training_epochs, verbose=2,
+            print(models[i].summary())
+            models[i].trainable = True
+            models[i].compile(optimizer=keras.optimizers.Adam(learning_rate= 5e-3 * learning_rate, clipvalue=1.5), loss=loss_fn)
+            print(models[i].summary())
+            fine_tuning_history = models[i].fit(x=train_features, y=train_labels, batch_size=batch_size, epochs=training_epochs, verbose=2,
                             callbacks=callbacks, shuffle=True)
             history = history.history["loss"] + fine_tuning_history.history["loss"]
         time5 = time.time()
         training_time += time5 - time4
 
         #Überprüfen wie gut es war
-        results = model.predict(test_features)
+        results = models[i].predict(test_features)
         loss = loss_function(y_true=transformer.retransform(test_labels), y_pred=transformer.retransform(results))
         total_losses.append(float(loss))
         print("total loss von Durchgang Nr. ", i, ":", float(loss))
@@ -173,6 +180,9 @@ def main():
         ml.make_losses_plot(history=history)
         plt.savefig(save_path + "/training_losses")
         plt.show()
+
+        if save_all_models:
+            models[i].save(filepath=save_path + "_" + str(i), save_format ="tf")
 
     print("Losses of the specific cycle:", total_losses)
     print("average Loss over", repeat, "cycles:", np.mean(total_losses))
@@ -190,12 +200,6 @@ def main():
                                      batch_size=batch_size, avg_total_Loss=avg_total_loss, transformer=transformer,
                                      training_time=training_time, custom=custom, loss_fn=loss_fn, smallest_loss=smallest_loss,
                                      loss_error=loss_error, total_losses=total_losses, read_path=read_path, save_path=save_path)
-
-
-
-    #Überprüfen, ob Fortschritt gemacht wurde
-    ml.check_progress(model=model, transformer=transformer, test_features=test_features, test_labels=test_labels, best_losses=best_losses,
-                      project_path=project_path, project_name=project_name, index=index, config=config, loss_name=loss_name)
 
 
 if __name__ == "__main__":

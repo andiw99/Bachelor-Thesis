@@ -30,13 +30,13 @@ def main():
 
     time1 = time.time()
     #Daten einlesen
-    data_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Data/TrainingData2M/"
+    data_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Data/TrainingData4M/"
     data_name = "all"
     project_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Models/"
     loss_name = "Source_loss"
     project_name = ""
 
-    read_name = "LongModel" #"best_guess_important_range" #
+    read_name = "Best Parameters" #"best_guess_important_range" #
     label_name = "WQ"
     read_path =project_path + project_name + read_name
     transferred_transformer = None
@@ -62,9 +62,9 @@ def main():
     batch_size = 256
     training_epochs = 100
     repeat= 5
-    nr_layers = 10
-    units = 64
-    learning_rate = 1e-3
+    nr_layers = 5
+    units = 256
+    learning_rate = 1e-2
     if not any([new_model, transfer, freeze]):
         learning_rate = 5e-6
         print("learning_rate für fine tuning reduziert!")
