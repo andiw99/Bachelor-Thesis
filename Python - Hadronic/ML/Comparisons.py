@@ -19,10 +19,10 @@ import ml
 # Grid erstellen, pool für jeden Hyperparameter, so kann man dynamische einstellen in welchen Dimensionen das Grid liegt
 # wichtig: Standardmodell hat index 0 in jedem pool
 pools = dict()
-pools["batch_size"] = [256]
-#pools["units_nr_layers"] = [(256, 5), (512, 3), (64, 7), (1024, 2), (128, 6)]
-pools["units"] = [256, 128, 64, 512]
-pools["nr_layers"] = [5, 4]
+pools["batch_size"] = [256, 512, 768,]
+pools["units_nr_layers"] = [(256, 5),(32, 10), (384, 4)]
+#pools["units"] = [256, 128, 64, 512]
+#pools["nr_layers"] = [5, 4]
 pools["learning_rate"] = [1e-2]
 pools["l2_kernel"] = [0.0]
 pools["l2_bias"] = [0.0]
@@ -42,12 +42,12 @@ pools["base10"] = [True]
 pools["label_normalization"] = [False]
 pools["min_delta"] = [5e-6]
 pools["min_lr"] = [5e-8]
-pools["dataset"] = ["TrainingData2M", "TrainingData8M"]
+pools["dataset"] = ["TrainingData2M"]
 # Festlegen, welche Hyperparameter in der Bezeichnung stehen sollen:
 names = {"feature_normalization", "logarithm", "base10", "label_normalization"}
 
 vary_multiple_parameters = False
-architecture = False
+architecture = True
 
 # Variablen...
 train_frac = 0.95
@@ -122,7 +122,7 @@ for config in checked_configs:
     (training_data, train_features, train_labels, test_features, test_labels,
      transformer) = ml.data_handling(
         data_path=data_path + data_name, label_name=label_name,
-        scaling_bool=params["scaling_bool"], logarithm=pools["logarithm"],
+        scaling_bool=params["scaling_bool"], logarithm=params["logarithm"],
         base10=params["base10"],
         label_normalization=params["label_normalization"],
         feature_rescaling=feature_rescaling,
