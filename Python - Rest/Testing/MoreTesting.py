@@ -226,9 +226,7 @@ print(c, type(c))
 print(str(c), type(str(c)))
 """
 
-
-
-y = [(1, 1, 2, 3), (1, 1, 2, 4)]
-x = [1, 2]
-py.plot(x, y)
-plot.show()
+a = pd.DataFrame()
+a["test"] = []
+a["test"] = ["hallo"]
+print(a)

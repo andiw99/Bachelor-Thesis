@@ -21,9 +21,9 @@ import ml
 #Grid erstellen, pool für jeden Hyperparameter, so kann man dynamische einstellen in welchen Dimensionen das Grid liegt
 # wichtig: Standardmodell hat index 0 in jedem pool
 pools = dict()
-pools["batch_size"] = [512, 256, 768, 1024]
-pools["units_nr_layers"] = [(512,3), (256,5), (64,7), (1024, 2), (128, 6), (256,4), (32,10)]
-pools["learning_rate"]= [1e-3, 1e-2, 1e-4, 5e-3]
+pools["batch_size"] = [256, 512, 768, 1024, 128]
+pools["units_nr_layers"] = [(256,5), (512,3), (64,7), (1024, 2), (128, 6)]
+pools["learning_rate"]= [1e-2, 1e-3, 1e-4, 5e-3]
 pools["l2_kernel"] = [0.0]
 pools["l2_bias"] = [0.0]
 pools["loss_fn"] = [keras.losses.MeanAbsoluteError(), keras.losses.MeanSquaredError(), keras.losses.Huber()]
@@ -33,7 +33,7 @@ pools["dropout"] = [False]
 pools["dropout_rate"] = [0]
 pools["kernel_initializer"] = [tf.keras.initializers.HeNormal()]
 pools["bias_initializer"] = [tf.keras.initializers.Zeros()]
-pools["hidden_activation"] = [tf.nn.relu, tf.nn.leaky_relu, tf.nn.elu]
+pools["hidden_activation"] = [tf.nn.leaky_relu, tf.nn.relu, tf.nn.elu, tf.nn.sigmoid, tf.nn.tanh]
 pools["output_activation"] = [ml.LinearActiavtion()]
 pools["feature_normalization"] = ["normalization", None]
 pools["scaling_bool"] = [True]

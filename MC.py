@@ -3,6 +3,8 @@ import scipy as sc
 import tensorflow as tf
 from scipy import stats
 from scipy import constants
+import pandas as pd
+import ml
 
 class class_loguni():
     def __init__(self, loguni_param, x_lower_limit, x_upper_limit, scaling=1):
@@ -96,6 +98,14 @@ def reweight_cut(features, E=6500, cut_energy=40, cut_eta=2.37, return_cut=False
 def strong_reweight_cut(features, E=6500, cut_energy=40, cut_eta=2.37, return_cut=False):
     #cut ist True fuer werte die nicht rausgeschnitten werden
     cut = (np.abs( np.log(features[:,1]/features[:,0])) < cut_eta)
+    features = features[cut]
+    if return_cut:
+        return features, cut
+    else:
+        return features
+
+def x_cut(features, lower_cut=0.15, upper_cut=0.3, return_cut=False):
+    cut = (features < upper_cut) & (features > lower_cut)
     features = features[cut]
     if return_cut:
         return features, cut
@@ -220,15 +230,15 @@ class x_power_dist():
 
 
     def __call__(self, x):
-        y = (self.offset + (x-self.mean) ** self.power)/self.scale
+        y = (self.offset + np.abs((x-self.mean) ** self.power))/self.scale
         return y
 
     def cdf(self, x):
         y = (self.offset * (x-self.a) + 1/(self.power + 1) * \
-            ((x - self.mean) ** (self.power + 1) - (self.a - self.mean) ** (self.power + 1)))/self.scale
+            ((x - self.mean) ** (self.power + 1)  - (self.a - self.mean) ** (self.power + 1)))/self.scale
         return y
 
-    def rvs(self, size, interpol_nr=1000):
+    def rvs(self, size, interpol_nr=10000):
         try:
             custom_samples = self.inverse_cdf(stats.uniform.rvs(loc=0, scale=1, size=size))
         except:
@@ -241,3 +251,38 @@ class x_power_dist():
         x = np.linspace(self.a, self.b, num=interpol_nr)
         y = self.cdf(x)
         self.inverse_cdf = inverse_cdf(xp=y, fp=x)
+
+def data_handling(data_path, label_name, return_pd=False,
+                  return_as_tensor=True, float_precision=None, dtype="float32"):
+    #Daten einlesen
+    data = pd.read_csv(data_path, float_precision=float_precision)
+    #in test und trainingsdaten untertaeilen
+
+
+    #In features und labels unterteilen
+    features_pd = data
+    labels_pd = features_pd.pop(label_name)
+
+    # Aus den Pandas Dataframes np-arrays machen
+    for i, key in enumerate(features_pd):
+        if i == 0:
+            features = np.array([features_pd[key]], dtype=dtype)
+        else:
+            more_features = np.array([features_pd[key]], dtype=dtype)
+            features = np.append(features, more_features, axis=0)
+
+
+    # Dimensionen arrangieren
+    features = np.transpose(features)
+    labels =np.transpose(np.array([labels_pd], dtype=dtype))
+
+    #numpy arrays zu tensorflow-tensoren machen, wegen schneller verarbeitung
+    if return_as_tensor:
+        features = tf.constant(features, dtype=dtype)
+        labels = tf.constant(labels, dtype=dtype)
+
+    if return_pd:
+        re = (features, labels, features_pd, labels_pd)
+    else:
+        re = (features, labels)
+    return re

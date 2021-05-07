@@ -5,9 +5,9 @@ import os
 from matplotlib import pyplot as plt
 
 #Daten präparieren
-epsilon = 0.01
-total = 5000
-name = "PlottingData5k_ep_0.01"
+epsilon = 0.163
+total = 10000
+name = "TestData10k_ep_0.163"
 importance_sampling = False
 offset = 0.4
 power = 4
@@ -19,6 +19,7 @@ if importance_sampling:
     theta = custom_dist.rvs(size=total)
     plt.hist(theta, bins=20)
     plt.show()
+    np.append(theta, np.array([epsilon, np.pi-epsilon]))
 else:
     theta = np.random.uniform(low=epsilon, high= np.pi - epsilon, size=total)
 WQ = diff_WQ_theta(theta)
@@ -36,7 +37,7 @@ config = pd.DataFrame(
     {
         "epsilon": epsilon,
         "total": total,
-        "importance_sampling": True,
+        "importance_sampling": importance_sampling,
         "power": power,
         "offset": offset,
     },

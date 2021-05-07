@@ -35,7 +35,7 @@ for key,path in paths.items():
     if key not in model_keys:
         (_, features[key], labels[key], _, _, features_pd[key], labels_pd[key], _) = ml.data_handling(data_path=path, label_name="WQ")
     if key in model_keys:
-        (models[key], transformers[key]) = ml.load_model_and_transormer(model_path=path)
+        (models[key], transformers[key]) = ml.load_model_and_transformer(model_path=path)
 
 show_3D_plots = False
 

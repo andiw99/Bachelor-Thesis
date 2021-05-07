@@ -16,8 +16,8 @@ def main():
 
     #Pfade eingeben
     testing_data_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Data/TransferTestData50k/all"
-    project_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Models/comparisons"
-    save_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Plots/hadronic_comparisons_test/"
+    project_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Models/final comparison"
+    save_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Plots/comparisons_test/"
 
     input("save_path geändert und an slash hinten gedacht?")
 
@@ -33,9 +33,9 @@ def main():
         model_paths[comparison] = dict()
         models[comparison] = dict()
         #model names laden, nur die directorys
-        model_names = [name for name in os.listdir(directorys[comparison])
+        model_names = sorted([name for name in os.listdir(directorys[comparison])
                        if (os.path.isdir(os.path.join(directorys[comparison], name)))
-                        & (name != "best_model")]
+                        & (name != "best_model")])
         # pfade in dictionarys packen
         for model in model_names:
             model_paths[comparison][model] = directorys[comparison] + "/" + model
@@ -73,10 +73,22 @@ def main():
                 MAPE[comparison][model] = float(configs[comparison][model]["smallest loss"][0])
                 MAPE_error[comparison][model] = float(configs[comparison][model]["loss error"][0])
                 avg_MAPE[comparison][model] = float(configs[comparison][model]["avg validation loss"][0])
-                all_MAPE[comparison][model] = tuple(ast.literal_eval(configs[comparison][model]["total_losses"][0]))
-
-                #MSE[comparison][model] = 0.1
-
+                all_MAPE[comparison][model] = np.array(ast.literal_eval(configs[comparison][model]["total_losses"][0]))
+                if comparison == "Units per Layer":
+                    print(comparison, model)
+                    print("mape error", MAPE_error[comparison][model])
+                    print("avg mape", avg_MAPE[comparison][model])
+                    print("all_mape",all_MAPE[comparison][model])
+                while MAPE_error[comparison][model] >= 0.9 * avg_MAPE[comparison][model]:
+                    all_MAPE[comparison][model] = all_MAPE[comparison][model][all_MAPE[comparison][model] < avg_MAPE[comparison][model] + MAPE_error[comparison][model]]
+                    MAPE_error[comparison][model] = np.std(all_MAPE[comparison][model], ddof=1)
+                    avg_MAPE[comparison][model] = np.mean(all_MAPE[comparison][model])
+                    if comparison == "Units per Layer":
+                        print("cut geschehen")
+                        print(comparison, model)
+                        print("mape error", MAPE_error[comparison][model])
+                        print("avg mape", avg_MAPE[comparison][model])
+                        print("all_mape", all_MAPE[comparison][model])
 
     else:
         # Zu testende Modelle und transformer laden
@@ -135,13 +147,14 @@ def main():
     all_MAPE_losses = dict()
     for comparison in model_paths:
         # TODO prints entfernen wenn alles läuft
-        print(MAPE_error[comparison])
+        # print(MAPE_error[comparison])
         names = list(model_paths[comparison].keys())
         #MSE_losses = list(MSE.values())
         MAPE_losses[comparison] = list(MAPE[comparison].values())
         MAPE_errors[comparison] = list(MAPE_error[comparison].values()) # TODO errors mit 1/N-1 statt 1/N
         avg_MAPE_losses[comparison] = list(avg_MAPE[comparison].values())
         all_MAPE_losses[comparison] = list(all_MAPE[comparison].values())
+        """
         print(MAPE_losses[comparison])
         print(MAPE_errors[comparison])
         print(type(MAPE_losses[comparison][0]))
@@ -149,8 +162,8 @@ def main():
         print(all_MAPE[comparison])
         print(all_MAPE_losses)
         print(names)
-
-        ml.make_comparison_plot(names=names, losses=MAPE_losses[comparison], all_losses=all_MAPE_losses[comparison],
+        """
+        ml.make_comparison_plot(names=names, min_losses=MAPE_losses[comparison], all_losses=all_MAPE_losses[comparison],
                                 avg_losses=avg_MAPE_losses[comparison], losses_errors=MAPE_errors[comparison], save_path=save_path,
                                 comparison=comparison)
 

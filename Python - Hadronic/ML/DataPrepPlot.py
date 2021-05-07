@@ -13,8 +13,8 @@ def main():
               "charge": [-1/3,2/3, -1/3, 2/3]}
 
     #PDF initialisieren
-    #PDF = pdf.mkPDF("CT14nnlo", 0)
-    PDF = pdf.mkPDF("MMHT2014nnlo68cl", 0)
+    PDF = pdf.mkPDF("CT14nnlo", 0)
+    #PDF = pdf.mkPDF("MMHT2014nnlo68cl", 0)
 
     #Variablen
     E = 6500 #Strahlenergie in GeV, im Vornherein festgelegt?
@@ -24,12 +24,12 @@ def main():
     x_upper_limit = 1
     eta_limit = 3
     loguni_param=0.05
-    stddev = 2
+    stddev = 4
     xMin = PDF.xMin
     random_seed = 30
     np.random.seed(random_seed)
 
-    set_name = "NewPlottingData_MMHT2014/"
+    set_name = "CT14 PlottingData/"
     path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Data/" + set_name
 
     #Test
@@ -70,18 +70,18 @@ def main():
     print(eta.size)
 
     #Feste werte setzen
-    i=0
-    x_1_constant=0
-    x_2_constant=0
+    i = 0
+    x_1_constant = 0
+    x_2_constant = 0
     eta_constant = 0
-    while x_1_constant < 0.05 or x_1_constant > 0.15:
+    while x_1_constant < 0.1 or x_1_constant > 0.46:
         if i >= x_total:
             x_1_constant = x_1[i-1]
             break
         x_1_constant = x_1[i]
         i += 1
     i=0
-    while x_2_constant < 0.05 or x_2_constant > 0.15:
+    while x_2_constant < 0.1 or x_2_constant > 0.46:
         if i >= x_total:
             x_2_constant = x_2[i-1]
             break
@@ -89,7 +89,7 @@ def main():
         i += 1
     i=0
 
-    while eta_constant <0.5 or eta_constant > 1.35:
+    while eta_constant < 0.5 or eta_constant > 1.0:
         if i >= eta_total:
             eta_constant = eta[i]
             break

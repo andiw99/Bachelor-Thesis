@@ -8,25 +8,29 @@ import MC
 
 #Pfade eingeben
 paths = dict()
-model_path= "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Models/transferred_model_2M_new_layer"
+model_paths = dict()
+model_paths["Predictions"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Models/best_guess_4M"
 #model_path= "/Files/Hadronic/Models/best_guess_4M"
 #more data to plot?
-#plotting_data = ...
+#PlottingDataLowX_data = ...
 
 #Pfade in dict speichern
-paths["model"] = model_path
-paths["$\eta, x_1$ constant"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Data/NewPlottingData_MMHT2014/eta_x_1_constant"
-paths["$x_1, x_2$ constant"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Data/NewPlottingData_MMHT2014/x_constant"
-paths["$\eta, x_2$ constant"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Data/NewPlottingData_MMHT2014/eta_x_2_constant"
-save_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Plots/Meeting/"
-name = "transferred_model_transfer_data_new"
+paths["$\eta, x_1$ constant"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Data/PlottingDataHighX/eta_x_1_constant"
+paths["$x_1, x_2$ constant"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Data/PlottingDataHighX/x_constant"
+paths["$\eta, x_2$ constant"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Data/PlottingDataHighX/eta_x_2_constant"
+save_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Plots/finished/"
+name = "hadronic_high_x"
 input("namen geändert?")
 save_path = save_path + name
 label_name = "WQ"
+trans_to_pb = True
 
 #Daten einlesen
 # Modell und transformer laden
-(model, transformer) = ml.load_model_and_transormer(model_path=model_path)
+models = dict()
+transformers = dict()
+for model_name in model_paths:
+    (models[model_name], transformers[model_name]) = ml.load_model_and_transformer(model_path=model_paths[model_name])
 
 show_3D_plots = False
 use_cut = True
@@ -53,8 +57,12 @@ for dataset in features:
         features_pd[dataset] = features_pd[dataset][cut].reset_index(drop=True)
         labels[dataset] = labels[dataset][cut]
         labels_pd[dataset] = labels_pd[dataset][cut].reset_index(drop=True)
-    predictions[dataset] = transformer.retransform(model.predict(transformer.rescale(features[dataset])))
-    losses[dataset] = loss_function(y_true=labels[dataset], y_pred=predictions[dataset])
+    predictions[dataset] = dict()
+    losses[dataset] = dict()
+    for model_name in models:
+        predictions[dataset][model_name] = transformers[model_name].retransform(
+            models[model_name].predict(transformers[model_name].rescale(features[dataset])))
+        losses[dataset][model_name] = loss_function(y_true=labels[dataset], y_pred=predictions[dataset][model_name])
 
 
 #Jetzt plotten irgendwie

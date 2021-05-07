@@ -1,0 +1,81 @@
+%--------------------------------------------------------------------
+% Vorlage für eine Abschlussarbeit
+% Darf ohne Einschränkungen weiterverwendet und abgeändert werden.
+% mehr zur Verwedung in der README.md
+% ⓒ (CC0) 2016, 2018 Henning Iseke <h_i_@online.de>
+%--------------------------------------------------------------------
+
+\documentclass[11pt, % 11 Punkt Schriftgröße
+german, % standardmäßig deutsche Eigenarten einhalten
+abstract=true, % Abstract verwenden
+twoside, % Zweiseitig
+captions=tableheading, % Tabellenüberschriften mit richtigem Abstand
+BCOR=10mm, % TODO: Bindekorrektur, muss je nach Bindung angepasst werden
+%draft % TODO: Entwurfsmodus am Ende entfernen
+]{scrreprt}
+
+\usepackage{ifluatex} % Paket, um Vorlage für Lua- und pdfLaTeX zu verwenden
+\ifluatex % LuaTeX
+    %\usepackage{fontspec} % Schriftarten verwalten (es können im Grunde genommen alle installierten Schriftarten verwendet werden)
+    %\setmainfont[Ligatures=TeX]{Linux Libertine O} % Hauptschriftart setzen
+    %\setsansfont[Ligatures=TeX]{Linux Biolinum O} % Serifenlose Schriftart
+
+    \usepackage{polyglossia} % Namen, Silbentrennung an Sprache anpasen
+    \setdefaultlanguage{english} % English as default language
+    \setotherlanguage{german} % weitere Sprache (für Abstract)
+
+    \newcommand*{\compiler}{Lua\LaTeX}
+\else % kein LuaTeX
+    \usepackage[utf8]{inputenc} % Kodierung der Datei
+    \usepackage[T1]{fontenc} % Vollen Umfang der Schriftzeichen
+    \usepackage[main=english, ngerman]{babel} % Sprache auf Deutsch (neue Rechtschreibung)
+    \newenvironment{german}{\begin{otherlanguage}{german}}{\end{otherlanguage}}
+    \newcommand*{\compiler}{pdf\LaTeX}
+    %\usepackage{libertine} % Schriftart Linux Libertine/Biolinum verwenden
+\fi
+
+\usepackage{siunitx} % Darstellung von Größen
+\sisetup{locale=UK, % in United Kingdom usual setting
+separate-uncertainty, % Unsicherheit mit ± getrennt darstellen
+table-number-alignment=center, % Zahlen in Tabellen zentrieren (mit Option S)
+}
+
+\usepackage{graphicx} % Einbinden von Grafiken
+
+\usepackage{booktabs} % schöne Tabellen mit \toprule, \midrule, \bottomrule
+\usepackage{multirow} % mehrzeilige Zellen
+\usepackage{csquotes} % Anführungszeichen mit \enquote
+\usepackage[automark]{scrpage2} % Seiten mit Kopf- und Fußzeile gestalten
+\pagestyle{scrheadings} % Seitenstil setzen
+%\usepackage{microtype} % Mikrotypographie
+
+% Literaturangaben
+\usepackage[backend=biber, % Biber zum Erstellen verwenden: biber <Dokument>
+style=phys, % in der Physik üblichen Stil
+articletitle=false, % ohne Titel bei Artikeln
+pageranges=false, % nur Anfangsseitenzahl
+language=english, % English language
+biblabel=brackets % Verweise als „[1]“
+]{biblatex} % Literaturverzeichnis
+\addbibresource{literatur} % bib-Datei mit den Infos zur Literatur
+%\renewcommand*{\bibfont}{\small} % kleine Schriftart für Literaturverzeichnis
+
+% Mathematik
+\usepackage{amsmath} % Umgebungen/Befehle, die für Mathe nützlich sind
+\ifluatex
+\usepackage{unicode-math} % Symbole für Mathematik
+%\setmathfont{Asana-Math.otf} % Schriftart für den Mathemodus (nur mit LuaLaTeX)
+\fi
+\usepackage{physics} % Umgebungen/Befehle für Physik
+
+\usepackage{caption} % Anpassung der Bildunterschriften, Tabellenüberschriften
+\usepackage{subcaption} % mehrere Unterabbilungen in einer Abbildung, auch Tabellen
+
+\usepackage[hidelinks,pdfauthor={\autor},
+pdfsubject=Thesis,pdftitle={\titel},pdfkeywords={\schlagworte},
+unicode=true]{hyperref} % Metadaten und Links in PDFs
+
+% Nummerierung anpassen
+\numberwithin{equation}{chapter}
+\numberwithin{figure}{chapter}
+\numberwithin{table}{chapter}

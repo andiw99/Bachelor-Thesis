@@ -1,0 +1,10 @@
+,0
+mean_squared_error_,2.29
+Adam_,0.17
+relu_,0.55
+tanh_,0.84
+"units_nr_layers_(256, 5)_",0.15
+"units_nr_layers_(1024, 2)_",0.53
+"units_nr_layers_(128, 6)_",0.16
+leaky_relu_,0.17
+SGD_,1.13
