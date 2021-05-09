@@ -9,12 +9,15 @@ from matplotlib import pyplot as plt
 paths = dict()
 paths[r"$x^4$-Distribution"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Partonic/PartonicData/TrainingData60k_ep_0.163/"
 save_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Plots/finished/"
-name = "IS_dist_comparison"
+name = "4"
 #input("namen geändert?")
 save_path = save_path + name
 label_name = "WQ"
 trans_to_pb = False
 
+#ticks festlegen ggf
+pi_ticks = np.array([0, np.pi/4, np.pi/2, 3*np.pi/4, np.pi])
+pi_names = np.array(["0", r"$\frac{1}{4} \pi$", r"$\frac{1}{2} \pi$", r"$\frac{3}{4} \pi$", r"$\pi$"])
 
 #In Features und Labels unterteilen
 labels_pd = dict()
@@ -70,5 +73,5 @@ for dataset in predictions:
     keys = ml.get_varying_value(features_pd=features_pd[dataset])
     ml.plot_model(features_pd=features_pd[dataset], labels=labels[dataset], predictions=predictions[dataset],
                  keys=keys, save_path=save_path, trans_to_pb=trans_to_pb, set_ylabel=r"$\rho$", set_ratio_yscale="linear",
-                  autoscale_ratio=True)
+                  autoscale_ratio=True, autoscale=True, automatic_legend=True, xticks=pi_ticks, xtick_labels=pi_names)
 

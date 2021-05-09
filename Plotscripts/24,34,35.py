@@ -9,8 +9,8 @@ import MC
 #Pfade eingeben
 paths = dict()
 model_paths = dict()
-model_paths["transferred model"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Models/transferred_model_best_parameters_fine_tuning"
-model_paths["source model"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Models/LastRandomSearch/best_model"
+model_paths["transferred model"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Models/test"
+model_paths["source model"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Models/best_model"
 #model_path= "/Files/Hadronic/Models/best_guess_4M"
 #more data to plot?
 #plotting_data = ...
@@ -20,7 +20,7 @@ paths["$\eta, x_1$ constant"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbei
 paths["$x_1, x_2$ constant"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Data/MMHT PlottingData/x_constant"
 paths["$\eta, x_2$ constant"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Data/MMHT PlottingData/eta_x_2_constant"
 save_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Plots/finished/"
-name = "transferred_model_vs_source_model"
+name = "24,34,35.2"
 input("namen geändert?")
 save_path = save_path + name
 label_name = "WQ"
@@ -33,7 +33,11 @@ for model_name in model_paths:
     (models[model_name], transformers[model_name]) = ml.load_model_and_transformer(model_path=model_paths[model_name])
 
 show_3D_plots = False
-use_cut = True
+use_cut = False
+replace_with_nan = True
+text_loc = (0.4, 0.88)
+#x_interval = (0.05, 0.15)
+x_interval = (0.15, 0.31)
 loss_function = keras.losses.MeanAbsoluteError(reduction=keras.losses.Reduction.NONE)
 
 #In Features und Labels unterteilen
@@ -68,6 +72,6 @@ for dataset in features:
 #Jetzt plotten irgendwie
 for dataset in predictions:
     keys = ml.get_varying_value(features_pd=features_pd[dataset])
-    ml.make_reweight_plot(features_pd=features_pd[dataset], labels=labels[dataset], predictions=predictions[dataset],
-                  keys=keys, save_path=save_path, x_cut=True)
+    ml.make_reweight_plot(features_pd=features_pd[dataset], labels=labels[dataset], predictions=predictions[dataset], use_sci_fct=True,
+                  keys=keys, save_path=save_path, x_cut=True, replace_with_nan=True, lower_x_cut=x_interval[0], upper_x_cut=x_interval[1])
 

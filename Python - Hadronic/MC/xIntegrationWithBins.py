@@ -5,13 +5,21 @@ from matplotlib import pyplot as plt
 from scipy import integrate
 import ml
 import MC
+import os
 
 
 def main():
     #Random Samples einlesen, und zwar alle und dann in bins einteilen:
     # eventuell mehrere datensets
     dataset_paths = list()
-    dataset_paths.append("/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Data/MC50M_I/")
+    directory = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Data/MC5M/"
+    datasets = os.listdir(directory)
+    for dataset in datasets:
+        if dataset != "conifg":
+            dataset_paths.append(directory + dataset + "/")
+    print(dataset_paths)
+    """
+    dataset_paths.append("/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Data/MC30M_newgauss/")
     dataset_paths.append(
        "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Data/MC50M_II/")
     dataset_paths.append(
@@ -20,7 +28,10 @@ def main():
         "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Data/MC50M_IV/")
     dataset_paths.append(
        "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Data/MC50M_V/")
+    """
     label_name = "WQ"
+    max_iterations = 100
+    with_ml = False
     # Config der RandomSample generierung einlesen
     config = pd.read_csv(dataset_paths[0] + "config")
     # model einlesen
@@ -32,7 +43,7 @@ def main():
     variables = dict()
     for key in config:
         variables[key] = float(config[key][0])
-    nr_bins = int(variables["total_data"] / 300000)
+    nr_bins = int(variables["total_data"] / 50000)
     eta_interval = np.linspace(start=-variables["eta_limit"],
                                stop=variables["eta_limit"], num=(nr_bins + 1) + (nr_bins) % 2)  #dafür sorgen, dass eta interval ungearde
                                                                                                     #viele
@@ -45,13 +56,15 @@ def main():
     eta_interval = np.sort(eta_interval)
     nr_bins = len(eta_interval) - 1
     print("nr_bins", nr_bins)
-
+    print("eta_interval", eta_interval)
     analytic_integrals = list()
     analytic_stddevs = list()
     ml_integrals = list()
     ml_stddevs = list()
     #Für jede Datenmenge MC-Integration machen
-    for path in dataset_paths:
+    for i,path in enumerate(dataset_paths):
+        if i >= max_iterations:
+            break
         features, labels = MC.data_handling(data_path=path + "all", label_name=label_name, return_pd=False)
 
         config = pd.read_csv(path + "config")
@@ -75,11 +88,12 @@ def main():
         print("Die Daten wurden in Bins eingeteilt, features, labels werden freigegeben")
         del features
         del labels
-        for i in range(nr_bins):
-            try:
-                predictions["{:.2f}".format(eta_interval[i])] = transformer.retransform(model.predict(features_eta_constant["{:.2f}".format(eta_interval[i])]))
-            except ValueError:
-                predictions["{:.2f}".format(eta_interval[i])] = np.array([[0]])
+        if with_ml:
+            for i in range(nr_bins):
+                try:
+                    predictions["{:.2f}".format(eta_interval[i])] = transformer.retransform(model.predict(features_eta_constant["{:.2f}".format(eta_interval[i])]))
+                except ValueError:
+                    predictions["{:.2f}".format(eta_interval[i])] = np.array([[0]])
 
         # Wahrscheinlichkeitsverteilungen initialisieren
         scaling_loguni = 1/(variables["x_upper_limit"]-variables["x_lower_limit"])
@@ -121,14 +135,17 @@ def main():
                                                    loguni(features_eta_constant[eta_value][:,1]) * gauss(features_eta_constant[eta_value][:,2])))))
             analytic_stddev[i] = np.sqrt((quadratic_analytic_integral[i] - analytic_integral[i]**2) * 1/(len(labels_eta_constant[eta_value][:,0])-1))
 
-            ml_integral[i] = tf.math.reduce_mean((predictions[eta_value][:,0])/
-                                                  (scaling * ratio * loguni(features_eta_constant[eta_value][:,0]) *
-                                                   loguni(features_eta_constant[eta_value][:,1]) * gauss(features_eta_constant[eta_value][:,2])))
-            quadratic_ml_integral[i] = (tf.math.reduce_mean(tf.math.square(predictions[eta_value][:,0] / (scaling * ratio * loguni(features_eta_constant[eta_value][:,0]) *
-                                                   loguni(features_eta_constant[eta_value][:,1]) * gauss(features_eta_constant[eta_value][:,2])))))
+            if with_ml:
+                ml_integral[i] = tf.math.reduce_mean((predictions[eta_value][:,0])/
+                                                      (scaling * ratio * loguni(features_eta_constant[eta_value][:,0]) *
+                                                       loguni(features_eta_constant[eta_value][:,1]) * gauss(features_eta_constant[eta_value][:,2])))
+                quadratic_ml_integral[i] = (tf.math.reduce_mean(tf.math.square(predictions[eta_value][:,0] / (scaling * ratio * loguni(features_eta_constant[eta_value][:,0]) *
+                                                       loguni(features_eta_constant[eta_value][:,1]) * gauss(features_eta_constant[eta_value][:,2])))))
 
-            ml_stddev[i] = np.sqrt((quadratic_ml_integral[i] - ml_integral[i]**2) * 1/(len(predictions[eta_value][:,0])-1))
+                ml_stddev[i] = np.sqrt((quadratic_ml_integral[i] - ml_integral[i]**2) * 1/(len(predictions[eta_value][:,0])-1))
 
+                ml_integrals.append(ml_integral)
+                ml_stddevs.append(ml_stddev)
 
             eta[i] = (eta_interval[i+1] - eta_interval[i])/2 + eta_interval[i]
 
@@ -139,14 +156,13 @@ def main():
         # Berechnungen den Listen hinzufuegen
         analytic_integrals.append(analytic_integral)
         analytic_stddevs.append(analytic_stddev)
-        ml_integrals.append(ml_integral)
-        ml_stddevs.append(ml_stddev)
 
         #Speicher wieder freigeben
         del features_eta_constant
         del labels_eta_constant
         del predictions
 
+    print("eta", eta)
     print("analytic_integrals", analytic_integrals)
     print("ml_integrals", ml_integrals)
     print("analytic_stds", analytic_stddevs)
@@ -155,7 +171,8 @@ def main():
     analytic_integral = np.mean(analytic_integrals, axis=0)
     ml_integral = np.mean(ml_integrals, axis=0)
     analytic_stddev = 1/len(analytic_stddevs) * np.sqrt(np.sum(np.square(analytic_stddevs), axis=0))
-    ml_stddev = 1/len(ml_stddevs) * np.sqrt(np.sum(np.square(ml_stddevs), axis=0))
+    if with_ml:
+        ml_stddev = 1/len(ml_stddevs) * np.sqrt(np.sum(np.square(ml_stddevs), axis=0))
     analytic_stddev_stat = np.std(analytic_integrals, axis=0, ddof=1) * 1/np.sqrt(len(analytic_integrals))
     ml_stddev_stat = np.std(ml_integrals, axis=0, ddof=1)
 
@@ -167,6 +184,9 @@ def main():
     order = np.argsort(eta)
     eta = np.array(eta)[order]
     analytic_integral = np.array(analytic_integral)[order]
+    if not with_ml:
+        ml_integral = analytic_integral
+        ml_stddev = analytic_stddev
     ml_integral = np.array(ml_integral)[order]
 
     ml.make_MC_plot(x=eta, analytic_integral=MC.gev_to_pb(analytic_integral), ml_integral=MC.gev_to_pb(ml_integral), xlabel=r"$\eta$",
@@ -184,6 +204,14 @@ def main():
     print("ml_integral in pb ", MC.gev_to_pb(ml_integral), "stddev in pb", MC.gev_to_pb(ml_stddev), "statistical stddev in pb", MC.gev_to_pb(ml_stddev_stat))
     print("analytic_integral in GeV", analytic_integral, "analytic integral in pb:", MC.gev_to_pb(analytic_integral), "stddev in pb", MC.gev_to_pb(analytic_stddev_stat))
 
+    analytic_integral[np.isnan(analytic_integral)] = 0
+    print(analytic_integral)
+    sigma_total = integrate.trapezoid(y=MC.gev_to_pb(analytic_integral),x=eta)
+    print("sigma_total", sigma_total)
+    sigma_total = 0
+    for i in range(len(analytic_integral)):
+        sigma_total += (eta_interval[i+1] - eta_interval[i]) * analytic_integral[i]
+    print("sigma_totla andere variante", MC.gev_to_pb(sigma_total))
 
 if __name__ == "__main__":
     main()

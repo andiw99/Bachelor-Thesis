@@ -19,18 +19,22 @@ model_paths["Prediction"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/py
 paths = dict()
 paths["$\eta, x_1$ constant"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Partonic/PartonicData/PlottingData5k_ep_0.163/all"
 save_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Plots/finished/"
-name = "random_search_best_model_theta"
+name = "2"
 input("namen geändert?")
 save_path = save_path + name
 label_name = "WQ"
 trans_to_pb = True
+
+#ticks festlegen ggf
+pi_ticks = np.array([0, np.pi/4, np.pi/2, 3*np.pi/4, np.pi])
+pi_names = np.array(["0", r"$\frac{1}{4} \pi$", r"$\frac{1}{2} \pi$", r"$\frac{3}{4} \pi$", r"$\pi$"])
 
 #Daten einlesen
 # Modell und transformer laden
 models = dict()
 transformers = dict()
 for model_name in model_paths:
-    (models[model_name], transformers[model_name]) = ml.load_model_and_transormer(model_path=model_paths[model_name])
+    (models[model_name], transformers[model_name]) = ml.load_model_and_transformer(model_path=model_paths[model_name])
 show_3D_plots = False
 use_cut = False
 loss_function = keras.losses.MeanAbsoluteError(reduction=keras.losses.Reduction.NONE)
@@ -68,5 +72,5 @@ for dataset in features:
 for dataset in predictions:
     keys = ml.get_varying_value(features_pd=features_pd[dataset])
     ml.plot_model(features_pd=features_pd[dataset], labels=labels[dataset], predictions=predictions[dataset],
-                  keys=keys, save_path=save_path, trans_to_pb=trans_to_pb)
+                  keys=keys, save_path=save_path, trans_to_pb=trans_to_pb, xtick_labels=pi_names, xticks=pi_ticks)
 

@@ -1,0 +1,58 @@
+% -- Anfang Präambel
+\documentclass[german,  % Standardmäßig deutsche Eigenarten, englisch -> english
+parskip=full,  % Absätze durch Leerzeile trennen
+%bibliography=totoc,  % Literatur im Inhaltsverzeichnis (ist unüblich)
+%draft,  % TODO: Entwurfsmodus -> entfernen für endgültige Version
+]{scrartcl}
+\usepackage[utf8]{inputenc}  % Kodierung der Datei
+\usepackage[T1]{fontenc}  % Vollen Umfang der Schriftzeichen
+\usepackage[ngerman]{babel}  % Sprache auf Deutsch (neue Rechtschreibung)
+
+% Mathematik und Größen
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[locale=DE,  % deutsche Eigenarten, englisch -> US
+separate-uncertainty,  % Unsicherheiten seperat angeben (mit ±)
+]{siunitx}
+\usepackage{physics}  % Erstellung von Gleichungen vereinfachen
+
+\usepackage{hyperref, graphicx}  % Bilder einbinden \includegraphics{Pfad/zur/Datei(ohne Dateiendung)}
+
+% Gestaltung
+\usepackage{geometry}
+\geometry{
+	bottom = 4cm,
+}
+\setlength{\skip\footins}{6mm}
+%\usepackage{microtype}  % Mikrotypographie (kann man am Ende verwenden)
+\usepackage{multirow} 
+\usepackage{booktabs}  % schönere Tabellen
+\usepackage[toc]{multitoc}  % mehrspaltiges Inhaltsverzeichnis
+\usepackage{csquotes}  % Anführungszeichen mit \enquote
+\usepackage{caption}  % Anpassung der Bildunterschriften, Tabellenüberschriften
+\usepackage{subcaption}  % Unterabbildungen, Untertabellen, …
+\usepackage{enumitem}  % Listen anpassen
+\setlist{itemsep=-10pt}  % Abstände zwischen Listenpunkten verringern
+
+% Manipulation des Seitenstils
+\usepackage{scrlayer-scrpage}
+% Kopf-/Fußzeilen setzen
+\pagestyle{scrheadings}  % Stil für die Seite setzen
+\clearscrheadings  % Stil zurücksetzen, um ihn neu zu definieren
+\automark{section}  % Abschnittsnamen als Seitenbeschriftung verwenden
+\ofoot{\pagemark}  % Seitenzahl außen in Fußzeile
+\ihead{\headmark}  % Seitenbeschriftung mittig in Kopfzeile
+\setheadsepline{.5pt}  % Kopzeile durch Linie abtrennen
+
+
+
+
+
+% -- Ende Präambel
+
+\begin{document}
+	\begin{titlepage}
+	$\Lambda$
+	\end{titlepage}
+\end{document}
+	$\eta$, $p_1$, $p_2$, $p_3$, $p_4$, $\theta$  

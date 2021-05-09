@@ -25,9 +25,9 @@
 \newcommand*{\abschlussarbeit}{Bachelor-Arbeit}
 \newcommand*{\schlagworte}{Deep-Learning}
 
+
 \newcommand{\abstractde}{
-<Zusammenfassung deutsch>
-In dieser Arbeit werden Sie die beste Bachelor-Arbeit der Welt finden.
+Für den Diphoton-Prozess $q\overline{q} \rightarrow \gamma \gamma$ wird der Wirkungsquerschnitt berechnet und auf die hadronische Ebene $pp \rightarrow \gamma \gamma$ übertragen. Anschließend werden Methoden des Deep-Learning verwendet, um die differentiellen Wirkungsquerschnitte zu nähern. Hierbei wird vor allem auf die Schwierigkeit eingegangen, neuronalen Netzen sich um Größenordnungen unterscheidende Labels beizubringen. Weiterhin wird die Eignung und Anwendbarkeit von Transfer-Learning bei Regression von Wirkungsquerschnitten untersucht. Schließlich wird von simplen Monte-Carlo-Methoden Gebrauch gemacht, um die differentiellen Wirkungsquerschnitte zu integrieren. 
 }
 \newcommand{\abstracten}{
 <Abstract english>
@@ -35,25 +35,40 @@ In dieser Arbeit werden Sie die beste Bachelor-Arbeit der Welt finden.
 
 % comment out the language which you do NOT want
 \input{preamble_de}
+
 %\input{preamble_en}
 
 %\input{befehle}
+\captionsetup{format=plain}
+\addto\captionsngerman{\renewcommand{\figurename}{Abb.}}
 
 \begin{document}
 % Abschnitte
 \include{chapters/title_de}
 %\include{chapters/title_en}
 %\include{chapters/einleitung}
+% TODO LHAPDF reinschreiben, dass du da dieses Modul benutzt hast
 \chapter{Einleitung}
-
+Maschinelles Lernen (ML) ist ein Schlagwort und Konzept, das zwar schon lange in Umlauf ist, jedoch neuerdings extrem an Beliebtheit gewonnen hat. Auch in der Physik haben verschiedene Methoden bereits Einzug gehalten, wobei verschiedene Arten des maschinellen Lernens für unterschiedliche Anwendungsmöglichkeiten verwendet werden. Besonders beliebt ist Deep-Learning, das einen Bereich des maschinellen Lernens bezeichnet, in dem tiefe neuronale Netze verwendet werden. In dieser Arbeit soll die Eignung neuronaler Netzen zur Regression von differentiellen Wirkungsquerschnitten untersucht werden. Dies wird am Beispiel des Diphoton-Prozess angewendet, den wir sowohl auf partonischer Ebene, als auch auf hadronischer Ebene in führender Ordnung analytisch herleiten werden.\\
+\newline
+Wir beginnen in \textit{\autoref{2}} mit der theoretischen Behandlung des Diphoton-Prozesses im Rahmen der Quantenelektrodynamik und leiten analytisch Ausdrücke für den differentiellen Wirkungsquerschnitt für den Prozess auf partonischer und hadronischer Ebene her. \textit{\autoref{3}} beschäftigt sich zunächst mit den Konzepten hinter Maschinellem Lernen und speziell Deep-Learning mit tiefen neuronalen Netzen (DNN). Am Ende des Kapitels gehen wir noch kurz auf die Grundlagen von einer simplen Monte-Carlo-Integration (MC-Integration) ein. Die Anwendung der DNN folgt in \textit{\autoref{4}}, wobei wir zunächst die differentiellen Wirkungsquerschnitte des Diphoton-Prozesses nähern. Anschließend untersuchen wir das Lernen von Reweights zwischen Fits von Partondichtefunktionen (PDF) und die Eignung von Transfer-Learning (TL) zur Anpassung von einem bereits bestehenden Modell an ein neues PDF-Set. \\
+\newline
+In dieser Arbeit werden gegebenfalls Abkürzungen verwendet, die bei Bedarf hier \textit{\autoref{label}} nachgelesen werden können. \\
+Wir verwenden durchweg natürliche Einheiten, sprich $\hbar = \epsilon_0 = 1$. Vektoren werden mit Fett gedruckten Kleinbuchstaben (Bsp. $\mathbf{x}$) und Matrizen oder Tensoren mit Fett gedruckten Großbuchstaben (Bsp. $\mathbf{M}$) notiert. Speziell Dreiervektoren werden mit einem Pfeil gekennzeichnet (Bsp. $\vec{p}$). Vierervektoren ergeben sich aus dem Kontext. \\
+\newline
+Der gesamte Python-Code, der während dieser Arbeit verwendet wurde, kann unter https://github.com/andiw99/Bachelor-Thesis eingesehen werden. Hierbei sind alle Skripte zur Generation der Diagramme im Ordner \glqq Plotscripts\grqq~durchnummeriert zu finden. Alle mit ML in Verbindung stehenden Funktionen und Klassen sind in ml.py definiert. Analoges gilt für MC.py. Wir nutzen TensorFlow 2.4.1, wobei die Skripte auch mit TensorFlow 2.... getestet wurden.
 
 \chapter{Diphoton-Prozess}
+\label{2}
 \section{Partonischer Diphoton-Prozess}
-Im folgenden wir der Diphoton-Prozess auf partonischer Ebene behandelt. Explizit bedeutet dies die Interaktion $q\overline{q} \rightarrow \gamma \gamma$. Unser Ziel ist die Bestimmung der differentiellen Wirkungsquerschnitte, die wir über Fermis goldene Regel berechnen wollen. Dazu benötigen wir die lorenz-invarianten Matrixübergangselemente der grundlegenden Reaktion. Das heißt wir erstellen zunächst alle möglichen Feynman-Diagramme und ein Diagramm, das die Kinematik des Prozesses zeigt. 
+\begin{wrapfigure}{r}{0.7\textwidth}
+	\subfloat[t-Kanal]{\includegraphics[width=45mm]{graphics/t.png}}
+	\subfloat[u-Kanal]{\includegraphics[width=45mm]{graphics/u.png}}
+	\caption{Feynman-Diagramme des Diphoton-Prozesses führender Ordnung}
+\end{wrapfigure}
+Im folgenden wir der Diphoton-Prozess auf partonischer Ebene behandelt.
 
-
-Hier befinden sich die Feynman-Diagramme des u- und t-Kanals!
-
+ Explizit bedeutet dies die Interaktion $q\overline{q} \rightarrow \gamma \gamma$. Unser Ziel ist die Bestimmung der differentiellen Wirkungsquerschnitte, die wir über Fermis goldene Regel berechnen wollen. Dazu benötigen wir die lorenz-invarianten Matrixübergangselemente der grundlegenden Reaktion. Das heißt wir erstellen zunächst alle möglichen Feynman-Diagramme und ein Diagramm, das die Kinematik des Prozesses zeigt.\\
 Die Feynman-Regeln der QED liefern dann die folgenden Beiträge der Kanäle:
 t-Kanal:
 \begin{equation}
@@ -186,7 +201,12 @@ daraus ergibt sich leicht der differentielle Wirkungsquerschnitt in Abhängigkei
 \end{equation}
 
 \section{Hadronischer Diphoton Prozess}
-Der in \textit{\autoref{text}} behandelte Prozess ist zwar sehr nützlich, spiegelt jedoch nicht die wahre Natur des Diphoton-Prozesses wider. In unserer Welt sind die Quarks durch das sogenannte Confinement in ihrem gegenseitigen Potential eingesperrt und kommen somit nicht als freie Teilchen vor. Das Schwerpunktsystem aus \textit{\autoref{text}} lässt sich also experimentell nicht erreichen. In Wahrheit müssen wir hier Hadronen betrachten, die die jeweiligen Quarks enthalten, die dann annihilieren sollen. In unserem Fall behandeln wir hierbei Protonen, die aus zwei up-Quarks und zwei down-Quarks bestehen. Lassen wir zwei Protonen in beispielsweise einem Speicherring mit genügend hohen Energien aufeinanderprallen, wird die Substruktur des Protons aufgelöst und die Konstituenten des Protons können miteinander interagieren. Bei diesen Interaktionen können die Quarks dann als freie Teilchen betrachtet werden. Wir untersuchen also explizit die Interaktion $pp \rightarrow \gamma \gamma$. 
+Der in \textit{\autoref{text}} behandelte Prozess ist zwar sehr nützlich, spiegelt jedoch nicht die wahre Natur des Diphoton-Prozesses wider. In unserer Welt sind die Quarks durch das sogenannte Confinement in ihrem gegenseitigen Potential eingesperrt und kommen somit nicht als freie Teilchen vor. Das Schwerpunktsystem  aus 
+\begin{wrapfigure}{r}{0.35\textwidth}
+	\includegraphics[width=45mm]{graphics/Kinematik}
+	\caption{Kinematik der Stoßprozesse im Labor- und Schwerpunktssystem}
+\end{wrapfigure}
+ \textit{\autoref{text}} lässt sich also experimentell nicht erreichen. In Wahrheit müssen wir hier Hadronen betrachten, die die jeweiligen Quarks enthalten, die dann annihilieren sollen. In unserem Fall behandeln wir hierbei Protonen, die aus zwei up-Quarks und zwei down-Quarks bestehen. Lassen wir zwei Protonen in beispielsweise einem Speicherring mit genügend hohen Energien aufeinanderprallen, wird die Substruktur des Protons aufgelöst und die Konstituenten des Protons können miteinander interagieren. Bei diesen Interaktionen können die Quarks dann als freie Teilchen betrachtet werden. Wir untersuchen also explizit die Interaktion $pp \rightarrow \gamma \gamma$. 
 
 Ein Problem, das wir nun beachten müssen, ist dass die Partonen im Proton nicht still sitzen, sondern sich bewegen. Auch befinden sich im Proton durchgehend Quark-Antiquark-Paare, die durch den Zerfall der Austauschteilchen der starken Wechselwirkung, den Gluonen, entstehen. Wir nennen diese Quarks See-Quarks und die Quarks die permanent im Hadron sitzen und seine Quantenzahlen ausmachen Valenzquarks. Wir können also nicht stumpf jedem Konstituentenquark $1/3$ des Gesamtimpulses des Protons zuordnen, sondern müssen uns intensiver mit den Impulsen auseinandersetzen. Wir formulieren unser Modell hierbei in einem System, in dem das Proton eine sehr hohe Energie $E \gg m_p$ hat. In diesem Bezugssystem können wir die Masse des Protons im Vergleich zu seiner kinetischen Energie vernachlässigen. Wir schreiben den Vierervektor eines Protons zu $p_p = (E, 0, 0, E)$, legen also seinen Impuls parallel zur z-Achse. Wir können nun einem Parton einen unbestimmten Bruchteil $\xi$ des Impulses zuordnen und damit seinen Vierervektor in  \textit{\autoref{text}} ausdrücken:
 \begin{equation}
@@ -255,95 +275,106 @@ Das genaue Ergebnis von \textit{\autoref{???}} hängt von dem verwendeten Fit an
 
 \chapter{Maschinelles Lernen und tiefe neuronale Netzwerke}
 \section{Motivation}
-Die Berechnung eines differentiellen Wirkungsquerschnitts eines Prozesses aus den zugrundeliegenden Feynman-Diagrammen, kann schnell sehr kompliziert werden. Oft sind diese Aufgaben analytisch nicht mehr lösbar, sodass numerische Methoden bemüht werden müssen. Diese fortgeschrittenen Methoden können in der Praxis sehr rechenaufwändig sein und viele Ressourcen beanspruchen. Algorithmen, die maschinelles Lernen verwenden, können je nach Typ und Komplexität jedoch sehr effizient und im Vergleich mit herkömmlichen numerischen Methoden signifikant schneller sein. Ein machine learning (ML)-Algorithmus ist zwar nicht in der Lage, den differentiellen Wirkungsquerschnitt numerisch aus den zugrundeliegenden Feynman-Diagrammen in erster Instanz zu berechnen, er kann die Funktion jedoch durch die Vorarbeit eines rechenaufwändigeren Algorithmus erlernen. Die praktische Anwendung hierbei liegt darin, mit resourcenfressenden numerischen Algorithmen zunächst eine ausreichende Anzahl an Punkten des differentiellen Wirkungsquerschnittes zu berechnen, mit diesen dann anschließende den ML-Algorithmus zu trainieren und im Endeffekt den ML-Algorithmus weiterzuverwenden, um eine größere Anzahl an Punkten zu berechnen.
+Die Berechnung eines differentiellen Wirkungsquerschnitts eines Prozesses aus den zugrundeliegenden Feynman-Diagrammen, kann schnell sehr kompliziert werden. Oft sind diese Aufgaben analytisch nicht oder nur noch sehr aufwändig lösbar, sodass numerische Methoden bemüht werden müssen. Diese fortgeschrittenen Methoden können in der Praxis sehr rechenintensiv sein und viele Ressourcen beanspruchen. Algorithmen, die maschinelles Lernen verwenden, können je nach Typ und Komplexität jedoch sehr effizient und im Vergleich mit herkömmlichen numerischen Methoden signifikant schneller sein. Ein ML-Algorithmus ist zwar nicht in der Lage, den differentiellen Wirkungsquerschnitt numerisch aus den zugrundeliegenden Feynman-Diagrammen in erster Instanz zu berechnen, er kann die Funktion jedoch durch die Vorarbeit eines rechenaufwändigeren Algorithmus erlernen. Die praktische Anwendung hierbei liegt darin, mit resourcenfressenden numerischen Algorithmen zunächst eine ausreichende Anzahl an Phasenraumpunkten zu berechnen, mit diesen dann anschließend das DNN zu trainieren und im Endeffekt den ML-Algorithmus weiterzuverwenden, um eine größere Anzahl an Punkten zu berechnen.
 
-Im Folgenden werden wir die Möglichkeiten eines solchen Einsatzes von ML-Algorithmen untersuchen und evaluieren. Wir beschränken uns dabei auf "überwachtes Lernen" von "Tiefen neuronalen Netzwerken". 
+Im Folgenden werden wir die Möglichkeiten eines solchen Einsatzes von ML-Algorithmen untersuchen und evaluieren. Wir beschränken uns dabei auf überwachtes Lernen von künstlichen neuronalen Netzwerken. 
 \section{Einführung in Maschinelles Lernen}
-Zunächst einmal ist der Begriff "Maschinelles Lernen" sehr breit gefächert und kann eine Vielzahl an Dingen bedeuten. Allgemein wird hier lediglich aus Erfahrung, beispielsweise Messwerte, ein statistisches Modell entwickelt, das im Anschluss verallgemeinert werden kann. Der Algorithmus hat die Gesetzmäßigkeiten und Muster hinter den Lerndaten erkannt und kann diese nun anwenden. Die Anwendungsmöglichkeiten von statistischen Modellen sind quasi unbegrenzt, werden im Kontext von ML jedoch in zwei Gebiete unterteilt:
+Das Konzept \glqq Maschinelles Lernen\grqq~befasst sich damit, aus Informationen, beispielsweise Messwerte, ein statistisches Modell zu entwickeln, das die Muster hinter den Lerndaten erkennt und übertragen kann. Wir unterscheiden dabei die Teilgebiete:
 \begin{itemize}
-	\item Klassifizierung und
+	\setlength\itemsep{0.1cm}
+	\setlength{\parskip}{0.1cm}
+	\item Klassifizierung und 
 	\item Regression
 \end{itemize}
-Klassifizierung bezeichnet dabei den Vorgang, dass Eigenschaften oder "Features" in den Algorithmus gefüttert werden und dieser anschließend das Element, zu dem die Features gehören, eine bestimmte Gruppe zuweist. Die definierende Eigenschaft eines Elements, nach dem wir auch klassifizieren wollen wird auch "Label" genannt. Ein Beliebtes Beispiel hierfür ist die Kennzeichnung einer E-Mail mit dem Label "Spam" oder "kein Spam", basiert auf dem "Bag of Words"-Modell, in dem jedes Wort in der E-Mail einem Feature der Nachricht entspricht. 
-Regression ist die in unserem Fall nützlichere Verwendung von maschinellem Lernen. Während bei der Klassifikation die Ausgabe eine Gruppe ist, wird bei der Regression eine reelle Zahl ausgegeben. Prinzipiell wird lediglich eine Funktion, die gerne hochdimensional sein darf, erlernt. Ähnlich zu einer linearen Regression kann man so durch einige Messwerte eine Funktionsgleichung aufstellen und anschließend zwischen den Werten, oder auch außerhalb, interpolieren. Entsprechend soll die Regression für jede Art von Funktion funktionieren.
-
-Es gibt einige Lernarten für ML-Algorithmen. Die Wichtigsten, die ich zumindest kurz erwähnen möchte, sind:
+\textbf{Klassifizierung} ordnet Objekten ihre jeweilige Gruppe, auch genannt \glqq Label\grqq~zu. Dies geschieht auf Grundlage der Eigenschaften eines Objektes, den sogenannten \glqq Features\grqq~. Am Beispiel von E-Mails könnte man die Kennzeichnung \glqq Spam\grqq~oder \glqq kein Spam\grqq~mit den Labels identifizieren, wobei der Inhalt der Nachricht die Features darstellt.\\
+Wir werden uns im Folgenden mit \textbf{Regression} beschäftigen, wobei hier anstatt einer diskreten Zuordnung eine reelle Zahl ausgegeben wird. Betrachten wir eine Funktion $f: \mathbb{R}^n \rightarrow \mathbb{R}, \mathbf{x} \mapsto f(\mathbf{x})$, bezeichnen wir die Einträge des Vektors $\mathbf{x}$ als Features und den Funktionswert $f(\mathbf{x}) \in \mathbb{R}$ als Label.\\
+Zu den wichtigsten Lernarten eines ML-Algorithmus gehören
 \begin{itemize}
+	\setlength\itemsep{0.1cm}
+	\setlength{\parskip}{0.1cm}
 	\item Überwachtes Lernen (supervised learning)
 	\item Unüberwachtes Lernen (unsupervised learning)
 \end{itemize}
-Das Unüberwachte Lernen findet hierbei seine Anwendung vor Allem in der Klassifikation. Hierbei werden nur die ungelabelten Features eingelesen, um anschließend von der Maschine eine Klassifikation entwickeln zu lassen. Der ML-Algorithmus soll also eine Möglichkeit entwickeln, die eingegeben Werte zu klassifizieren. 
-
-Für uns relevant ist das Überwachte lernen, wobei die Trainingsdaten mit Labels versehen sind. Explizit bedeutet das, dass die Eingabewerte wie $\eta, x_1, x_2$ die Features sind, die mit den Labels, dem Wrikungsquerschnitt $\frac{\text{d}\sigma}{\text{d}\eta}$, versehen sind. Je nachdem wie nah die Ausgabe der Maschine nun am richtigen Ergebnis liegt, kann der Algorithmus bestraft werden und so lernen. 
-
-Zur konkreten Durchführung von maschinellem Lernen gibt es verschiedene Modelle, zum Beispiel Lineare Regression, also das Minimieren der Abweichung einer Linearen Funktion von den Messwerten, logistische Regression, Entscheidungsbaum-Lernen, Support Vector Machines, etc. Die meisten überwachten Lernalgorithmen sind jedoch "flach", betreiben also "shallow"-learning. Hierbei wird die Ausgabe direkt aus den eingehenden Features berechnet. Die wohlbekannte Ausnahme bilden tiefe neuronale Netze, hierbei spricht man auch von "Deep"-learning. Der Unterschied besteht hierbei dabei, dass aus den Eingangswerten zunächst sozusagen Zwischenergebnisse berechnet werden, die dann als Eingangswerte für die nächste Instanz des Modells dienen. Die einzelnen Instanzen, die jeweils Eingangswerte entgegennehmen und Zwischenwerte oder gegebenfalls auch Endwerte ausgeben, werden die Schichten des neuronalen Netzwerks genannt. Im Fall von neuronalen Netzen, besteht eine Schicht aus verschiedenen sogenannten Neuronen, deren Benennung von den Neuronen im biologischen Nervensystem inspiriert ist. Jedes Neuron stellt hierbei eine Funktion dar, die Ausgangswerte von der vorhergehenden Schicht entgegennimmt und eine reelle Zahl zurückgibt. Diese reelle Zahl wird dann wiederum an die nächste Schicht von Neuronen weitergegeben. Klassischerweise würde die letzte Schicht dann nur noch ein Neuron enthalten, dessen Ausgabe dann das Label repräsentiert. Die am häufigsten genutzte Art von neuronalen Netzen sind vollständig verbundene Feedforward-Netze. Hierbei bedeutet vollständig verbunden, dass jedes Neuron der Schicht $l-1$ seine Ausgabe an jedes Neuron der Schicht $l$ weitergibt. In anderen Arten von neuronalen Netzen kann es vorkommen, dass nur bestimmte Neuronen miteinander verbunden sind, beispielsweise könnte also ein Neuron der Schicht $l$ nur die Hälfte aller Ausgaben der Neuronen der Schicht $l-1$ berücksichtigen. Ein anderes macht dann Gebrauch von der anderen Hälfte. Feedforward bedeutet, dass die einzelnen Schichten in einer festen Reihenfolge aufgebaut sind und es keine "Loops" oder ähnliches gibt. Auch wir werden uns in dieser Arbeit mit der gewöhnlichsten Art von Neuronalen Netzen beschäftigen. 
-
-Im folgenden beschäftigen wir uns also damit einen überwachten Regressionsalgorithmus mit tiefen Neuronalen Netzen zu entwickeln, der eine gegebenfalls hochdimensionale Funktion erlernen kann und damit die aufwändige numerische Berechnung von differentiellen Wirkungsquerschnitten effizienter machen kann.
+Das \textbf{unüberwachte} Lernen findet hierbei seine Anwendung vor allem in der Klassifikation. Hierbei werden ausschließlich Features ohne Zuordnung(Label) eingelesen, um anschließend von der Maschine eine Klassifikation entwickeln zu lassen. \\
+Für uns relevant ist das \textbf{überwachte} Lernen, wobei die Trainingsdaten mit Labels versehen sind. Explizit bedeutet dies, dass die Vorhersage des Modells für die eingegebenen Features im Anschluss mit den Labels abgeglichen werden kann und das Netz seine Parameter entsprechend anpasst, um minimale Abweichung zu erreichen. \\
+\newline
+Die konkrete Art des Machine-Learning, die in dieser Arbeit untersucht wird, ist das Deep-Learning, dessen Prinzip auf künstlichen neuronalen Netzwerken beruht. Dieses unterscheidet sich von vielen anderen ML-Modellen dadurch, dass zunächst mehrfach Zwischenergebnisse ausgerechnet werden, bevor diese schließlich zum Endergebnis kombiniert werden. \\
+Im folgenden beschäftigen wir uns also damit einen überwachten Regressionsalgorithmus mit tiefen Neuronalen Netzen zu entwickeln, der eine gegebenfalls hochdimensionale Funktion erlernen und damit die aufwändige numerische Berechnung von differentiellen Wirkungsquerschnitten effizienter machen kann.
 
 \section{Neuronale Netze}
-In \textit{\autoref{label}} haben wir bereits erwähnt, was neuronale Netze sind und wie sie in etwa funktionieren. In diesem Abschnitt gehen wir noch einmal tiefer in die Theorie von neuronalen Netzen. In Abbildung ist ein prinzipieller Aufbau von einem sogenannten mehrschichtigen Perzeptron gezeigt. Hier sind alle Knoten von zwei aufeinanderfolgenden Schichten miteinander verbunden und die Layers sind in einer festen Reihenfolge angeordnet. Es handelt sich also um ein vollständig verbundenes Feedforward-Netz. 
-
-Die erste Schicht nimmt die Features unseres Messwertes entgegen und gibt die die gleiche Anzahl an Ausgangswerten, wie der Layer auch Neuronen hat, wieder aus. Jede Node/Neuron stellt hierbei eine lineare Funktion von den Anfangswerten da, die in der Praxis mittels einer Vektormultiplikation dargestellt werden kann:
+In diesem Abschnitt werden wir uns eingehender mit der Theorie hinter neuronalen Netzen beschäftigen, um Fundament für die kommende Anwendung zu legen. Zunächst betrachten wir einen kurzen Überblick über die Funktionsweise. \\
+Eine Veranschaulichung des Konzeptes eines neuronalen Netzes ist in \textit{\autoref{label}} gezeigt.
+Den Grundbaustein eines DNN, in dem die elementaren Berechnungen durchgeführt werden, stellt das Neuron dar, dessen Name durch das biologische Nervensystem inspiriert ist.
+ Diese Neuronen, die auch Units oder Nodes genannt werden, können unterschiedlich stark aktiviert sein, sprich Werte ausgeben. Die Nodes sind in Schichten, genannt Layern, organisiert, zwischen denen die Ausgabewerte der Neuronen hin- und hertransferiert werden. Die Units des Layers $l$ nehmen als Funktionsargumente die Aktivierung von Neuronen der Schicht $l-1$ und geben ihrerseits wieder einen reellen Wert aus. Während im ersten Layer, genannt Input-Layer, ist die Aktivierung der Neuronen durch den Wert der eingehenden Features gegeben ist, beherbergt die letzte Schicht, der sogenannte Output-Layer nur noch eine Node, dessen Aktivierung die Vorhersage des Netzes darstellt. \\
+ \begin{wrapfigure}{r}{0.5\textwidth}
+ 	\includegraphics[width=65mm]{graphics/NeuralNetwork}
+ 	\caption{Konzeptzeichnung eines mehrschichtigen Perzeptron, kann noch verändert werden}
+ \end{wrapfigure}
+Wir werden uns im folgenden auf vollständig verbundene Feedforward-Netze beschränken. Während sich hierbei vollständig verbunden darauf bezieht, dass ein Neuron mit allen Neuronen der vorhergehenden Schicht verbunden ist, versteht man unter Feedforward-Netzen, dass die Ausgabe von Units der Schicht $l-1$ nur Neuronen in Layer $l$ beeinflusst. \\
+\newline
+Jedes Neuron stellt zunächst eine lineare Funktion von den Ausgaben des vorhergegangen Layers $l-1$ dar, die im Vektor $\mathbf{y_{l-1}}$ zusammengefasst sind. Wir stellen die Ausgabe des n-ten Neurons der Schicht l, bezeichnet mit $y_l^n$, als Skalarprodukt zwischen den Gewichten der Node $\mathbf{w_{l}^n}$ dar, wobei zusätzlich das Bias $b_l^n$ addiert wird. Auf diese Lineare Funktion wird anschließend eine nichtlineare Aktivierungsfunktion $\sigma$ angewendet, die es dem Netz ermöglicht nichtlineare Zusammenhänge zu erlernen.
 \begin{equation}
-	y_l^n = \mathbf{w_{ln}} \cdot \mathbf{y_{l-1}} + b_{ln}
+	y_l^n = \sigma\left(\mathbf{w_{l}^n} \cdot \mathbf{y_{l-1}} + b_{l}^n\right)
 \end{equation}
-Hierbei bezeichnet l die Nummer des Layers und n ist der Index des jeweiligen Neurons innerhalb einer Schicht. Für den ersten Layer gilt $\mathbf{y_0} = \mathbf{x}$. Vektoren sind hierbei fettgedruckt (lieber irgendwo am Anfang hinschreiben). Hierbei bezeichnet $w_{ln}$ die Gewicht oder "Weights" der Node und $b_{ln}$ das sogenannte "Bias". In unserem vollständig verbundenen Netz erhalten wir also pro Node eine lineare Gleichung der Form \textit{\autoref{text}}. Insgesamt können wir die Rechenoperation, die in einem Layer stattfindet also als Matrixmultiplikation formulieren. Die Vektoren $\mathbf{w_{ln}}$ werden hierbei zu den Zeilen der Matrix $\mathbf{W_l}$, die $y_l^n$ sowie die $b_{ln}$ fassen wir in Vektoren zusammen. In \textit{\autoref{text}} ist die Matrixmultiplikation niedergeschrieben.
+Für den ersten Layer gilt  $\mathbf{y_0} = \mathbf{x}$, die Features entsprechen also $y_0$. In unserem vollständig verbundenen Netz erhalten wir also pro Node eine lineare Gleichung der Form \textit{\autoref{text}}. Insgesamt können wir die Rechenoperation, die in einem Layer stattfindet also als Matrixmultiplikation formulieren. Die Vektoren $\mathbf{w_{l}^n}$ werden hierbei zu den Zeilen der Matrix $\mathbf{W_l}$, die  $b_{l}^n$ fassen wir in Vektoren zusammen.
 \begin{equation}
-	\mathbf{y_l} = \mathbf{M_l}\cdot \mathbf{y_l} + \mathbf{b_l} 
+	\mathbf{y_l} = \sigma\left(\mathbf{W_l}\cdot \mathbf{y_{l-1}} + \mathbf{b_l}\right)
 \end{equation}
-Im letzten Layer findet der Output statt. Wie in den meisten Fällen, so kann auch in unserem Fall der letzte Layer als Schicht mit einem Neuron aufgefasst werden und der Funktionswert $y$ dieses Neurons ist das Label unserer Anfangs eingefütterten Features. Aus der hier kurz aufgefassten Mathematik geht direkt hervor, dass neuronale Netze, die lediglich aus einem Layer bestehen, auch nur lineare statistische Modelle liefern. Ist die Funktion, die wir voraussagen wollen also nicht linear, sollten wir ein tieferes Neuronales Netzwerk verwenden, dass seine Nichtlinearität durch die aufeinandergestapelten Layers erhält. Sind die Gewichte der Layer $\mathbf{M_l}$ gut abgestimmt und ist das Netzwerk tief genug, kann man viele Funktionen sehr gut und effizient nähern. Dafür müssen wir behandeln, wie man denn gute Gewichte erhält. Dazu wird ein Optimierungsproblem gelöst. Konkret ist dieses Problem in \textit{\autoref{text}} gezeigt.
+Im Neuron des Output-Layers findet schließlich die Ausgabe des Funktionswertes $y$ statt. Das Ziel ist es nun, die Abweichung des Ausgabewertes $y$ des Netzes vom wahren Wert $\tilde{y}$ zu minimieren. Mathematisch wird die Abweichung als eine Metrik definiert und das Erlernen der freien Parameter eines künstlichen neuronalen Netzes wird damit zum Optimierungsproblem. Im Kontext von ML wird die zu minimierende Metrik, die abhängig von allen Gewichten $\mathbf{M}$ und Biases $\mathbf{b}$ ist, gerne als Kostenfunktion (Cost-Function) oder Verlustfunktion (Loss-Function) bezeichnet, wobei hier eine beliebte Wahl die mittlere quadratische Abweichung ist.
 \begin{equation}
 	C\left(\mathbf{M}, \mathbf{b}\right) = \frac{1}{N}\sum_{i=1}^{N}\left(y^{(i)} - \tilde{y}^{(i)}\right)^2
 \end{equation}
-Hierbei bezeichnet N die Menge unserer Trainingsdaten und $\tilde{y}$ sind die wahren Labels, die uns im Fall des überwachten Lernens ja zur Verfügung stehen. Die Funktion $C$ wird in der Praxis Kostenfunktion ("Cost-Function") oder Verlustfunktion ("Loss-Function") genannt und ist eine hochdimensionale Funktion, abhängig von allen Gewichten $\mathbf{M}$ und Bias $\mathbf{b}$. In \textit{\autoref{text}} ist die Kostenfunktion durch die mittlere quadratische Abweichung repräsentiert. Theoretisch kann als Kostenfunktion jedoch jede Funkion genommen werden, die die Abweichung zwischen den wahren Labels und den Predictions beschreibt. In der Anwendung nutzt man die Funktion, die im jeweiligen Anwendungsfall das beste Ergebnis erzielt. Das Minimum  oder zumindest ein lokales Minimum dieser Funktion analytisch zu berechnen, ist nicht mehr möglich, daher haben sich über die Zeit eine Reihe an Möglichkeiten etabliert, sich einem Minimum zu Nähern. In der Praxis reicht es in fast allen Fällen ein lokales Minimum der Kostenfunktion zu finden. Die beliebteste Methode ist wohl der "Gradient-descent". Hierbei wird numerisch der Gradient der Kostenfunktion berechnet und dessen negative auf die trainierbaren Variablen des Modells angewendet. Der Gradient wird dabei jeweils als mittel über einen sogenannten Batch berechnet. In anderen Worten werden gleichzeitig mehrere Objekte durch das Netz geführt und am Ende die jeweiligen Gradienten gemittelt. Man hofft so sich mit jedem Batch dem lokalen oder sogar globalen Minimum der Kostenfunktion zu nähern. Für die praktische Durchführung haben sich in der Zeit verschiedene Etablierungen entwickelt, wie Adam, Stochastic Gradient Descent (SDG) oder RMSprop. 
-
+Als Kostenfunktion kann prinzipiell jede Metrik verwendet werden, die zielführend erscheint, jedoch beschränkt es sich in der Praxis im Kontext von Regressionsproblemen meist auf die mittlere quadratische- oder absolute Abweichung und Variationen dieser.
+Da die analytische Berechnung von Extremstellen in unserem Fall nicht möglich ist, greifen wir auf \glqq Gradient-descent\grqq~ zurück. Hierbei wird, beim Output-Layer beginnend, der Gradient der Kostenfunktion berechnet und per Kettenregel zum nächsten Layer fortgepflanzt. Diesen Vorgang, so für alle Nodes einen Gradienten zu berechnen, nennt sich Backpropagation und führt in der Anwendung auf die Methode des automatischen Ableitens zurück. Die Gradienten werden immer gemittelt für eine Ladung, genannt Batch, an Trainingspunkten berechnet und auf die Gewichte angewendet, sodass man sich einem lokalen, oder auch globalen, Minimum nähern kann (Stochastic Gradient Descent, SGD).
 \section{Training und Hyperparameter}
-Hat man sich nun auf ein vollständig verbundenes Feedforward-Netz festgelegt, gibt es immer noch viele Parameter, die optimiert werden müssen. Man nennt Parameter, die der Programmierer im Vornherein festlegen muss und die nicht vom Algorithmus erlernt werden, Hyperparameter. Wir sprechen im folgenden über die Hyperparameter:
+Man nennt Parameter, die der Programmierende im Vornherein festlegen muss und die nicht vom Algorithmus erlernt werden, Hyperparameter. Wir sprechen im folgenden über die Hyperparameter:
+\begin{multicols}{2}
 \begin{itemize}
+	\setlength\itemsep{0.1cm}
+	\setlength{\parskip}{0.1cm}
 	\item Anzahl der Layer und Nodes
 	\item Kostenfunktion
 	\item Aktivierungsfunktion der Neuronen
 	\item Initialisierung der Gewichte
-	\item Optimizer(Lernart) oder learning-rate(Lernrate)
+	\item Optimizer(Lernart) 
+	\item Learning-Rate(Lernrate)
 	\item Batch-Größe
 	\item Trainingsepochen
 	\item Normalisierung
-	\item Regularisierung
-	\item Dropout
 \end{itemize}
-Zunächst sollte man sich Gedanken machen, wie die Struktur des Netzes aussehen soll. Man legt also die Anzahl der \textbf{Layer und Nodes} fest. Tiefere neuronale Netze mit größeren Anzahlen an Neuronen sind in der Lage kompliziertere Sachverhalte genauer zu lernen. Die Anzahl der trainierbaren Parameter nimmt jedoch exponentiell mit der Zahl der Schichten zu. Daher sollte man bestrebt sein, das vorliegende Problem mit möglichst wenigen Layern zu lösen. Ähnlich verhält es sich mit der Anzahl an Neuronen pro Layer. Ein gewöhnliches Problem, auf das man trifft, wenn man willkürlich zu große neuronale Netze für simple Probleme verwendet ist das der Überanpassung(siehe \textit{\autoref{text}}). Das Netz passt sich hierbei zu stark an die Messdaten an, was am Ende dazu führt, dass sich die Generalisierungsfähigkeit des Netzes verschlechtert. Ein gewöhnliches Beispiel ist, wenn ein linearer Zusammenhang zwischen unseren Messwerte vorliegt, ein komplexes Netz darin jedoch ein Polynom hoher Ordnung sieht, welches eventuell die Trainingsdaten perfekt abdeckt, im Allgemeinen jedoch ungenauer wäre als ein simpleres lineares Modell.
-
-Ein weiterer wichtiger Grundpfeiler eines ML-Algorithmus ist die bereits angesprochene \textbf{Kostenfunktion}. Beliebt sind hierbei die mittlere quadratische oder absolute Abweichung oder die Kreuzentropie. In high-level APIs wie scikit-learn oder Keras in Tensorflow sind noch weitere verschiedene Kostenfunktionen bereits integriert, von denen man dann nur noch diejenige finden muss, die im vorliegenden Fall am besten performed. Man hat sozusagen die Qual der Wahl. 
-
-Da jedes Neuron eine lineare Funktion der Aktivierungen der vorausgehenden Neuronen darstellt, ist es im vornherein nicht bestimmt in welchem Bereich der numerische Wert der Ausgabe der Neuronen liegt. Daher wird häufig die Ausgabe eines Neurons mit einer sogenannten \textbf{Aktivierungsfunktion} reguliert. Das hat den Vorteil, dass manche Neuronen nicht sehr große Werte nehmen und damit fast alleinig die endgültige Ausgabe bestimmen, sondern alle Neuronen "gleichberechtigt" von der darauffolgenden Schicht berücksichtigt werden. Beliebte Funktionen sind hier die Sigmoid-Funktion, der tanh, oder ReLU. ReLU beispielsweise, setzt die Aktivierung eines Neurons auf Null, wenn dessen Ausgabe negativ ist, und gibt den ursprünglichen Funktionswert zurück, wenn die Aktivierung der Knoten positiv ist. 
-
-Irgendwo muss das Netz ja anfangen zu lernen, daher müssen seine Gewichte am Anfang irgendwie festgelegt(\textbf{initialisert}) werden.  Auch hier haben sich über die Zeit verschiedene Möglichkeiten entwickelt, wie simpel alle Gewichte zunächst bei Null zu belassen, zufällige Werte nahe an Null zu nehmen, komplett zufällige Werte oder gar die Initialisierung an die Aktivierungsfunktion anzupassen. So ist zum Beispiel HeNormal an die Aktivierungsfunktion ReLU angepasst und soll zu besseren Ergebnissen führen.
-
-Wie bereits angesprochen, wird zum Trainieren der neuronalen Netze eine Art des "gradient descent" verwendet. Am liebsten wird hierbei der Adam-Algorithmus verwendet. Jeder Art von gradient-descent muss jedoch eine \textbf{learning-rate} übergeben werden. Diese ist prinzipiell ein Faktor, mit dem der am Ende berechnete Gradient skaliert wird, bevor dieser auf die Gewichte angewendet wird. Intuitiv führt eine größere learning-rate zu schneller lernenden Netzen, kann jedoch andererseits auch dazu führen, dass man über die Minima hinausschießt und der Algorithmus im Endeffekt nicht konvergiert. Ein stabileres, aber rechenaufwändigeres und damit langsameres, Lernen erreicht man mit kleinen learning-rates. 
-
-Die \textbf{Batch-Größe} beschreibt, wie viele Objekte auf einen Schlag vom neuronalen Netz behandelt werden. In der Praxis fügt man jediglich dem Tensor der Eingangswerte eine weitere Dimension hinzu, die dann den Ausmaß der Batch-Größe hat. Das neuronale Netz kann dann alle Objekte parallel berechnen. Die Batch-Größe kann große Einflüsse auf die Trainingszeit und das Lernverhalten haben. Große Batch-Größen können schneller bearbeitet werden und führen zu kürzeren Trainingszeiten. Zu große Trainingszeiten verschlechtern die Stabilität des Lernvorgangs.
-
-Die Anzahl \textbf{Trainingsepochen} beschreibt, wie oft während des Lernvorgangs über die Trainingsdaten gegangen wird. Nach einer Epoche werden die Trainingsdaten gegebenenfalls durchmischt und wieder eingefüttert. Es kann nun so lange nachkorrigiert werden, bis die Kostenfunktion nicht mehr merklich abnimmt und man ein lokales Minimum erreicht hat. Oft ist es nicht nötig sehr große Epochenzahlen zu verwenden, da dies meist keine großen Auswirkungen mehr hat und weiterhin zur Überanpassung führen kann. Praktisch beobachtet man nach jeder Epoche die Kostenfunktion angewendet auf die Trainingsdaten und auf die Testdaten. Hat man einen Punkt erreicht, ab dem der Verlust der Trainingsdaten zwar noch sinkt, der Verlust der Testdaten aber wieder steigt, ist das ein klares Zeichen für Überanpassung. 
-
-Hat man Eingabewerte, deren numerische Reichweite stark auseinandergeht, kann es sich lohnen die Eingabewert zu \textbf{normalisieren}. Das bedeutet, alle Features auf ein festgelegtes Intervall, zum Beispiel $I=[1,0]$ anzupassen. So wird verhindert, dass einem Feature mit großem numerischen Wert nicht zu viel Bedeutung zugeordnet wird.
-
-Ein Werkzeug zur Bekämpfung der schon besprochenen Überanpassung ist die \textbf{Regularisierung} des Modells. Diese soll die Komplexität des Modells moderieren, indem das Optimierungsproblem modifiziert wird. Die modifizierte Version von \textit{\autoref{text}} ist in \textit{\autoref{text}} zu sehen. Die in \textit{\autoref{text}} zu sehende Regularisierung wird L-Regularisierung genannt und $\abs{\mathbf{M}}$ ist die p-Norm des Modells. Für gewöhnlich nutzt man die L1- oder L2-Regularisierung. Mit dem richtigen tuning der Parameter können mit tiefen neuronalen Netzen komplexe Zusammenhänge gut genähert werden ohne es zu Überanpassung kommen zu lassen. Wichtig ist hierbei, dass die Konstante $\text{L}$ so zu wählen, dass die Genauigkeit des Algorithmus nicht auf Kosten der Regularisierung leidet. Sprich ist L zu groß, kümmert sich der Algorithmus nur noch darum, die Norm zu minimieren und findet im schlimmsten Fall ein lokales Minimum in dem alle Gewichte Null sind. 
-\begin{equation}
-	C\left(\mathbf{M}, \mathbf{b}\right) = \left[ \text{L}\norm{\mathbf{M}}^p + \frac{1}{N}\sum_{i=1}^{N}\left(y^{(i)} - \tilde{y}^{(i)}\right)^2\right] \quad \text{mit} \quad \norm{\mathbf{M}}^p= \sum_{l,n} \norm{\mathbf{w}_{ln}}^p
-\end{equation}
-Eine weitere Möglichkeit zur Verhinderung von Überanpassung ist das Einfügen von Dropout-Layern. Diese setzen zufällig die Ausgaben von Neuronen auf Null und simulieren somit quasi einen Ausfall dieser Nodes. Dies soll die Generalisierungsfähigkeit des ML-Algorithmus erhöhen und Überanpassung verhindern.
+\end{multicols}
+Die Architektur eines neuronalen Netzes wird durch die Anzahl an \textbf{Layer und Nodes} festgelegt.
+Tiefere neuronale Netze mit größeren Anzahlen an Neuronen sind in der Lage kompliziertere Sachverhalte genauer zu lernen, allerdings steigt die Anzahl an zu trainierenden Parametern und auszuführenden Rechnungen. Bei zu komplexen Modellen für simple Sachverhalte mit wenigen Trainingspunkten kommt es häufig zur Überanpassung, bei der sich das Modell zu sehr auf die vorliegenden Daten spezialisiert und seine Generalisierungsfährigkeit verliert.\\
+\newline
+Die \textbf{Loss-Funktion} bestimmt das Lernverhalten des Netzes maßgeblich, denn sie ist es die letztendlich abgeleitet wird, um die Gradienten zu erhalten. Es ist kaum möglich, vorauszusagen, welche Kostenfunktion für das vorliegende Problem am Besten geeignet ist, jedoch kann man sagen, dass der absolute Fehler weniger sensitiv auf Ausreißer reagiert. \\
+\newline
+Die \textbf{Aktivierungsfunktion} bricht die Linearität des Netzes und sorgt dafür, dass dieses beliebe Funktionen erlernen kann.  Die Form und Ableitung der Aktivierungsfunktion bestimmt den Gradienten während der Backpropagation. Gegebenenfalls kann sie auch dazu genutzt werden, die Ausgabe eines Neurons zu regulieren. \\
+\newline
+An welchem Punkt des hochdimensionalen Phasenraums der Kostenfunktion der Lernprozess beginnt, wird von der \textbf{Initialisierung} festgelegt. Die Initialisierung der Gewichte ist eng verknüpft mit der verwendeten Aktivierungsfunktion, sodass sich bereits spezielle Initialisierungsmethoden für bestimmte Aktivierungen etabliert haben, wie zum Beispiel HeNormal für ReLU-Aktivierung. \\
+\newline
+Neuronale Netze lernen prinzipiell mittels Gradientenabstieg. Für die konkrete Implementation des Gradient-descent, die sich gegebenenfalls an die vorliegende Situation anpasst, wird \textbf{Optimizer} genannt. Die \textbf{Learning-Rate} ist hierbei der Faktor, mit dem der Gradient skaliert wird, bevor er auf die Gewichte angewendet wird. Diese muss hierbei so gewählt werden, dass das Lernen weder in einem zu hohen lokalen Maximum zum Erliegen kommt, noch zu groß ist um den Tiefpunkt des Minimums zu erreichen. \\
+\newline
+Die \textbf{Batch-Größe} beschreibt, wie viele Objekte ein einem Durchgang vom neuronalen Netz behandelt werden. Große Batch-Größen dämpfen Ausreißer und beschleunigen die Trainingszeit, wobei ein Training mit kleineren Batches detailreicher und genauer sein kann. \\ 
+\newline
+Die Anzahl \textbf{Trainingsepochen} beschreibt, wie oft während des Lernvorgangs über die Trainingsdaten gegangen wird. Die Präzision eines neuronalen Netzes konvergiert idealerweise, daher legt man sich in der Praxis gerne eine Abbruchbedingung als minimale Verbesserung zwischen Epochen fest. \\
+\newline
+Hat man Features, deren numerische Reichweite stark auseinandergeht, kann es sich lohnen die Eingabewert zu \textbf{normalisieren}. Das bedeutet, alle Features auf ein festgelegtes Intervall, zum Beispiel $I=[1,0]$ anzupassen. So wird verhindert, dass einem Feature mit großem numerischen Wert nicht zu viel Bedeutung zugeordnet wird.\\
 
 \section{Transfer-Learning}
-Das Trainieren von neuronalen Netzen kann teilweise sehr Kosten- und Zeitintensiv sein. Auch werden häufig große Mengen an Daten benötigt, um eine brauchbare Genauigkeit zu erhalten. Es ist jedoch möglich, bei beiden hier genannten Aspekten, eine Abkürzung zu nutzen und das Training signifikant effizienter zu machen. Diese Abkürzung nennt sich \textbf{Transfer-Learning}. 
-Die Grundidee des Transfer-Learning ist denkbar einfach. Ähnlich zu einem Menschen, soll hierbei der ML-Algorithmus seine bereits erlerntes wissen, auf eine geringfügig andere Situation übertragen. Im Gegensatz zum Menschen, besitzt die Maschine jedoch kein Bewusstsein und ist nicht in der Lage, dies ohne Anweisung zu tun. Man muss den Algorithmus also noch mit Daten aus der neuen Situation trainieren. Trotzdem bringt das Transfer-Learning die beiden angesprochenen Vorteile:
+Um die hohen Zeit- und Rechenkosten des Trainings zu verringern, kann man an ähnlichen Problemen bereits trainierte Modelle an sein eigenes Problem anpassen. Außerdem kann mit dem sogenannten \textbf{Transfer-Learning}, die Menge an Daten, die benötigt wird, um ein brauchbares Modell zu erhalten, signifikant verringert werden. \\
+Die Grundidee des Transfer-Learning besteht darin, dass der Algorithmus sein bereits erlerntes statistisches Modell auf eine andere Situation überträgt und gegebenenfalls nur noch die numerischen Ausgaben anpassen muss. Es ist beobachtet worden, dass Transfer-Learning die folgenden Vorteile bringt:
 \begin{itemize}
-	\item Höherer Start, höhere Asymptote und höhere Steigung
+	\setlength\itemsep{0.1cm}
+	\setlength{\parskip}{0.1cm}
+	\item Höherer Start, höhere Asymptote und höhere Steigung der Lernkurve
 	\item signifikant weniger Messwerte benötigt, um brauchbare Ergebnisse zu erreichen
 \end{itemize}
-Das Transfer-Learning wird also vor allem eingesetzt, wenn man entweder einen Algorithmus trainieren möchte, der ansonsten rechenintensiv über längere Zeit trainieren müsste, oder über zu wenige Daten besitzt, um ein Modell von Grund auf zu trainieren. Wir profitieren von beiden Aspekten, denn wir können zwar theoretisch beliebig viele Punkt erzeugen und für jede Situation einen kompletten eigenständigen Algorithmus trainieren, es ist jedoch rechnerisch effizienter weniger Punkte zu erzeugen und zusätzlich nicht von Null zu beginnen. Konkret werden wir im Laufe dieser Thesis das Transfer-Learning verwenden, um die differentiellen Wirkungsquerschnitt berechnet mit einem PDF-Set, auf selbige, berechnet mit einem anderen PDF-Set, zu übertragen.
+Wir machen Nutzen von beiden Aspekten, da wir einerseits die Trainingszeit reduzieren und sich andererseits die Zeit zur Datengeneration verkürzt. Konkret werden wir im Laufe dieser Thesis das Transfer-Learning verwenden, um die differentiellen Wirkungsquerschnitt berechnet mit einem PDF-Set, auf selbige, berechnet mit einem anderen PDF-Set, zu übertragen.
 
-Das Transfer-Learning wird bereichsübergreifend im maschinellen Lernen verwendet. Im folgenden werden wir kurz den konkreten Ablauf für neuronale Netze besprechen. Der gewöhnliche Ablauf beinhaltet dabei:
+Im Folgenden werden wir kurz auf den Ablauf von Transfer-Learning für künstliche neuronale Netze eingehen:
 \begin{itemize}
+	\setlength\itemsep{0.1cm}
+	\setlength{\parskip}{0.1cm}
 	\item Zunächst wird ein sogenanntes Source-Model an einer Source-Datenmenge bis zur Konvergenz trainiert. 
 	\item Als nächstes erstellt man eine (viel) kleinere Datenmenge an Zielwerten.
 	\item Man entfernt die oberste oder einige der oberen Schichten (sprich der Output-Layer und wenige darunterliegende Layer)
@@ -440,27 +471,7 @@ Die gelernte Funktion im Vergleich mit den analytischen Werten ist in \textit{\a
  \\
 \textbf{Modell für $\mathbf{\frac{d\sigma}{d\theta}}$:} \\
 Der Wirkungsquerschnitt in Abhängigkeit von $\theta$ unterscheidet sich vom vorherigen Modell durch seine Polstellen. Da Computer schlecht mit Polstellen umgehen können, müssen wir den Trainingsbereich auf $[\epsilon, \pi-\epsilon]$ einschränken. Aus physikalischer Sicht ist das legitim, da die Polstellen im Strahlengang des Speicherrings liegen und damit nicht messbar sind. Viele Detektoren können Pseudo-Rapiditäten bis zu $\abs{\eta} \leq 2.5$ messen, was einem $\epsilon \approx 0.163$ entspricht. Man kann dem Modell den Umgang mit den Polstellen erleichtern, in dem man die Labels(also den differentiellen Wirkungsquerschnitt) auf das Intervall $[-1, 1]$ normiert. Da gute Modelle hier nicht mehr trivial gefunden werden können, greifen wir auf eine automatische, zufällige Suche zurück (Random-Search), um nicht einzelne Hyperparameter per Hand ausprobieren zu müssen. Die Such-Parameter mit Ergebnis sind in \textit{\autoref{text}} festgehalten.
-\begin{table}
-	\centering
-	\begin{tabular}{|l|l|l|}
-		\hline
-		Hyperparameter & Pool & Best Config \\
-		\hline
-		Anzahl Layer & $\left\lbrace 1, 2, 3, 4 \right\rbrace$ & 4 \\
-		Anzahl Units & $\left\lbrace 32, 64, 128, 256\right\rbrace$ & 128 \\
-		Loss-Funktion & MAE, MSE, Huber & MAE \\
-		Optimizer & Adam, RMSprop, SGD  & Adam\\
-		Aktivierungsfunktion & ReLU, Leaky-ReLU, Sigmoid & Leaky-ReLU \\
-		Learning-rate & $\left\lbrace 10^{-2}, 5 \cdot 10^{-3}, 10^{-3}, 10^{-4} \right\rbrace $ & $5 \cdot 10^{-3}$\\
-		Batch-Größe & $\left\lbrace 64, 128, 512, 768, 2048 \right\rbrace $ & 128\\
-		Label-Normalisierung & $\left\lbrace \text{keine}, [-1,1]\right\rbrace $ & $[-1,1]$\\
-		\hline
-		Max. Epochen & \multicolumn{2}{c|}{200}\\
-		Anzahl Trainingspunkte & \multicolumn{2}{c|}{60000} \\
-		\hline
-	\end{tabular}
-	\caption{Parameter der Random-Search für $\frac{d\sigma}{d\theta}$ mit Ergebnis}
-\end{table}
+
 Es fällt auf, dass die Architektur des Modells um ein vielfaches komplizierter ist, als die vorhergehende. Einerseits ist dies aufgrund der Polstellen zu erwarten und andererseits ist die Möglichkeit des Overfitten durch die große Anzahl an Trainingspunkten weitgehend ausgeschlossen und daher nur natürlich, dass komplexere Modelle genauere Ergebnisse erzielen. Die Performance des Modells ist in \textit{}\autoref{label} gezeigt. Die Präzision ist trotz der komplizierteren Funktion mit \textit{\autoref{text}} zu vergleichen. Durch den Random-Search konnte also ein vergleichsweise passendes Modell gefunden werden. \\
 \begin{figure}[tbp]
 	\centering
@@ -528,30 +539,7 @@ Hier kommt die Skalierung, die wir in den beiden vorhergehenden Modellen bereits
 Die Skalierung in Kombination mit dem Mean-Squared-Logarihmic-Error macht eine Anwendung von tiefen neuronalen Netzen auf das vorliegende Problem überhaupt erst möglich. Wir werden später die Transformation der vorliegenden Daten und deren Effekt auf das Lernverhalten der Netze genauer untersuchen. Da wir nun bereits einen Transformator verwenden, müssen wir das bilden des Logarithmus auch nicht mehr auf die Loss-Function abwälzen. Wir können nun das Netz direkt den Logarithmus der Wirkungsquerschnitte lernen lassen und haben alle nötigen Informationen zur Rücktransformation der Ausgaben des Netzes im Transformator gespeichert. So können wir den Komfort der in Keras implementierten Loss-Funktionen verwenden und müssen keine eigenen Implementationen kreieren, sobald wir beispielsweise einen Mean-Absolute-Logarithmic-Error verwenden wollen. Die Label-Normalisierung aus dem vohergehenden Modell wurde praktisch auch im Transformator umgesetzt.
 \newline
 Selbst mit den eingeführten Transformierungen ist das Erlernen jedoch immer noch keine triviale Aufgabe. Zur Hyperparameteroptimierung verwenden wir wieder einen Random Search. Für die Hyperparameter wurden mittlereweile zwar Algorithmen entwickelt, die effizienter sein sollen als ein Random Search, in dieser Arbeit konnte jedoch keine Verbesserung festgestellt werden. Konkret ausprobiert wurden ein "Bayesian Search" und der "Hyperband-Tuner", wobei die Implementierung mit Keras-Tuner vollzogen wurde. Bayesian Search benutzt eine Objecitv-Funktion, die aus den bereits getesteten Hyperparametern eine Vorhersage für vielversprechende neue Hyperparameter-Kombinationen abgibt. Hyperband trainiert eine große Zahl an Modellen für wenige Epochen und sucht aus diesen die besten Kandidaten zum Weitertrainieren aus. Dies wird stufenweise durchgeführt, bis man in der Theorie mit einer Hand voll gut funktionierender Hyperparameter zurückbleibt. Die Hyperparameter einer erfolgreichen Suche sind in \textit{\autoref{text}} aufgelistet.
-\begin{table}
-	\centering
-	\begin{tabular}{|l|l|l|}
-		\hline
-		Hyperparameter & Pool & Best Config \\
-		\hline
-		(Units, Nr. of Layers) &$\left\lbrace (256,5), (512,3), (64,7), (1024, 2), (128, 6) \right\rbrace $ & $(256, 5)$ \\
-		Loss-Funktion & MAE, MSE, Huber & MAE \\
-		Optimizer & Adam, RMSprop  & Adam\\
-		Aktivierungsfunktion & ReLU, Leaky-ReLU, Sigmoid, ELU, tanh & Leaky-ReLU \\
-		Learning-rate & $\left\lbrace 10^{-2}, 5 \cdot 10^{-3}, 10^{-3}, 10^{-4} \right\rbrace $ & $10^{-2}$\\
-		Batch-Größe & $\left\lbrace 256, 128, 512, 768, 1024 \right\rbrace $ & 256\\
-		Basis 10 & True, False  & True \\
-		Label-Normalisierung & $\left\lbrace \text{keine}, [-1,1]\right\rbrace $ & keine\\
-		Feature-Normal. & True, False & True \\
-		\hline
-		Skalierung & \multicolumn{2}{c|}{True} \\
-		Logarithmus & \multicolumn{2}{c|}{True} \\ 
-		Max. Epochen & \multicolumn{2}{c|}{100}\\
-		Trainingspunkte & \multicolumn{2}{c|}{4.000.000} \\
-		\hline
-	\end{tabular}
-	\caption{Hyperparameter Pools eines erfolgreichen Random-Search mit bester Konfiguration für den dreidimensionalen differentiellen Wirkungsquerschnitt des Diphoton Prozesses}
-\end{table}
+
 Hierbei muss man beachten, dass die Trainingspunkte zufällig generiert sind nach den Verteilungen in \textit{\autoref{text}}. 
 \begin{equation}
 	\begin{aligned}
@@ -655,30 +643,7 @@ Auch die Batch-Sizes (siehe \textit{\autoref{text}}) haben große Auswirkungen a
 \section{Reweweight zwischen Fits der Partondichtefunktionen}
 Eine weitere Anwendung von maschinellem Lernen, die wir besprechen wollen, ist das Reweighting von verschiedenen Anpassungen der Partondichtefunktionen. Konkret wollen wir im folgenden das Set \glqq CT14nnlo\grqq~auf \glqq MMHT2014nnlo\grqq~abbilden. Die Reweights schwanken um eins und stellen damit ein viel kleineres Problem für das Netz dar, als das vorhergegangene Modell. Auch gibt es dieses mal keine Polstellen oder Ähnliches. Für sehr hohe $x$ beginnen die Fits jedoch stark voneinander abzuweichen und die Gewicht beginnen zu oszillieren und um Größenordnungen zu fluktuieren. Es liegt daher nahe den Impulsbruchteil-Cut aus \textit{\autoref{text}} zu verwenden. Da die starken Abweichungen hier jedoch erst etwas später beginnen, entscheiden wir uns das Modell bis $x_max=0.8$ zu trainieren. \\
 Der Random-Search mit den besten Parametern ist in \textit{\autoref{text}} zu sehen.
-\begin{table}
-	\centering
-	\begin{tabular}{|l|l|l|}
-		\hline
-		Hyperparameter & Pool & Best Config \\
-		\hline
-		Anzahl Layer & $\left\lbrace 1,2,3,4\right\rbrace$ & 2 \\
-		Units &$\left\lbrace 32, 64, 128, 256\right\rbrace$ & 256 \\
-		Loss-Funktion & MAE, MSE & MAE \\
-		Optimizer & Adam, RMSprop, SGD  & Adam\\
-		Aktivierungsfunktion & ReLU, Leaky-ReLU, Sigmoid & Leaky-ReLU \\
-		Learning-rate & $\left\lbrace 10^{-2}, 5 \cdot 10^{-3}, 10^{-3}, 10^{-4} \right\rbrace $ & $5 \cdot 10^{-3}$\\
-		Batch-Größe & $\left\lbrace 256, 128, 512, 768, 1024 \right\rbrace $ & 512\\
-		Label-Normalisierung & $\left\lbrace \text{keine}, [-1,1]\right\rbrace $ & keine\\
-		Feature-Normal. & True, False & True \\
-		\hline
-		Skalierung & \multicolumn{2}{c|}{False} \\
-		Logarithmus & \multicolumn{2}{c|}{False} \\ 
-		Max. Epochen & \multicolumn{2}{c|}{100}\\
-		Trainingspunkte & \multicolumn{2}{c|}{1.000.000} \\
-		\hline
-	\end{tabular}
-	\caption{Hyperparameter Pools eines Random-Search mit bester Konfiguration für ein Reweighting des differentiellen Wirkungsquerschnitt des Diphoton Prozesses}
-\end{table}
+
 Wie erwartet, ist die Genauigkeit des Modells sehr gut, wie wir in \textit{\autoref{text}} beobachten können. Die Abweichung beträgt generell weniger als $0.1\%$ und ist somit praktisch kaum von den analytisch berechneten Werten zu unterscheiden. Wie das gelernte Reweight in der Praxis funktioniert, ist in \textit{\autoref{text}} dargestellt. Auch hier können wir nur minimale Abweichungen verzeichnen. Wir betrachten nur kleine Bereiche in $x$, um den Unterschied zwischen den PDF-Sets aufzulösen. Das Ratio in \textit{\autoref{text}} c) ist wie erwartet konstant, da das Reweight nicht von $\eta$ abhängt (siehe \textit{\autoref{text}}). 
 \begin{figure}[tbp]
 	\centering
@@ -697,33 +662,30 @@ Wie erwartet, ist die Genauigkeit des Modells sehr gut, wie wir in \textit{\auto
 \end{figure}
 \section{Transfer-Learning zwischen verschiedenen Fits der Partondichtefunktionen}
 Eine weitere Möglichkeit, den Wirkungsquerschnitt, der mit einem anderen PDF-Set berechnet wurde, zu erhalten, ist Transfer-Learning. Wie wir gesehen haben, unterscheiden sich die Wirkungsquerschnitte von den verschiedenen Fits in den relevanten Phasenraumbereichen nur minimal. Mit Transfer-Learning können wir diesen Unterschied ausgleichen und mit wenig Aufwand gut Modelle für andere PDF-Fits erhalten. Das Grundprinzip von Transfer-Learning ist bereits in \textit{\autoref{??}} festgehalten. Wir nutzen wieder einen Random-Search, um gute Hyperparameter für den Transfer zu finden. Diese können in \textit{\autoref{label}} nachgelesen werden.\\
-\begin{table}
+
+In \textit{\autoref{label}} sind Schnitte des differentiellen Wirkungsquerschnitts mit transferiertem Modell, dem Modell das als Quelle gedient hat, und den analytischen Werten gezeigt. Wir können beobachten, dass die Genauigkeit des transferierten Modells fast identisch mit der des Source-Modells in \textit{\autoref{text}} ist. Das Modell verliert also beim Transfer nicht signifikant an Genauigkeit. Wir beobachten jedoch auch keine Verbesserung der Performance, was dem Transfer-Learning manchmal zugesprochen wird. Interessant zu sehen ist, dass sich die Form des Ratios beider Modell in \textit{\autoref{label}} ähnelt. Der Grund hierfür liegt darin, dass das transferierte Modell vom Source-Modell abstammt.\\
+Eindeutig können wir sehen, dass sich die Menge an Trainigsdaten und damit auch die Trainingsdauer stark verringert. Es konnte mit einfachen Mitteln eine Reduktion um den Faktor vier an Trainingsdaten erreicht werden. Automatisch verkürzt sich hiermit auch die Trainingszeit, wie in \textit{\autoref{text}} aufgeführt ist. 
+Sowohl das Transfer-Learning, als auch das Reweighting sind also legitime Methoden um den Wirkungsquerschnitt von einem PDF-Set auf das nächste zu übertragen. Es stellt sich nun die Frage, welche Methode besser geeignet ist und wo jede Methode seine stärken und Schwächen hat. Zunächst sind in \textit{\autoref{text}} noch einmal Schnitte des Wirkungsquerschnitts gezeigt. In den Ratios lässt sich ?vermuten?, dass das neu gewichtete Source-Model etwas bessere Vorhersagen trifft. \\
+\newline
+In \textit{\autoref{text}} sind einige Eigenschaften gegenübergestellt.
+\begin{table} % TODO Trainingszeit passt noch nicht so ganz
 	\centering
-	\begin{tabular}{|l|l|l|}
+	\begin{tabular}{|l|c|c|c|c|}
 		\hline
-		Hyperparameter & Pool & Best Config \\
+		Modell & MAPE & Training$[\text{s}]$ & Punkte & TPM$[\text{s}]$ \\
 		\hline
-		Anzahl entfernte Layer & $\left\lbrace  1, 2 \right\rbrace $ & 1 \\
-		Anzahl hinzugefügte Layer & $\left\lbrace  0, 1, 2 \right\rbrace $ & 1 \\
-		Units(hinzugefügte Layer) &$\left\lbrace 64, 128, 512\right\rbrace$ & 128\\
-		Aktivierungsfunktion & ReLU, Leaky-ReLU, Sigmoid & ReLU \\
-		Learning-Rate & $\left\lbrace 10^{-2}, 5 \cdot 10^{-3}, 10^{-3}, 10^{-4} \right\rbrace $ & $5 \cdot 10^{-3}$\\
-		Batch-Größe & $\left\lbrace 128, 512, 768, 2048, 8196 \right\rbrace $ & 768\\
-		Fine-Tuning & True, False & True \\
-		\hline
-		Learning-Rate
-		Loss-Funktion & \multicolumn{2}{c|}{MAE} \\
-		Optimizer & \multicolumn{2}{c|}{Adam} \\
-		Max. Epochen & \multicolumn{2}{c|}{100}\\
-		Trainingspunkte & \multicolumn{2}{c|}{1.000.000} \\
+		Reweight + Source & 0.076 & 243.42 & 1M & 30.60 \\
+		Reweight + Analy. &  0.017 & 243.42 & 1M & 13.84 \\
+		Transfer & 0.204 & 85.78 & 1M & 15.73\\
+		Transfer + FT & 0.064 & 164.83 & 1M & 15.65 \\
+		Source-Model & 0.229 & 841.46 & 4M & 15.81\\
 		\hline
 	\end{tabular}
-	\caption{Hyperparameter Pools eines Random-Search mit bester Konfiguration für Transfer-Learning zwischen Wirkungsquerschnitten verschiedener PDF-Sets}
+	\caption{Vergleich von Reweight- und Transfer-Modellen \newline TPM: Time per Million, Berechnungszeit für $10^{6}$ Punkte}
 \end{table}
-In \textit{\autoref{label}} sind Schnitte des differentiellen Wirkungsquerschnitts mit transferiertem Modell, dem Modell das als Quelle gedient hat, und den analytischen Werten gezeigt. Wir können beobachten, dass die Genauigkeit des transferierten Modells fast identisch mit der des Source-Modells in \textit{\autoref{text}} ist. Das Modell verliert also beim Transfer nicht signifikant an Genauigkeit. Wir beobachten jedoch auch keine Verbesserung der Performance, was dem Transfer-Learning manchmal zugesprochen wird.  \\
-Eindeutig können wir sehen, dass sich die Menge an Trainigsdaten und damit auch die Trainingsdauer stark verringert. Es konnte mit einfachen Mitteln eine Reduktion um den Faktor vier an Trainingsdaten erreicht werden. Automatisch verkürzt sich hiermit auch die Trainingszeit, wie in \textit{\autoref{text}} aufgeführt ist. %TODO Tabelle mit Trainingszeiten für transfer,transfer-fine-tuning, source-modell, souce-modell, reweight+source_modell mit größerer Batch-Size, time-per-million, trainingsdaten,
-Sowohl das Transfer-Learning, als auch das Reweighting sind also legitime Methoden um den Wirkungsquerschnitt von einem PDF-Set auf das nächste zu übertragen. Es stellt sich nun die Frage, welche Methode besser geeignet ist und wo jede Methode seine stärken und Schwächen hat. Zunächst sind in \textit{\autoref{text}} noch einmal Schnitte des Wirkungsquerschnitts gezeigt. In den Ratios lässt sich ?vermuten?, dass das neu gewichtete Source-Model etwas bessere Vorhersagen trifft. 
- 
+Wir sehen, dass das präziseste und schnellste Modell das Reweighting der analytisch berechneten Werte ist. Verfügt man also bereits über eine große Anzahl an Werten von differentiellen Wirkungsquerschnitten, dann ist dies das Modell der Wahl. Möchten wir jedoch über ein vollständiges Modell verfügen, dass nicht auf die analytische Berechnung von differentiellen Wirkungsquerschnitten angewiesen ist, fällt diese Möglichkeit jedoch heraus. Hier schneidet das Modell \glqq Transfer + FT\grqq~am Besten ab. Es sticht seinen Konkurrenten \glqq Reweight + Source\grqq~ in allen betrachtet Kriterien aus. Da im zweiten Fall sowohl die Reweights mit einem Netz, als auch die Source-Wirkungsquerschnitten mit neuronalen Netzen berechnet werden, verdoppelt sich hier die TPM im Vergleich zu den restlichen Modellen. Während das Transfer+FT ein neues Modell ergibt, dass für das neue PDF-Set ebenso gut funktioniert wie das Souce-Modell am vorherigen Set, bleibt der MAPE in etwa konstant. Gewichten wir jedoch die Ergebnisse des Source-Model neu, pflanzen sich beide Ungenauigkeiten fort und die Unsicherheit steigt etwas. In \textit{\autoref{text}} ist noch einmal die Performance der angesprochenen Modelle miteinander verglichen.\\
+\newline
+Wir kommen zum Schluss, dass das Transfer-Learning eine generell bessere Methode für den angesprochenen Zweck ist und das Erlernen des Reweights zwar gut funktioniert, jedoch nur nützlich ist, wenn man für speziell die Gewichte benötigt.
 \subsection{...}
 \begin{figure}[tbp]
 	\centering
@@ -754,6 +716,28 @@ Wir nutzen Monte-Carlo-Methoden zur Integration von \textit{\autoref{text}}, \te
 \begin{equation}
 	\abs{\eta} \leq 2.5 \qquad \Rightarrow \qquad \theta \in \left[\epsilon, \pi - \epsilon \right] \quad \text{mit} \quad \epsilon = 0.1638
 \end{equation}
+Die Unsicherheit auf unsere Monte-Carlo-Integration bestimmen wir aus \textit{\autoref{text}}. Wir führen die Integrationen mit 1000 Stützstellen durch und wiederholen die Integration 100 mal. In \textit{\autoref{text}} sind die erhaltenen Ergebnisse mit dem analytischen Wert verglichen.
+\begin{table}
+	\centering
+	\begin{tabular}{lll}
+		Integrand & \multicolumn{2}{c}{$\quad \sigma_{\text{tot}}[\text{pb}]$} \\
+		\hline
+		analytische Integration& \quad  $0.053793$ &$\pm~ 0$\\
+		$\derivative{\sigma}{\theta}$ analytisch + IS & $\quad 0.05382 $&$\pm~ 0.00006 $ \\
+		$\derivative{\sigma}{\theta}$ analytisch & $\quad 0.05389$ &$\pm~ 0.00015 $ \\
+		$\derivative{\sigma}{\theta}$ ml + IS &$\quad 0.05386$ &$\pm~ 0.00005$ \\
+		$\derivative{\sigma}{\eta}$ analytisch & $\quad 0.053796 $&$\pm~ 0.000034$ \\
+		$\derivative{\sigma}{\eta}$ ml & $\quad 0.053801 $&$\pm~ 0.000034$ \\
+	\end{tabular}
+	\caption{Monte-Carlo-Integration des partonischen Diphoton Prozesses}
+\end{table}
+Wir sehen, dass die neuronalen Netze so präzise sind, dass ihre Abweichung in de Monte-Carlo-Integration untergeht. Das sind gute Voraussetzungen für die Anwendbarkeit von neuronalen Netzen auch bei höherdimensionalen Prozessen. Das simple Importance-Sampling bringt eine signifikante Varianz-Verringerung mit sich.
+\subsection{Hadronischer Diphoton-Prozess}
+ Auch für den hadronischen Diphoton-Prozess nutzen wir Importance-Sampling. Für die Generation der Impulsbruchteile $x$ verwenden wir die Verteilung aus \textit{\autoref{text}}. Aufgrund der Cuts leisten Phasenraumpunkte mit kleinem $\eta$ einen Größeren Beitrag zum messbaren $\sigma_{\text{tot}}$, wir ziehen daher Punkte aus einer Gaußverteilung um Null($\textit{\autoref{label}}$).
+ \begin{equation}
+ 		\rho(\eta) = \frac{1}{\sqrt{2\pi \sigma^2}} \exp(-\frac{(\eta)^2}{2\sigma^2}) \quad \text{mit} \quad \sigma=2
+ \end{equation}
+ Wir integrieren zunächst über zwei Freiheitsgrade und sehen uns die Wirkungsquerschnitte in Abhängigkeit von $x_1, x_2$ und $\eta$ an. Wir samplen dazu 50.000.000 Punkte, mit gleicher Sample-Effizienz wie in \textit{\autoref{label}} und wiederholen den Prozess fünf mal. Die Ergebnisse sind in \textit{\autoref{label}} dargestellt.
 \begin{figure}[tbp]
 	\centering
 	\subfloat[]{\includegraphics[width=7cm]{graphics/27}} 
@@ -761,16 +745,150 @@ Wir nutzen Monte-Carlo-Methoden zur Integration von \textit{\autoref{text}}, \te
 	\subfloat[]{\includegraphics[width=7cm]{graphics/11}}
 	\caption{MC-Integrationen über zwei Freiheitsgrade}
 	\label{11,27,28}
-\end{figure}
-
-\chapter{Zusammenfassung und Diskussion}
+\end{figure} %TODO sicherstellen, dass ratio immer analytisch/WQ ist.
+Wie wir sehen, überdecken sich die integrieren Wirkungsquerschnitte für die analytischen Werte und die Vorhersagen des neuronalen Netzes an vielen Phasenpunkten. Lediglich für große $x$ überschätzt die Vorhersage wie erwartet den eigentlichen Wert. Dass die Auswirkungen dieser Überschätzung jedoch eindeutig zu vernachlässigen sind, kann schon in Teil c) von \textit{\autoref{label}} beobachtet werden. Das Ratio ist bis auf wenige Ausnahmen größer als eins, was bedeutet, dass unsere Vorhersagen zu klein sind. Der Grund hierfür liegt vermutlich in der Polstelle an $x=0$. Durch die Cuts werden viele Phasenraumpunkte mit großem Wirkungsquerschnitt herausgenommen, da sie die $p_T$-Hürde nicht erfüllen. Dem Netz unterschätzt dadurch generell diese Punkte und in den Monte-Carlo-Integration kommt es dann dazu, dass wenige Punkte generiert werden, die große Einflüsse auf den integrierten Wirkungsquerschnitt haben. Die Unterschätzung dieser Punkte ist dann viel gravierender, als die Überschätzung in Phasenraumbereichen mit hohen $x$. \\
+\newline
+Zur Integration über alle Freiheitsgrade verwenden wir die gleichen Daten wie im vorherigen Abschnitt. Wir erhalten die Ergebnisse \textit{\autoref{label}}.
+\begin{equation}
+	\begin{split}
+	\sigma_{tot}^{analytic} =  5.1707 \pm 0.0038 \\
+	\sigma_{tot}^{prediction} = 5.1634 \pm 0.0038 \\
+	\end{split}
+\end{equation}
+\begin{table}
+	\centering
+	\begin{tabular}{lll}
+		Integrand & \multicolumn{2}{l}{$\quad \sigma_{tot}$[pb]} \\
+		\hline
+		analytic & & \\
+		prediction & & \\
+	\end{tabular}
+\end{table}
+\chapter{Zusammenfassung und Ausblick}
 \section{Zusammenfassung}
-\section{Diskussion}
-\section{Ausblick}
+In dieser Arbeit wurde der Diphoton Prozess als $q\overline{q} \rightarrow \gamma \gamma$ und $pp \rightarrow \gamma \gamma$ auf Leading-Order Ebene behandelt und Ausdrücke für die jeweiligen differentiellen Wirkungsquerschnitte hergeleitet. An dies Beispielen wurde dann die Eignung von tiefen neuronalen Netzwerken zur Näherung des Integranden überprüft. Dabei mussten verschiedene Tücken bedacht und behandelt werden. In diesem Kontext wurde die Wichtigkeit von Label-Transformationen und der Architektur des Neuronalen Netzes deutlich. Anschließend wurden die Gewichte zwischen den Fits der Partondichtefunktionen CT14nnlo und MMHT2014nnlo erlernt und angewendet. Schließlich wurde noch die Möglichkeit des Transfer-Learning zwischen Modellen, die an verschiedenen PDF-Sets trainiert wurden überprüft. Mithilfe von Monte-Carlo-Methoden wurden die differentiellen Wirkungsquerschnitte integriert.
 
+Wir erwartet, haben die neuronalen Netze keine Probleme mit simplen Regressionsaufgaben, wie die Wirkungsquerschnitte des Prozesses $q\overline{q} \rightarrow \gamma \gamma$ darstellen. Die Funktionswerte können mit ausgezeichneter Genauigkeit und wenig Aufwand vorhergesagt werden.\\
+Andererseits ist der differentielle Wirkungsquerschnitt des Prozesses $pp \rightarrow \gamma \gamma$ wiederum nicht trivial. Hier müssen Hürden wie das \glqq Dying-ReLU\grqq~Problem und die passende Wahl der Loss-Function beachtet werden. Auch kann es hier helfen kaum beitragende Phasenraumbereiche zu vernachlässigen, um die Spanne an Größenordunungen, über die sich die Wirkungsquerschnitte verteilen, zu verkleinern. Letztendlich kann mit etwas Feingefühl und Erfahrung im Umgang mit neuronalen Netzen jedoch passende Modelle gefunden werden, die gute Genauigkeit zeigen.\\
+Das Erlernen der Reweights stellt aus Sicht des neuronalen Netzes kein Problem dar, solange ein sinnvoller Phasenraumbereich gewählt wird. Hier kann das Netz die Funktionswerte mit exzellenter Genauigkeit vorhersagen. Das neuronale Netz kann also hier gut als Interpolation zwischen den analytischen Werten dienen. \\
+Transfer-Learning stellt sich als eine gute Möglichkeit heraus, aus einem bereits vorhandenen Modell, ein Modell für einen anderen Fit von Partondichtefunktionen zu erhalten. In puncto Berechnungs- und Trainingsgeschwindigkeit und Genauigkeit übertrifft das Transfer-Learning hier das Reweighten eines bereits vorhandenen Source-Models.
+
+\section{Ausblick}
+Die in dieser Arbeit behandelten Methoden haben gute Ergebnisse an den einfachen Beispielen gezeigt. Als nächstes sollte nun der Test an höherdimensionalen Prozessen mit analytisch nicht mehr oder nur aufwändig zu berechnenden Wirkungsquerschnitten folgen. Es muss noch untersucht werden, ob die neuronalen Netze ihre Genauigkeit auch in höheren Dimensionen aufrechterhalten können und wenn ja, ob dies mit einer realistischen Zahl an Trainingspunkten möglich ist. Anschließend muss überprüft werden, wie groß der rechentechnische Nutzen der neuronalen Netze. In den einfachen, analytischen Beispielen von uns ist der analytische Weg noch um einen Faktor zwei schneller. Die in dieser Arbeit erhaltenen Ergebnisse sind jedoch gute Voraussetzungen für die Funktionstüchtigkeit im Höherdimensionalen. Zusätzlich sind neuronale Netze dafür bekannt mit sehr hochdimensionalen Eingangswerten umgehen zu können. \\
+\newline
+Auch das Transfer-Learning hat in dieser Arbeit seine Funktionalität bewiesen. Es muss jedoch nicht beim Transfer zwischen PDF-Sets bleiben. In der Praxis wird Transfer-Learning zwischen viel diverseren Datensets eingesetzt. Es könnte sich also lohnen, auch den Transfer zwischen sich ähnelnden Prozessen in der Teilchenphysik zu untersuchen. Ich spreche hier von Vorgängen die sich beispielsweise nur durch das Vorhandensein von Myonen anstatt Elektronen unterscheiden oder auch den Transfer von Leading-Order Prozessen zu höheren Ordnungen. \\
+\newline
+Abgesehen von den hier untersuchten Verwendungsmöglichkeiten gibt es noch unzählige weiter Anwendungsmöglichkeiten von Machine-Learning oder tiefen neuronalen Netzen in der Teilchenphysik. Hierunter fällt beispielsweise... 
+
+%TODO Transfer zwischen ähnlichen Prozessen, nicht nur PDF-Sets 
+%TODO Schwerpunktsenergie die du verwendet hast festschreiben
+ 
 
 \appendix
 \chapter{Anhang}
+\begin{figure}[tbp]
+	\centering
+	\subfloat[Rectified Linear Unit: $f(x) = \text{max}(0, x)$]{\includegraphics[width=7cm]{graphics/ReLU(x)}} 
+	\subfloat[Leaky-ReLU: $f(\alpha, x) = \alpha x$ für $x<0$]{\includegraphics[width=7cm]{graphics/Leaky-ReLU(x)}} \\
+	\subfloat[ELU: $f(\alpha, x) = \alpha(e^x - 1)$ für $x < 0$]{\includegraphics[width=7cm]{graphics/ELU(x)}}
+	\subfloat[Sigmoid: $f(x) = \frac{e^x}{e^x + 1}$]{\includegraphics[width=7cm]{graphics/Sigmoid(x)}} \\
+	\subfloat[tanh : $f(x) = tanh(x)$]{\includegraphics[width=7cm]{graphics/tanh(x)}}
+	\subfloat[Exp: $f(x) = e^x$]{\includegraphics[width=7cm]{graphics/Exp(x)}} \\  
+	\caption{Activation-Funkctions, die verwendet wurden}
+	\label{11,27,28}
+\end{figure}
+\begin{table}
+	\centering
+	\begin{tabular}{|l|l|l|}
+		\hline
+		Hyperparameter & Pool & Best Config \\
+		\hline
+		Anzahl Layer & $\left\lbrace 1, 2, 3, 4 \right\rbrace$ & 4 \\
+		Anzahl Units & $\left\lbrace 32, 64, 128, 256\right\rbrace$ & 128 \\
+		Loss-Funktion & MAE, MSE, Huber & MAE \\
+		Optimizer & Adam, RMSprop, SGD  & Adam\\
+		Aktivierungsfunktion & ReLU, Leaky-ReLU, Sigmoid & Leaky-ReLU \\
+		Learning-rate & $\left\lbrace 10^{-2}, 5 \cdot 10^{-3}, 10^{-3}, 10^{-4} \right\rbrace $ & $5 \cdot 10^{-3}$\\
+		Batch-Größe & $\left\lbrace 64, 128, 512, 768, 2048 \right\rbrace $ & 128\\
+		Label-Normalisierung & $\left\lbrace \text{keine}, [-1,1]\right\rbrace $ & $[-1,1]$\\
+		\hline
+		Max. Epochen & \multicolumn{2}{c|}{200}\\
+		Anzahl Trainingspunkte & \multicolumn{2}{c|}{60000} \\
+		\hline
+	\end{tabular}
+	\caption{Parameter der Random-Search für $\frac{d\sigma}{d\theta}$ mit Ergebnis}
+\end{table}
+\begin{table}
+	\centering
+	\begin{tabular}{|l|l|l|}
+		\hline
+		Hyperparameter & Pool & Best Config \\
+		\hline
+		(Units, Nr. of Layers) &$\left\lbrace (256,5), (512,3), (64,7), (1024, 2), (128, 6) \right\rbrace $ & $(256, 5)$ \\
+		Loss-Funktion & MAE, MSE, Huber & MAE \\
+		Optimizer & Adam, RMSprop  & Adam\\
+		Aktivierungsfunktion & ReLU, Leaky-ReLU, Sigmoid, ELU, tanh & Leaky-ReLU \\
+		Learning-rate & $\left\lbrace 10^{-2}, 5 \cdot 10^{-3}, 10^{-3}, 10^{-4} \right\rbrace $ & $10^{-2}$\\
+		Batch-Größe & $\left\lbrace 256, 128, 512, 768, 1024 \right\rbrace $ & 256\\
+		Basis 10 & True, False  & True \\
+		Label-Normalisierung & $\left\lbrace \text{keine}, [-1,1]\right\rbrace $ & keine\\
+		Feature-Normal. & True, False & True \\
+		\hline
+		Skalierung & \multicolumn{2}{c|}{True} \\
+		Logarithmus & \multicolumn{2}{c|}{True} \\ 
+		Max. Epochen & \multicolumn{2}{c|}{100}\\
+		Trainingspunkte & \multicolumn{2}{c|}{4.000.000} \\
+		\hline
+	\end{tabular}
+	\caption{Hyperparameter Pools eines erfolgreichen Random-Search mit bester Konfiguration für den dreidimensionalen differentiellen Wirkungsquerschnitt des Diphoton Prozesses}
+\end{table}
+\begin{table}
+	\centering
+	\begin{tabular}{|l|l|l|}
+		\hline
+		Hyperparameter & Pool & Best Config \\
+		\hline
+		Anzahl Layer & $\left\lbrace 1,2,3,4\right\rbrace$ & 2 \\
+		Units &$\left\lbrace 32, 64, 128, 256\right\rbrace$ & 256 \\
+		Loss-Funktion & MAE, MSE & MAE \\
+		Optimizer & Adam, RMSprop, SGD  & Adam\\
+		Aktivierungsfunktion & ReLU, Leaky-ReLU, Sigmoid & Leaky-ReLU \\
+		Learning-rate & $\left\lbrace 10^{-2}, 5 \cdot 10^{-3}, 10^{-3}, 10^{-4} \right\rbrace $ & $5 \cdot 10^{-3}$\\
+		Batch-Größe & $\left\lbrace 256, 128, 512, 768, 1024 \right\rbrace $ & 512\\
+		Label-Normalisierung & $\left\lbrace \text{keine}, [-1,1]\right\rbrace $ & keine\\
+		Feature-Normal. & True, False & True \\
+		\hline
+		Skalierung & \multicolumn{2}{c|}{False} \\
+		Logarithmus & \multicolumn{2}{c|}{False} \\ 
+		Max. Epochen & \multicolumn{2}{c|}{100}\\
+		Trainingspunkte & \multicolumn{2}{c|}{1.000.000} \\
+		\hline
+	\end{tabular}
+	\caption{Hyperparameter Pools eines Random-Search mit bester Konfiguration für ein Reweighting des differentiellen Wirkungsquerschnitt des Diphoton Prozesses}
+\end{table}
+\begin{table}
+	\centering
+	\begin{tabular}{|l|l|l|}
+		\hline
+		Hyperparameter & Pool & Best Config \\
+		\hline
+		Anzahl entfernte Layer & $\left\lbrace  1, 2 \right\rbrace $ & 1 \\
+		Anzahl hinzugefügte Layer & $\left\lbrace  0, 1, 2 \right\rbrace $ & 1 \\
+		Units(hinzugefügte Layer) &$\left\lbrace 64, 128, 512\right\rbrace$ & 128\\
+		Aktivierungsfunktion & ReLU, Leaky-ReLU, Sigmoid & ReLU \\
+		Learning-Rate & $\left\lbrace 10^{-2}, 5 \cdot 10^{-3}, 10^{-3}, 10^{-4} \right\rbrace $ & $5 \cdot 10^{-3}$\\
+		Batch-Größe & $\left\lbrace 128, 512, 768, 2048, 8196 \right\rbrace $ & 768\\
+		Fine-Tuning & True, False & True \\
+		\hline
+		Learning-Rate
+		Loss-Funktion & \multicolumn{2}{c|}{MAE} \\
+		Optimizer & \multicolumn{2}{c|}{Adam} \\
+		Max. Epochen & \multicolumn{2}{c|}{100}\\
+		Trainingspunkte & \multicolumn{2}{c|}{1.000.000} \\
+		\hline
+	\end{tabular}
+	\caption{Hyperparameter Pools eines Random-Search mit bester Konfiguration für Transfer-Learning zwischen Wirkungsquerschnitten verschiedener PDF-Sets}
+\end{table}
 % TODO gar nicht wahr, die dinger sind abh. von batch size
 \begin{table}
 	\centering
@@ -785,12 +903,32 @@ Wir nutzen Monte-Carlo-Methoden zur Integration von \textit{\autoref{text}}, \te
 		\multirow{2}{*}{ReduceLROnPlateau}& Fällt der Loss nach einer Epoche nicht um mindestens\\
 		& $2 \cdot 10^{-6}$, wird die Learning-Rate um $50\%$ reduziert.\\
 		\hline
-		\multirow{2}{*}{EarlyStopping}& Fällt der Loss in drei aufeinanderfolgenden Epochen nicht um  \\ 
-		& mindestens $2 \cdot 10^{-7}$ ab, wird der Trainingsvorgang gestoppt.\\
+		\multirow{3}{*}{EarlyStopping}& Fällt der Loss in drei aufeinanderfolgenden \\
+		& Epochen nicht um $2 \cdot 10^{-7}$ ab, \\
+		& wird der Trainingsvorgang gestoppt.\\
 		\hline
 	\end{tabular}
 	\label{callbacks}
 \end{table}
+\section{Abkürzungen}
+\begin{table}[htp]
+	\centering
+	\begin{tabular}{ll}
+		ML $\hspace{3cm}$& Machine-Learning \\
+		TL & Transfer-Learning \\
+		DNN & Deep-Neural-Network \\
+		PDF & Partondichtefunktion \\
+		MC & Monte-Carlo \\
+		Features & Eingabewerte eines ML-Algorithmus \\
+		Labels & wahrer Funktionswert der Features \\
+		Units & Neuronen, Grundbaustein des DNN \\
+		Nodes & Neuronen, Grundbaustein des DNN \\
+		Layer & Schicht von Neuronen \\
+		&\\
+	\end{tabular}
+	\caption{Häufig genutzte Abkürzungen}
+\end{table}
+
 \section{Grafiken}
 \section{Source-Code}
 
@@ -799,6 +937,8 @@ Wir nutzen Monte-Carlo-Methoden zur Integration von \textit{\autoref{text}}, \te
 \end{document}
 
 \begin{itemize}
+	\setlength\itemsep{0.1cm}
+	\setlength{\parskip}{0.1cm}
 	\item Anzahl der Layer l: $\left\lbrace2, 3\right\rbrace$  
 	\item Anzahl der Knoten pro Layer: $\left\lbrace64, 128 \right\rbrace $
 	\item Kostenfunktion: $\left\lbrace \text{MeanSquaredError}, \text{MeanAbsoluteError} \right\rbrace$

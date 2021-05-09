@@ -23,10 +23,10 @@ def main():
     #Zu vergleichende models laden
     model_paths = dict()
     #model_paths["best model "] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Models/Loss_comparison/best_model"
-    model_paths["60k"] = project_path + "theta_model_full_range"
-    model_paths["IS\n60k"] = project_path + "theta_model_full_range_IS"
     model_paths["10k"] = project_path + "theta_model_full_range_less_data"
     model_paths["IS\n10k"] = project_path + "theta_model_full_range_IS_less_data"
+    model_paths["60k"] = project_path + "theta_model_full_range"
+    model_paths["IS\n60k"] = project_path + "theta_model_full_range_IS"
 
     #festlegen ob modelle an Datenmengen getestet werden oder die Losses aus config ausgelesen werden
     from_config = False
@@ -134,7 +134,7 @@ def main():
 
 
     ml.make_comparison_plot(names=names, all_losses=MAPE_losses, avg_losses=avg_MAPE_losses,
-                            losses_errors=MAPE_errors, save_path=save_path, comparison=comparison)
+                             save_path=save_path, comparison=comparison, autoscale=True)
     plt.show()
 if __name__ == "__main__":
     main()

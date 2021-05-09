@@ -69,12 +69,12 @@ def main():
         custom_samples = custom_dist.rvs(size=theta_size)
         uniform_samples = stats.uniform.rvs(loc=epsilon, scale=np.pi - 2 * epsilon, size=theta_size)
         #totalen WQ berechnen, integration über theta und über phi (*2pi)
-        sigma_total_mc = MC.gev_to_pb(np.mean(1/2 * theta_transformer.retransform(theta_model.predict(custom_samples))[:,0]/custom_dist(custom_samples)))
+        sigma_total_mc_ml = MC.gev_to_pb(np.mean(1/2 * theta_transformer.retransform(theta_model.predict(custom_samples))[:,0]/custom_dist(custom_samples)))
         sigma_total_mc_mean_std = np.sqrt(1/(len(custom_samples) - 1) * (np.mean(np.square(1/2 * MC.gev_to_pb(theta_transformer.retransform(theta_model.predict(custom_samples))[:,0])/custom_dist(custom_samples))) - sigma_total_mc ** 2))
-        sigma_total_mc_no_IS = MC.gev_to_pb(np.mean(1/2 * theta_transformer.retransform(theta_model.predict(uniform_samples))[:,0]/
+        sigma_total_mc_no_IS_ml = MC.gev_to_pb(np.mean(1/2 * theta_transformer.retransform(theta_model.predict(uniform_samples))[:,0]/
                                                     stats.uniform.pdf(x=uniform_samples, loc=epsilon, scale=np.pi - 2 * epsilon)))
-        theta_WQ[i] = sigma_total_mc
-        theta_WQ_no_IS[i] = sigma_total_mc_no_IS
+        theta_WQ[i] = sigma_total_mc_ml
+        theta_WQ_no_IS[i] = sigma_total_mc_no_IS_ml
         theta_WQ_mean_std[i] = sigma_total_mc_mean_std
     plt.hist(theta_WQ, bins=30)
     plt.show()
@@ -115,6 +115,7 @@ def main():
 
     results = pd.DataFrame(
         {
+            "analytischer Wert": analytic_expression,
             "sigma theta": sigma_total_mc,
             "sigma theta error": sigma_total_mc_error,
             "sigma theta std": sigma_total_mc_std,

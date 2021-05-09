@@ -49,7 +49,7 @@ def main():
     if transfer:
         save_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Models/"
 
-        save_name = "test_without_fine_tuning"
+        save_name = "no_add_layer_no_fine_tuning"
         save_path = save_path + project_name + save_name
         add_layers = int(input("add layers: "))
         fine_tuning = ast.literal_eval(input("fine tuning:"))
@@ -67,12 +67,12 @@ def main():
 
     #Variablen...
     train_frac = 0.95
-    batch_size = 768
+    batch_size = 256
     training_epochs = 100
     repeat = 5
     nr_layers = 6
     units = 128
-    learning_rate = 5e-3
+    learning_rate = 1e-2
     if not any([new_model, transfer, freeze]):
         learning_rate = 5e-6
         print("learning_rate für fine tuning reduziert!")

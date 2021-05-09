@@ -226,7 +226,33 @@ print(c, type(c))
 print(str(c), type(str(c)))
 """
 
-a = pd.DataFrame()
-a["test"] = []
-a["test"] = ["hallo"]
-print(a)
+a = np.array([])
+print(type(a))
+a = "5"
+b = int(a)
+print(b, type(b))
+a= "hallo"
+b= int(a)
+print(a, type(a))
+exit()
+b = float(tf.math.reduce_mean(a))
+print(b)
+c = np.nan
+print(c)
+print(~np.isnan(b))
+print(np.isnan(c))
+d = np.array([1, 2, np.nan])
+print(np.min(d), "test")
+print(np.isnan(d))
+
+a = np.array([1.17972416e+04, 3.76453833e+03, 1.27083480e+03 ,4.46081871e+02,
+ 1.65798578e+02, 6.13161467e+01, 2.55620532e+01, 6.86385281e+00,
+ 7.78108408e-01, 6.85481064e-02, 3.62932251e-03, 4.22153632e-05])
+
+b = np.array([0, 0.00086323, 0.00160074, 0.00296837, 0.00550445, 0.01020728, 0.01892807
+, 0.03509963, 0.06508769, 0.12069662, 0.22381613, 0.4150378, 0.76963343, 1])
+
+I = 0
+for i,value in enumerate(a):
+    I += value * (b[i+1]-b[i])
+print(I)

@@ -29,8 +29,8 @@ def main():
     random_seed = 30
     np.random.seed(random_seed)
 
-    set_name = "CT14 PlottingData/"
-    path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Data/" + set_name
+    set_name = "PlottingDataHighX/"
+    path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Data/" + set_name
 
     #Test
     total_data = x_total
@@ -74,14 +74,14 @@ def main():
     x_1_constant = 0
     x_2_constant = 0
     eta_constant = 0
-    while x_1_constant < 0.1 or x_1_constant > 0.46:
+    while x_1_constant < 0.2 or x_1_constant > 0.35:
         if i >= x_total:
             x_1_constant = x_1[i-1]
             break
         x_1_constant = x_1[i]
         i += 1
     i=0
-    while x_2_constant < 0.1 or x_2_constant > 0.46:
+    while x_2_constant < 0.35 or x_2_constant > 0.46:
         if i >= x_total:
             x_2_constant = x_2[i-1]
             break
@@ -89,7 +89,7 @@ def main():
         i += 1
     i=0
 
-    while eta_constant < 0.5 or eta_constant > 1.0:
+    while eta_constant < 0.1 or eta_constant > 0.4:
         if i >= eta_total:
             eta_constant = eta[i]
             break

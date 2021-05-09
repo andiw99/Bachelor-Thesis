@@ -5,6 +5,7 @@ import numpy as np
 import os
 from matplotlib import pyplot as plt
 from scipy import stats
+import time
 
 import MC
 
@@ -29,8 +30,8 @@ def main():
 
     #Variablen
     E = 6500 #Strahlenergie in GeV, im Vornherein festgelegt?
-    x_total = int(50000000) #Anzahl an x Werten
-    eta_total = int(50000000) # Anzahl an eta Werten
+    x_total = int(5000000) #Anzahl an x Werten
+    eta_total = int(5000000) # Anzahl an eta Werten
     x_lower_limit = 0
     x_upper_limit = 1
     eta_limit = 2.37
@@ -44,7 +45,7 @@ def main():
     eta_gauss = True
     num_eta_values = 25
 
-    set_name = "MC50M_V/"
+    set_name = "5M_Test/"
     root_name ="/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject"
     location = None #input("Welcher Rechner?")
     if location == "Taurus" or location == "taurus":
@@ -143,7 +144,13 @@ def main():
     plt.hist(features[:,2], bins=50, rwidth=0.9)
     plt.show()
 
+    time_pre_calc = time.time()
     diff_WQ = ml.calc_diff_WQ(PDF=PDF, quarks=quarks, x_1=features[:,0], x_2=features[:,1], eta=features[:,2], E=E)
+    comp_time_per_million = (time.time()-time_pre_calc)/len(diff_WQ) * 1e+6
+    print("time", time.time()-time_pre_calc)
+    print("nr values", len(diff_WQ))
+    print("comp time, exit entfernen", comp_time_per_million)
+    exit()
 
     #berechnen, wie viele punkte akzeptiert und wie viele gecuttet wurden:
     acceptance_ratio = diff_WQ.size/x_total

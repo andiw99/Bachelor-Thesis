@@ -19,7 +19,7 @@ model_paths["Full Range + IS"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbe
 paths = dict()
 paths["$\eta, x_1$ constant"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Partonic/PartonicData/PlottingDataHighTheta/all"
 save_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Plots/finished/"
-name = "theta_model_comparison_high_theta"
+name = "3.1"
 input("namen geändert?")
 save_path = save_path + name
 label_name = "WQ"
@@ -69,5 +69,5 @@ for dataset in features:
 for dataset in predictions:
     keys = ml.get_varying_value(features_pd=features_pd[dataset])
     ml.plot_model(features_pd=features_pd[dataset], labels=labels[dataset], predictions=predictions[dataset],
-                  keys=keys, save_path=save_path, trans_to_pb=trans_to_pb, automatic_legend=True)
+                  keys=keys, save_path=save_path, trans_to_pb=trans_to_pb, automatic_legend=True, ratio_size=80, autoscale=True)
 

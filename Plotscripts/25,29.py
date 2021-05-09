@@ -6,6 +6,7 @@ import pandas as pd
 import ml
 import time
 import ast
+import MC
 
 
 def main():
@@ -15,23 +16,25 @@ def main():
 
     #Pfade eingeben
     testing_data_paths = dict()
-    testing_data_paths[""] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Data/TransferTestData50k/all"
+    testing_data_paths["testing_data"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Data/MMHT TestData50k/all"
     #testing_data_paths["Full Range"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Partonic/PartonicData/TrainingData10k_ep_0.01/all"
     #testing_data_paths["Full Range + IS"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Partonic/PartonicData/TrainingData10k_ep_0.01_IS/all"
     project_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Models/"
     save_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Plots/finished/"
-    comparison = "Reweight or Transfer"
+    comparison = ""
     #Zu vergleichende models laden
     model_paths = dict()
     #model_paths["best model "] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Models/Loss_comparison/best_model"
-    model_paths["No Fine Tuning"] = project_path + "transfer_no_tuning"
-    model_paths["Fine Tuning"] = project_path + "transfer_fine_tuning_faster_training"
-    #model_paths["Source Model \n reweighted"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Results/Reweight/"
-    #model_paths["Source Model"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Models/LastRandomSearch/best_model"
+    model_paths["No FT"] = project_path + "no_add_layer_no_fine_tuning"
+    model_paths["FT"] = project_path + "test"
+    model_paths["Source\nrw"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Results/reweight/"
+    model_paths["CT14\nrw"] =  "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Results/reweigth+analytic/"
     #model_paths["IS\n10k"] = project_path + "theta_model_full_range_IS_less_data"
 
     #festlegen ob modelle an Datenmengen getestet werden oder die Losses aus config ausgelesen werden
     from_config = True
+    use_x_cut = True
+    calc_computing_time = False
 
     config_paths = dict()
     for model in model_paths:
@@ -40,7 +43,6 @@ def main():
     #Zu testende Kriterien: Berechnungszeit, Trainingszeit(schon gegeben), Validation loss
 
 
-    MSE = dict()
     MAPE = dict()
     avg_MAPE = dict()
     all_MAPE = dict()
@@ -51,10 +53,10 @@ def main():
     models = dict()
     transformers = dict()
     Predictions = dict()
-
-    for model in model_paths:
-        models[model], transformers[model] = ml.import_model_transformer(
-            model_paths[model])
+    if not from_config or calc_computing_time:
+        for model in model_paths:
+            models[model], transformers[model] = ml.import_model_transformer(
+                model_paths[model])
 
     test_features = dict()
     test_labels = dict()
@@ -62,6 +64,15 @@ def main():
         (_, test_features[dataset], test_labels[dataset], _, _, _) = \
             ml.data_handling(data_path=testing_data_paths[dataset], label_name=label_name,
                          return_pd=False)
+        print(test_features[dataset].shape)
+        if use_x_cut:
+            _, x_1_cut = MC.x_cut(features=test_features[dataset][:,0], lower_cut=0, upper_cut=0.8, return_cut=True)
+            test_features[dataset] = test_features[dataset][x_1_cut]
+            _, x_2_cut = MC.x_cut(features=test_features[dataset][:,1], lower_cut=0, upper_cut=0.8, return_cut=True)
+            test_features[dataset] = test_features[dataset][x_2_cut]
+            test_labels[dataset] = test_labels[dataset][x_1_cut]
+            test_labels[dataset] = test_labels[dataset][x_2_cut]
+            print(test_features[dataset].shape)
 
     if from_config:
         configs = dict()
@@ -71,15 +82,16 @@ def main():
             MAPE_error[model] = float(configs[model]["loss error"][0])
             avg_MAPE[model] = float(configs[model]["avg validation loss"][0])
             all_MAPE[model] = ast.literal_eval(configs[model]["total_losses"][0])
-            training_time[model] = float(configs[model]["training time"][0])
+            #training_time[model] = float(configs[model]["training time"][0])
 
             #Berechnung der Labels timen
-            time_pre_calc = time.time()
-            for dataset in testing_data_paths:
-                Predictions[model] = transformers[model].retransform(models[model](test_features[dataset]))
-                time_post_calc = time.time()
-                time_per_million = ((time_post_calc - time_pre_calc)/(float(tf.size(test_labels[dataset])))) * 1e+6
-            calc_times[model] = time_per_million
+            if calc_computing_time:
+                time_pre_calc = time.time()
+                for dataset in testing_data_paths:
+                    Predictions[model] = transformers[model].retransform(models[model](test_features[dataset]))
+                    time_post_calc = time.time()
+                    time_per_million = ((time_post_calc - time_pre_calc)/(float(tf.size(test_labels[dataset])))) * 1e+6
+                calc_times[model] = time_per_million
 
     else:
         # Validation Loss berechnen, am besten MSE und MAPE
@@ -89,7 +101,7 @@ def main():
             Predictions[model] = dict()
             MAPE[model] = dict()
             calc_times[model] = []
-
+            all_MAPE[model] = dict()
             for dataset in test_features:
                 #Berechnung der Labels timen
                 time_pre_calc = time.time()
@@ -99,6 +111,7 @@ def main():
                 time_per_million = ((time_post_calc - time_pre_calc)/(float(tf.size(test_labels[dataset])))) * 1e+6
                 #In dicts abspeichern
                 MAPE[model][dataset] = float((MAPE_loss_fn(y_true= test_labels[dataset], y_pred=Predictions[model][dataset])))
+                all_MAPE[model][dataset] = MAPE[model][dataset]
                 calc_times[model].append(time_per_million)
             MAPE_error[model] = np.std([*MAPE[model].values()])
             avg_MAPE[model] = np.mean([*MAPE[model].values()])
@@ -133,6 +146,7 @@ def main():
     print("MAPE_losses", MAPE_losses)
     print("MAPE_error", MAPE_errors)
     print("all mape", all_MAPE_losses)
+    print("min_losses", MAPE_losses)
     print(type(MAPE_losses[0]))
     print(type(MAPE_errors[0]))
 

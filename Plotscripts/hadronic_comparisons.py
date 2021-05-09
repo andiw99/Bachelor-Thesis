@@ -17,7 +17,7 @@ def main():
     #Pfade eingeben
     testing_data_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Data/TransferTestData50k/all"
     project_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Models/final comparison"
-    save_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Plots/finished/comparisons"
+    save_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Plots/finished/comparisons/"
 
     input("save_path geändert und an slash hinten gedacht?")
 
@@ -36,6 +36,14 @@ def main():
         model_names = sorted([name for name in os.listdir(directorys[comparison])
                        if (os.path.isdir(os.path.join(directorys[comparison], name)))
                         & (name != "best_model")])
+        print(model_names)
+        try:
+            model_names = [int(name) for name in model_names]
+            model_names.sort()
+            model_names = [str(name) for name in model_names]
+        except ValueError:
+            pass
+        print(model_names)
         # pfade in dictionarys packen
         for model in model_names:
             model_paths[comparison][model] = directorys[comparison] + "/" + model
@@ -154,15 +162,6 @@ def main():
         MAPE_errors[comparison] = list(MAPE_error[comparison].values()) # TODO errors mit 1/N-1 statt 1/N
         avg_MAPE_losses[comparison] = list(avg_MAPE[comparison].values())
         all_MAPE_losses[comparison] = list(all_MAPE[comparison].values())
-        """
-        print(MAPE_losses[comparison])
-        print(MAPE_errors[comparison])
-        print(type(MAPE_losses[comparison][0]))
-        print(type(MAPE_errors[comparison][0]))
-        print(all_MAPE[comparison])
-        print(all_MAPE_losses)
-        print(names)
-        """
         ml.make_comparison_plot(names=names, min_losses=MAPE_losses[comparison], all_losses=all_MAPE_losses[comparison],
                                 avg_losses=avg_MAPE_losses[comparison], losses_errors=MAPE_errors[comparison], save_path=save_path,
                                 comparison=comparison)

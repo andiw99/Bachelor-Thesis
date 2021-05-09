@@ -19,7 +19,7 @@ model_paths["Full Range + IS"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbe
 paths = dict()
 paths["$\eta, x_1$ constant"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Partonic/PartonicData/PlottingDataHighTheta/all"
 save_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Plots/finished/"
-name = "theta_model_comparison_high_theta_less_data"
+name = "3.2"
 input("namen geändert?")
 save_path = save_path + name
 label_name = "WQ"
@@ -34,7 +34,7 @@ show_ratio = [False, True, True]
 models = dict()
 transformers = dict()
 for model_name in model_paths:
-    (models[model_name], transformers[model_name]) = ml.load_model_and_transormer(model_path=model_paths[model_name])
+    (models[model_name], transformers[model_name]) = ml.load_model_and_transformer(model_path=model_paths[model_name])
 show_3D_plots = False
 use_cut = False
 loss_function = keras.losses.MeanAbsoluteError(reduction=keras.losses.Reduction.NONE)
@@ -73,5 +73,5 @@ for dataset in predictions:
     keys = ml.get_varying_value(features_pd=features_pd[dataset])
     ml.plot_model(features_pd=features_pd[dataset], labels=labels[dataset], predictions=predictions[dataset],
                   keys=keys, save_path=save_path, trans_to_pb=trans_to_pb, automatic_legend=True,
-                  autoscale_ratio=True, set_ratio_yscale="linear", show_ratio=show_ratio)
+                  autoscale_ratio=True, set_ratio_yscale="linear", show_ratio=show_ratio, autoscale=True, ratio_size=60)
 

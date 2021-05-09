@@ -21,6 +21,12 @@ class class_loguni():
         x = self.scaling * stats.loguniform.pdf(x, self.a, self.b)
         return x
 
+    def cdf(self, x):
+        # retransform x
+        x = (x - self.x_lower_limit) / (
+                    self.x_upper_limit - self.x_lower_limit) + self.loguni_param
+        return self.scaling * stats.loguniform.cdf(x, self.a, self.b)
+
 class gaussian():
     def __init__(self, mu = 0, sigma=1, scaling=1):
         self.mu = mu
@@ -86,7 +92,7 @@ def crack_cut(eta_values, crack_interval=(1.37, 1.52), return_cut = False):
 
 def reweight_cut(features, E=6500, cut_energy=40, cut_eta=2.37, return_cut=False):
     #cut ist True fuer werte die nicht rausgeschnitten werden
-    cut = (np.abs(1/2 * np.log(features[:,1]/features[:,0])) < cut_eta) |\
+    cut = (np.abs(1/2 * np.log(features[:,1]**2/features[:,0]**2)) < cut_eta) |\
           (np.sqrt(features[:,0] * features[:,1] * (1-np.tanh(1/2 * np.log(features[:,1]/features[:,0]) -
                                                               cut_eta * (features[:,1] > features[:,0]) + cut_eta * (features[:,1] < features[:,0])) ** 2)) * E > cut_energy)
     features = features[cut]

@@ -9,8 +9,8 @@ import MC
 #Pfade eingeben
 paths = dict()
 model_paths = dict()
-model_paths["transferred model"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Models/transferred_model_best_parameters_fine_tuning"
-model_paths["source model rw"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Models/LastRandomSearch/best_model"
+model_paths["transferred model"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Models/test"
+model_paths["source model rw"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Models/best_model"
 reweight_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Reweight/Models/RandomSearch_logartihm_false/best_model"
 #model_path= "/Files/Hadronic/Models/best_guess_4M"
 #more data to plot?

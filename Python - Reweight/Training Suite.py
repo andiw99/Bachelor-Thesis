@@ -36,7 +36,7 @@ def main():
     loss_name = "Source_loss"
     project_name = ""
 
-    read_name = "best_parameters" #"best_guess_important_range" #
+    read_name = "best_parameters_3" #"best_guess_important_range" #
     label_name = "reweight"
     read_path =project_path + project_name + read_name
     transferred_transformer = None
@@ -61,7 +61,7 @@ def main():
     train_frac = 0.95
     batch_size = 512
     training_epochs = 100
-    repeat=3
+    repeat=2
     nr_layers = 2
     units = 256
     learning_rate = 5e-3

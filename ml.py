@@ -982,8 +982,11 @@ def get_varying_value(features_pd):
 
 def plot_model(features_pd, labels, predictions,  keys, save_path=None,
                trans_to_pb=True, set_ylabel=None, set_ratio_yscale=None,
-               autoscale_ratio=False, set_yscale=None, automatic_legend=False,
-               xticks=None, xtick_labels=None, colors=None, show_ratio=None):
+               autoscale_ratio=False, autoscale=False, set_yscale=None, set_xscale=None, automatic_legend=False,
+               xticks=None, xtick_labels=None, colors=None, show_ratio=None,
+               text_loc=(0.025, 0.95), fontsize=13, legend_loc="upper right", ratio_size=10):
+    font = {"family": "normal", "size": fontsize}
+    matplotlib.rc("font", **font)
     if colors == None:
         colors = ["C0", "C2", "C3", "C6", "deeppink"]
     if show_ratio == None:
@@ -1048,14 +1051,17 @@ def plot_model(features_pd, labels, predictions,  keys, save_path=None,
                 s = ""
                 log_factor = 1      #skalierungsfaktor falls logarithmische skala
                 if features_pd.shape[1] == 3:
-                    ylabel = r"$\frac{d^3\sigma}{d x_1 d x_2 d \eta} [pb]$"
+                    ylabel = r"$\frac{d^3\sigma}{d x_1 d x_2 d \eta} [\mathrm{pb}]$"
                     if key == "x_1" or key == "x_2":
                         ax_fct.set_yscale("log")
-                        log_factor=2
+                        ax_ratio.set_xscale("log")
+                        legend_loc = "lower left"
+                        text_loc = (0.03, 0.2)
+                        log_factor=10
                         xlabel = "$" + key + "$"
                         s = (r"$x_1$ = " + "{:.2f}".format(features_pd["x_1"][0])) * (key != "x_1")\
                             + (r"$x_2$ = " + "{:.2f}".format(features_pd["x_2"][0])) * (key != "x_2")\
-                            + "\n$\eta$ = " + "{:.2f}".format(features_pd["eta"][1])
+                            + "\n$\eta$  = " + "{:.2f}".format(features_pd["eta"][1])
                     elif key == "eta":
                         xlabel = "$\eta$"
                         s = r"$x_1$ = " + "{:.2f}".format(features_pd["x_1"][0]) + "\n$x_2$ = " + "{:.2f}".format(features_pd["x_2"][1])
@@ -1066,48 +1072,51 @@ def plot_model(features_pd, labels, predictions,  keys, save_path=None,
                             + (r"$x_2$ = " + "{:.2f}".format(features_pd["x_2"][0])) * (key != "x_2")
                 else:
                     if key in {"theta", "Theta"}:
-                        ylabel = r"$\frac{d \sigma}{d \theta}[pb]$"
+                        ylabel = r"$\frac{d \sigma}{d \theta}[\mathrm{pb}]$"
                         xlabel = r"$\theta$"
 
                     if key == "eta":
-                        ylabel = r"$\frac{d \sigma}{d \eta}[pb]$"
+                        ylabel = r"$\frac{d \sigma}{d \eta}[\mathrm{pb}]$"
                 ax_fct.grid(True)
                 if set_ylabel:
                     ylabel = set_ylabel
                 if set_yscale:
                     ax_fct.set_yscale(set_yscale)
                     log_factor = 1
+                #Plot labels ohne nan drin
+                labels_no_nan = plot_labels[~np.isnan(plot_labels)]
                 ax_fct.set_ylabel(ylabel, loc="center", fontsize=15)
-                ax_fct.set_ylim((np.min(plot_labels)-0.05 * np.ptp(plot_labels), np.max(plot_labels) + 0.1 * log_factor * np.ptp(plot_labels))) # ylim so setzen dass Legende hereinpasst
-                ax_fct.text(x=0.025, y=0.95, s=s, bbox=dict(boxstyle="round", facecolor="white", alpha=1, edgecolor="gainsboro"), transform=ax_fct.transAxes)
+                ax_fct.set_ylim((np.min(labels_no_nan)-0.05/(log_factor ** 20) * np.ptp(labels_no_nan), np.max(labels_no_nan) + 0.25 * log_factor * np.ptp(labels_no_nan))) # ylim so setzen dass Legende hereinpasst
+                ax_fct.text(x=text_loc[0], y=text_loc[1], s=s, bbox=dict(boxstyle="round", facecolor="white", alpha=1, edgecolor="gainsboro"), transform=ax_fct.transAxes)
                 if automatic_legend:
                     ax_fct.legend()
                 else:
-                    ax_fct.legend(loc=(0.75, 0.89))
+                    ax_fct.legend(loc=legend_loc)
                 if xticks is not None:
                     ax_fct.set_xticks(xticks)
                     ax_fct.set_xticklabels(xtick_labels, fontdict={'fontsize': 20})
-
-                # TODO plots checken ob das so passt mit der legendenpostion
-                plt.tight_layout()
-                #plt.show()
-
+                if autoscale:
+                    ax_fct.autoscale()
+                if set_xscale:
+                    ax_ratio.set_xscale(set_xscale)
                 #Ratios plotten
                 ratios = dict()
                 ratios_std = dict()
+                predictions_no_nan = dict()
                 for model_name in plot_predictions:
-                    ratios[model_name] = plot_labels/plot_predictions[model_name]
+                    predictions_no_nan[model_name] = plot_predictions[model_name][
+                        ~np.isnan(plot_predictions[model_name])]
+                    ratios[model_name] = labels_no_nan/predictions_no_nan[model_name]
                     #stddev der ratios berechnen, für skala
                     ratios_std[model_name] = np.std(ratios[model_name])
-                print(ratios_std, np.array([*ratios_std.values()]))
                 ratios_std = np.max(np.array([*ratios_std.values()]))
-                print(ratios_std)
-
+                # plot features ohne nan
+                plot_features_no_nan = plot_features[~np.isnan(plot_labels)[:,0]]
                 for i,model_name in enumerate(ratios):
                     if show_ratio[i]:
-                        ax_ratio.scatter(plot_features, ratios[model_name],
-                                         marker=".", s=60, linewidths=1, facecolors=facecolors[i],
-                                         edgecolors=colors[i], alpha=alphas[i])
+                        ax_ratio.scatter(plot_features_no_nan, ratios[model_name],
+                                         marker=".", s=ratio_size, linewidths=1, facecolors=facecolors[i],
+                                         edgecolors=colors[i])
 
                 if key == "x_1" or key == "x_2":
                     xlabel = "$" + key + "$"
@@ -1156,12 +1165,15 @@ def scheduler(epoch, learning_rate, reduction = 0.1):
 
 
 def make_comparison_plot(names, all_losses, min_losses=None, avg_losses=None, losses_errors=None,
-                         save_path=None, comparison=None, colors=None):
+                         save_path=None, comparison=None, colors=None, fontsize=13, autoscale=False):
+    font = {"family": "normal", "size": fontsize}
+    matplotlib.rc("font", **font)
     if colors == None:
         colors = ["C1", "C2", "C3", "C4"]
     x = list(np.arange(len(names)))
     fig, ax = plt.subplots(figsize=(len(x) * 1. + 0.5, 4.8))
-    if type(all_losses[0]) == list or type(all_losses[0]) == tuple:
+    if type(all_losses[0]) in {list, tuple, np.ndarray}:
+        print("hallo")
         for xe, ye in zip(x, all_losses):
             ax.scatter([xe] * len(ye), ye, marker="o", facecolors="None", edgecolors="C0")
     elif type(all_losses[0]) == dict:
@@ -1187,14 +1199,20 @@ def make_comparison_plot(names, all_losses, min_losses=None, avg_losses=None, lo
     ax.set_ylabel("MAPE")
     ax.set_axisbelow(True)
     ax.yaxis.grid(True, color="lightgray")
-    ax.set_xlim(x[0]-0.5, x[-1]+0.5)
+
     ax.set_xticks(x)
     ax.set_xticklabels(names)
     ax.set_xlabel(comparison)
     # negative werte für y lim verhindern
-    if ax.get_ylim()[0] < 0:
+    ylims = ax.get_ylim()
+    if ylims[0] < 0:
         ax.set_ylim(bottom=0)
-    fig.legend()
+        ylims = ax.get_ylim()
+    if autoscale:
+        ax.autoscale()
+    ax.set_xlim(x[0] - 0.5, x[-1] + 0.5)
+    ax.set_ylim(ylims[0], ylims[1] + 0.1 * np.max(min_losses))
+    fig.legend(loc="upper right")
     fig.tight_layout()
     if save_path:
         if not os.path.exists(save_path):
@@ -1202,7 +1220,10 @@ def make_comparison_plot(names, all_losses, min_losses=None, avg_losses=None, lo
         plt.savefig(save_path + str(comparison) + "_comparison.pdf", format="pdf")
 
 
-def make_MC_plot(x, analytic_integral, ml_integral, xlabel=None, ylabel=None, save_path=None, name="", analytic_errors=None, ml_errors=None, scale="linear", ylims=None):
+def make_MC_plot(x, analytic_integral, ml_integral, xlabel=None, ylabel=None, save_path=None, name="",
+                 analytic_errors=None, ml_errors=None, scale="linear", xscale="linear", ylims=None, fontsize=13):
+    font = {"family": "normal", "size": fontsize}
+    matplotlib.rc("font", **font)
     fig, (ax, ax_ratio) = plt.subplots(nrows=2, ncols=1, sharex=True, gridspec_kw={"height_ratios": [3,1], "hspace": 0.05}, figsize=(6.4, 7.2))
     # Integration plotten
     ax.step(x=x, y=analytic_integral,
@@ -1215,6 +1236,7 @@ def make_MC_plot(x, analytic_integral, ml_integral, xlabel=None, ylabel=None, sa
 
     ax.set_ylabel(ylabel, fontsize=15)
     ax.set_yscale(scale)
+    ax.set_xscale(xscale)
     ax.grid(True, color="lightgray")
     ax.legend()
     # ratio plotten
@@ -1240,7 +1262,11 @@ def make_MC_plot(x, analytic_integral, ml_integral, xlabel=None, ylabel=None, sa
 
 def make_reweight_plot(features_pd, labels, predictions,  keys, save_path=None,
                trans_to_pb=True, set_ylabel=None, set_ratio_yscale=None, autoscale_ratio=False, x_cut=True,
-                       yticks_ratio=None, ytick_labels_ratio=None, lower_x_cut=0.05, upper_x_cut=0.15, heigth_ratios=[2.5, 1]):
+                       yticks_ratio=None, ytick_labels_ratio=None, lower_x_cut=0.05, upper_x_cut=0.15,
+                       heigth_ratios=[2.5, 1], fontsize=13, text_loc=(0.34, 0.875), ratio_minus_one=False, use_sci=False,
+                       replace_with_nan=False, use_sci_fct=False):
+    font = {"family": "normal", "size": fontsize}
+    matplotlib.rc("font", **font)
     colors = ["C0", "C2", "C9", "C6", "deeppink"]
     linestyles = ["dashed", "dashdot", "dashed", "dashdot"]
     facecolors = ["C0", "None", "None", "None"]
@@ -1259,10 +1285,18 @@ def make_reweight_plot(features_pd, labels, predictions,  keys, save_path=None,
                 if trans_to_pb:
                     plot_labels = MC.gev_to_pb(plot_labels)
 
+                # eta Werte auf nan setzen
+                if replace_with_nan:
+                    features = features_pd.to_numpy()
+                    features = features[order]
+                    _, nan_cut = MC.cut(features=features, return_cut=True)
+                    plot_labels[~nan_cut] = np.nan
+
                 # x Werte einschärnken um unterschied zu erkennne
                 if key in {"x_1", "x_2"} and x_cut:
                     (plot_features, cut) = MC.x_cut(features=plot_features, return_cut=True, lower_cut=lower_x_cut, upper_cut=upper_x_cut)
                     plot_labels = plot_labels[cut]
+
 
                 for model_name in predictions:
                     plot_predictions[model_name] = \
@@ -1270,8 +1304,11 @@ def make_reweight_plot(features_pd, labels, predictions,  keys, save_path=None,
                     if trans_to_pb:
                         plot_predictions[model_name] = MC.gev_to_pb(
                             plot_predictions[model_name])
-                        if key in {"x_1", "x_2"} and x_cut:
-                            plot_predictions[model_name] = plot_predictions[model_name][cut]
+                    if replace_with_nan:
+                        plot_predictions[model_name][~nan_cut] = np.nan
+                    if key in {"x_1", "x_2"} and x_cut:
+                        plot_predictions[model_name] = plot_predictions[model_name][cut]
+
                 fig, (ax_fct, ax_ratio) = plt.subplots(nrows=2, ncols=1,
                                                        sharex=True,
                                                        gridspec_kw={
@@ -1285,7 +1322,7 @@ def make_reweight_plot(features_pd, labels, predictions,  keys, save_path=None,
                                 linestyle=linestyles[i], alpha=alphas[i])
                 s = ""
                 log_factor = 1  # skalierungsfaktor falls logarithmische skala
-                ylabel = r"$\frac{d^3\sigma}{d x_1 d x_2 d \eta} [pb]$"
+                ylabel = r"$\frac{d^3\sigma}{d x_1 d x_2 d \eta} [\mathrm{pb}]$"
                 if key == "x_1" or key == "x_2":
                     ax_fct.set_yscale("log")
                     ax_fct.set_xlim((lower_x_cut, upper_x_cut))
@@ -1306,34 +1343,34 @@ def make_reweight_plot(features_pd, labels, predictions,  keys, save_path=None,
                 if set_ylabel:
                     ylabel = set_ylabel
                 ax_fct.set_ylabel(ylabel, loc="center", fontsize=15)
-                ax_fct.set_ylim(top=np.max(plot_labels) * (1. + len(predictions.keys())/15) * log_factor)  # ylim so setzen dass Legende hereinpasst
-                ax_fct.text(x=0.025, y=0.9, s=s,
+                #plot labels ohne nan
+                plot_labels_no_nan = plot_labels[~np.isnan(plot_labels)]
+                ax_fct.set_ylim(top=np.max(plot_labels_no_nan) * (1. + len(predictions.keys())/10) * log_factor)  # ylim so setzen dass Legende hereinpasst
+                ax_fct.text(x=text_loc[0], y=text_loc[1], s=s,
                             bbox=dict(boxstyle="round", facecolor="white",
                                       alpha=1, edgecolor="gainsboro"),
                             transform=ax_fct.transAxes)
                 ax_fct.legend()
-                # TODO plots checken ob das so passt mit der legendenpostion
-                plt.tight_layout()
                 # plt.show()
 
                 # Ratios plotten
                 ratios = dict()
                 ratios_std = dict()
                 mean_ratios = dict()
+                plot_predictions_no_nan = dict()
                 for model_name in plot_predictions:
-                    ratios[model_name] = plot_labels/ plot_predictions[
-                        model_name]
-                    print("plot_lables", labels)
-                    print("plot_predictions", predictions[model_name])
-                    print("ratio", ratios[model_name])
+                    plot_predictions_no_nan[model_name] = plot_predictions[model_name][~np.isnan(plot_predictions[model_name])]
+                    ratios[model_name] = plot_labels_no_nan/plot_predictions_no_nan[
+                        model_name] - ratio_minus_one
+
                     # stddev der ratios berechnen, für skala
                     ratios_std[model_name] = np.std(ratios[model_name])
                     mean_ratios[model_name] = np.mean(ratios[model_name])
+                    plot_features_no_nan = plot_features[
+                        ~np.isnan(plot_labels)[:, 0]]
                 for i, model_name in enumerate(ratios):
-                    if np.mean(np.abs(ratios[model_name] - 1)) < 0.05:
-                        print(plot_features)
-                        print(ratios[model_name])
-                        ax_ratio.scatter(plot_features, ratios[model_name][:,0],
+                    if np.mean(np.abs(ratios[model_name]) + ratio_minus_one - 1) < 0.05:
+                        ax_ratio.scatter(plot_features_no_nan, ratios[model_name],
                                          marker=".", s=20, linewidths=0.5,
                                          facecolors=facecolors[i],
                                          edgecolors=colors[i])
@@ -1348,6 +1385,9 @@ def make_reweight_plot(features_pd, labels, predictions,  keys, save_path=None,
                         features_pd["eta"][1])
                 if key == "eta":
                     xlabel = "$\eta$"
+                    ax_ratio.ticklabel_format(axis="x", style="sci",
+                                              scilimits=(0, 0))
+
                     if features_pd.shape[1] == 3:
                         s = r"$x_1$ = " + \
                             "{:.2f}".format(
@@ -1355,7 +1395,10 @@ def make_reweight_plot(features_pd, labels, predictions,  keys, save_path=None,
                             "{:.2f}".format(features_pd["x_2"][1])
                 ax_ratio.yaxis.set_label_coords(-0.125, 0.5)
                 ax_ratio.grid(True)
-                ax_ratio.set_ylabel(r"ratio", loc="center", rotation=90,
+                ratio_y_label = "ratio"
+                if ratio_minus_one:
+                    ratio_y_label = "ratio-$1$"
+                ax_ratio.set_ylabel(ratio_y_label, loc="center", rotation=90,
                                     fontsize=15)
                 ax_ratio.set_xlabel(xlabel, fontsize=15)
                 if set_ratio_yscale:
@@ -1364,16 +1407,16 @@ def make_reweight_plot(features_pd, labels, predictions,  keys, save_path=None,
                     ax_ratio.autoscale()
                 if yticks_ratio:
                     ax_ratio.set_yticks(yticks_ratio)
-                    ax_ratio.set_yticklabels(ytick_labels_ratio)
+                    if ytick_labels_ratio:
+                        ax_ratio.set_yticklabels(ytick_labels_ratio)
                 # prevent scientific notation
-                else:
-                    ax_ratio.ticklabel_format(useOffset=False)
-                mean = np.mean([*mean_ratios.values()])
-                std = np.min([*ratios_std.values()])
+                if use_sci:
+                    ax_ratio.ticklabel_format(axis="y", style="sci", scilimits=(0,0))
+                if use_sci_fct:
+                    if ax_fct.get_yscale() != "log":
+                        ax_fct.ticklabel_format(axis="y", style="sci", scilimits=(0,0))
                 plt.tight_layout()
                 if save_path:
-                    if not os.path.exists(save_path):
-                        os.makedirs(save_path)
                     plt.savefig(save_path + "_" + str(key) + ".pdf", format="pdf")
                 plt.show()
 

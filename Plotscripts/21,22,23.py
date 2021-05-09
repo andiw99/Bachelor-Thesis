@@ -1,10 +1,5 @@
 import pandas as pd
-import numpy as np
-from matplotlib import pyplot as plt
-import ast
-from matplotlib import cm
 import ml
-from tensorflow import keras
 
 #Pfade eingeben
 paths = dict()
@@ -22,14 +17,14 @@ analytic_paths["MMHT eta, x_1 constant"] = "/home/andiw/Documents/Semester 6/Bac
 analytic_paths["MMHT eta, x_2 constant"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Data/MMHT PlottingData/eta_x_2_constant"
 model_paths["CT14nnlo reweighted"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Reweight/Models/RandomSearch_logartihm_false/best_model"
 save_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Plots/finished/"
-name = "reweight_lower_x"
+name = "21,22,23"
 label_name = "WQ"
 
 #modelle laden
 models = dict()
 transformers = dict()
 for model_name in model_paths:
-    models[model_name], transformers[model_name] = ml.load_model_and_transormer(model_path=model_paths[model_name])
+    models[model_name], transformers[model_name] = ml.load_model_and_transformer(model_path=model_paths[model_name])
 
 #Daten einlesen
 data = dict()
@@ -38,9 +33,13 @@ for key,path in paths.items():
         data[key] = pd.read_csv(path)
 
 show_3D_plots = False
+replace_with_nan = True
 
-yticks = [0.9994, 0.9996, 0.9998, 1.0000, 1.0002, 1.0004, 1.0006]
-ytick_labels = ["1-6e-4","1-4e-4", "1-2e-4", "1", "1+2e-4", "1+4e-4", "1+6e-4"]
+yticks = [-0.001, -0.0005, 0, 0.0005, 0.001]
+ytick_labels = ["$10 \cdot 10^{-4}$","$10 \cdot 10^{-4}$", "$10 \cdot 10^{-4}$", "$10 \cdot 10^{-4}$", "$10 \cdot 10^{-4}$"]
+#x_interval = (0.15, 0.31)
+x_interval = (0.05, 0.15)
+text_loc = (0.28, 0.87)
 
 
 #Features und labels unterteilen
@@ -91,8 +90,6 @@ for i,source_dataset in enumerate(source_features.keys()):
 for i,analytic_dataset in enumerate(analytic_features.keys()):
     predictions[analytic_dataset] = predictions.pop(i)
 
-print("predictions", predictions)
-print("analytic_labels", analytic_labels)
 
 #Dictionary mit den Werten anlegen, die jeweils variabel sind im jeweiligen Dataset
 variabel = dict()
@@ -101,4 +98,6 @@ for dataset in predictions:
     keys = ml.get_varying_value(features_pd=analytic_features_pd[dataset])
     ml.make_reweight_plot(features_pd=analytic_features_pd[dataset], labels=analytic_labels[dataset],
                   predictions=predictions[dataset], keys=keys, save_path=save_path + name, trans_to_pb=True,
-                  autoscale_ratio=True, yticks_ratio=yticks, ytick_labels_ratio=ytick_labels)
+                  autoscale_ratio=True, text_loc=text_loc, yticks_ratio=yticks, use_sci=True, ratio_minus_one=True,
+                          replace_with_nan=replace_with_nan, lower_x_cut=x_interval[0], upper_x_cut=x_interval[1], use_sci_fct=True)
+#yticks_ratio=yticks, ytick_labels_ratio=ytick_labels,

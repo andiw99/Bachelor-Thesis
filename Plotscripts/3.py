@@ -72,5 +72,6 @@ for dataset in features:
 for dataset in predictions:
     keys = ml.get_varying_value(features_pd=features_pd[dataset])
     ml.plot_model(features_pd=features_pd[dataset], labels=labels[dataset], predictions=predictions[dataset],
-                  keys=keys, save_path=save_path, trans_to_pb=trans_to_pb, automatic_legend=True, xticks=pi_ticks, xtick_labels=pi_names)
+                  keys=keys, save_path=save_path, trans_to_pb=trans_to_pb, automatic_legend=True, xticks=pi_ticks,
+                  xtick_labels=pi_names, autoscale=True, ratio_size=80)
 

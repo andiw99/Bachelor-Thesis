@@ -21,22 +21,19 @@ def main():
     #testing_data_paths["Full Range + IS"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Partonic/PartonicData/TrainingData10k_ep_0.01_IS/all"
     project_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Models/"
     save_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Plots/finished/"
-    comparison = "Reweight or Transfer from dataset"
+    comparison = ""
     #Zu vergleichende models laden
     model_paths = dict()
     #model_paths["best model "] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Models/Loss_comparison/best_model"
-    model_paths["No Fine Tuning"] = project_path + "transfer_no_tuning"
-    model_paths["No Fine Tuning2"] = project_path + "test_without_fine_tuning"
-    model_paths["Fine Tuning"] = project_path + "transfer_fine_tuning_faster_training"
-    #model_paths["Source Model \n reweighted"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Results/Reweight/"
-    model_paths["Source Model"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Models/best_model"
-    model_paths["Source Model2"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Models/LastRandomSearch/best_model"
-    model_paths["test_model"] = project_path + "test"
+    model_paths["No FT"] = project_path + "no_add_layer_no_fine_tuning"
+    model_paths["FT"] = project_path + "test"
+    model_paths["Source\n rw"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Results/reweight/"
     #model_paths["IS\n10k"] = project_path + "theta_model_full_range_IS_less_data"
 
     #festlegen ob modelle an Datenmengen getestet werden oder die Losses aus config ausgelesen werden
-    from_config = False
+    from_config = True
     use_x_cut = True
+    calc_computing_time = False
 
     config_paths = dict()
     for model in model_paths:
@@ -55,10 +52,10 @@ def main():
     models = dict()
     transformers = dict()
     Predictions = dict()
-
-    for model in model_paths:
-        models[model], transformers[model] = ml.import_model_transformer(
-            model_paths[model])
+    if not from_config or calc_computing_time:
+        for model in model_paths:
+            models[model], transformers[model] = ml.import_model_transformer(
+                model_paths[model])
 
     test_features = dict()
     test_labels = dict()
@@ -84,15 +81,16 @@ def main():
             MAPE_error[model] = float(configs[model]["loss error"][0])
             avg_MAPE[model] = float(configs[model]["avg validation loss"][0])
             all_MAPE[model] = ast.literal_eval(configs[model]["total_losses"][0])
-            training_time[model] = float(configs[model]["training time"][0])
+            #training_time[model] = float(configs[model]["training time"][0])
 
             #Berechnung der Labels timen
-            time_pre_calc = time.time()
-            for dataset in testing_data_paths:
-                Predictions[model] = transformers[model].retransform(models[model](test_features[dataset]))
-                time_post_calc = time.time()
-                time_per_million = ((time_post_calc - time_pre_calc)/(float(tf.size(test_labels[dataset])))) * 1e+6
-            calc_times[model] = time_per_million
+            if calc_computing_time:
+                time_pre_calc = time.time()
+                for dataset in testing_data_paths:
+                    Predictions[model] = transformers[model].retransform(models[model](test_features[dataset]))
+                    time_post_calc = time.time()
+                    time_per_million = ((time_post_calc - time_pre_calc)/(float(tf.size(test_labels[dataset])))) * 1e+6
+                calc_times[model] = time_per_million
 
     else:
         # Validation Loss berechnen, am besten MSE und MAPE
