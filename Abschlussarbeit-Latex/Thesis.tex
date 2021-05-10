@@ -359,6 +359,8 @@ Die \textbf{Batch-Größe} beschreibt, wie viele Objekte ein einem Durchgang vom
 Die Anzahl \textbf{Trainingsepochen} beschreibt, wie oft während des Lernvorgangs über die Trainingsdaten gegangen wird. Die Präzision eines neuronalen Netzes konvergiert idealerweise, daher legt man sich in der Praxis gerne eine Abbruchbedingung als minimale Verbesserung zwischen Epochen fest. \\
 \newline
 Hat man Features, deren numerische Reichweite stark auseinandergeht, kann es sich lohnen die Eingabewert zu \textbf{normalisieren}. Das bedeutet, alle Features auf ein festgelegtes Intervall, zum Beispiel $I=[1,0]$ anzupassen. So wird verhindert, dass einem Feature mit großem numerischen Wert nicht zu viel Bedeutung zugeordnet wird.\\
+\newline
+Das Finden der besten Hyperparameter ist ein weiteres Optimierungsproblem, das abgesehen von der Suche der besten Gewichte gelöst werden muss. Für die Methoden des Grid- oder Random-Search wird ein Gitter an Hyperparametern erstetllt, die variiert werden sollen und im ersten Fall jeder dieser Gitterpunkte, bzw. im zweiten nur zufällige Gitterpunkte auch trainiert. Fortgeschrittenere Methoden der Hyperparameteroptimierung wie Bayesian-Search oder Hyperband, sollen in kürzerer Zeit bessere Parameter finden. Da es, wie wir gesehen haben, einige Hyperparameter gibt, die es zu optimieren gilt, ist die Hyperparameteroptimierung in der Praxis häufig am aufwändigsten.
 
 \section{Transfer-Learning}
 Um die hohen Zeit- und Rechenkosten des Trainings zu verringern, kann man an ähnlichen Problemen bereits trainierte Modelle an sein eigenes Problem anpassen. Außerdem kann mit dem sogenannten \textbf{Transfer-Learning}, die Menge an Daten, die benötigt wird, um ein brauchbares Modell zu erhalten, signifikant verringert werden. \\
@@ -387,38 +389,36 @@ Das Fine-Tuning kann dabei essentiell sein, um nocheinmal bedeutende Verbesserun
 
 
 \section{Implementierung mit Keras und Tensorflow}
-Die Implementierung des ML-Algorithmus wird in dieser Arbeit mit der open-source Python-Bibliothek TensorFlow und Keras stattfinden. Keras fungiert hierbei als eine high-level API für TensorFlow. Keras ist hierbei schon so weit entwickelt, dass man gut funktionierende ML-Algorithmen in wenigen Zeilen schreiben kann. Man muss prinzipiell nur die Architektur des neuronalen Netzes eintragen, Werte für Optimizer und Loss festlegen und die Trainingsdaten in der passenden Form präparieren. Es ist mit Keras jedoch auch möglich, auf eine tieferes Level zu gehen und die Layer-Klassen selbst zu schreiben. So ist man flexibler und kann direkt nachvollziehen, was in in jeder Schicht passiert. Entscheidet man sich Custom-Layer zu benutzen, wird auch der Trainingsalgorithmus selbst geschrieben. Selbst wenn man sich jedoch auf der Low-Level-Ebene von Keras befindet, kann man trotzdem noch von den Optimizern und Kostenfunktionen, die bereits in TensorFlow eingebunden sind, profitieren. Ein Beispiel für einen einfachen ML-Algorithmus mit der high-level API Keras ist in \textit{\autoref{label}} gezeigt.
-Die Schwierigkeit besteht also primär nicht darin, ein tiefes neuronales Netzwerk zu bauen und zu trainieren, sondern im Tuning der Hyperparameter. Diese müssen, wie bereits erwähnt, vom Programmierer im vornherein festgelegt werden und können nicht vom Algotihmus erlernt werden. Es gibt leider keine Methode, immer die perfekten Hyperparameter zu finden, über die Zeit haben sich jedoch die Möglichkeiten der Grid-Search und des Random-Search durchgesetzt. Bei ersterem wird hierbei systematisch immer ein Hyperparameter in einem festgelegten Intervall variiert und der Lernvorgang durchgeführt. Genauso variiert man alle Hyperparameter, die man Anpassen möchte und erstellt so ein "Gitter". Am Ende wählt man die Hyperparameter, die das beste Ergebnis geliefert haben. Da es vergleichsweise viele Hyperparameter gibt, die man festlegen muss, kann das schnell dazu führen, dass der Trainingsvorgang sehr oft durchgeführt werden muss und damit die Suche sehr rechenaufwändig wird. In der Praxis wird also häufig der Random-Search bevorzugt, bei dem alle Hyperparameter vor jedem Durchlauf einen zufälligen Wert aus einem vorher festgesetzten Pool annehmen. Man sucht nun so lange, bis man ein zufriedenstellendes Ergebnis erreicht hat.       
-
+Die Implementierung des ML-Algorithmus wird in dieser Arbeit mit der open-source Python-Bibliothek TensorFlow und Keras stattfinden. Keras fungiert hierbei als eine high-level API für TensorFlow. Das Aufsetzen eines Netzes wird mit den Modulen sehr simpel und sowohl Loss-Funktion, Optimizer als auch Initialisierungen sind bereits vorgeschrieben. Man kann vorgefertigte Layer anpassen, als auch Layer und Trainingsroutine selbst schreiben, wobei die vorgefertigten Layer über einige Methoden verfügen, die den Umgang mit dem Netz komfortabler machen und das Speichern und Laden vereinfachen. 
 \section{Monte-Carlo-Integration}
-In der Physik, insbesondere der Teilchenphysik, ist es oft nötig, die Integrale von komplexen Funktionen auszuwerten. So auch in unserem Fall, wenn wir den totalen Wirkungsquerschnitt aus den differentiellen erhalten wollen. Oft genug, sind diese Integrale nicht mehr analytisch lösbar und es bedarf numerischen Methoden, um ein Ergebnis zu erhalten. Herkömmliche Integrationsmethoden weisen dabei, bezogen auf ihre Konvergenz, generell eine Abhängigkeit der Dimensionalität des Integrals auf. Hier kommt der Große Vorteil der Monte-Carlo-Integration (MC-Integration) ins Spiel, denn diese Methode konvergiert immer mit einer Geschwindigkeit von $\frac{1}{N} $, wobei $N$ die Anzahl an ausgewerteten Funktionspunkten ist. Monte-Carlo-Methoden machen hierbei Gebrauch von dem Gesetz der Großen Zahlen und lösen die Integrale mittels Wahrscheinlichkeitstheorie.
+Monte-Carlo-Integration unterscheidet sich von anderen numerischen Integrationsmethoden vor allem dadurch, dass die Konvergenz der Integration keine Abhängigkeit von der Dimensionalität des Integrals aufweist. Monte-Carlo-Methoden konvergieren hierbei immer mit $\propto \frac{1}{\sqrt{N}} $, wobei $N$ die Anzahl der ausgewerteten Phasenraumpunkte ist. Wir machen hierbei Gebrauch vom Gesetz der Großen Zahlen und lösen die Integrale mittels Wahrscheinlichkeitstheorie. \\
 \newline
-\newline
-Wir betrachten eine Funktion $f: \Omega \subseteq \mathbb{R}^n \rightarrow \mathbb{R}, x \mapsto f(x)$ und definieren ihren Erwartungswert $\mu$ auf $\Omega$ als \textit{\autoref{text}}.
+Wir betrachten eine Funktion $f: \Omega \subseteq \mathbb{R}^n \rightarrow \mathbb{R}, \mathbf{x} \mapsto f(\mathbf{x})$ und definieren ihren Erwartungswert $\left\langle f(\mathbf{X})\right\rangle $ auf $\Omega$, wobei $\mathbf{X}$ uniform auf $\Omega$ gezogen wird.
 \begin{equation}
-\left\langle f\right\rangle  = \frac{1}{\norm{\Omega}}\int_{\Omega} f(x) \text{d}x 
+\left\langle f(\mathbf{X})\right\rangle  = \left\langle f\right\rangle  = \frac{1}{\norm{\Omega}}\int_{\Omega} f(\mathbf{x}) \text{d}\mathbf{x} 
 \end{equation}
 Wir wenden nun das Gesetz der Großen Zahlen an und finden somit einen Schätzer für den Erwartungswert von $f$ (\textit{\autoref{text}}).
 \begin{equation}
-\tilde{\left\langle f \right\rangle } = \frac{1}{N} \sum_{i=1}^{N} f(x_i) \quad \text{mit} \quad \lim_{N\rightarrow \infty} \frac{1}{N} \sum_{i=1}^{N} f(x_i) = \mu(f)
+\tilde{\left\langle f \right\rangle } = \frac{1}{N} \sum_{i=1}^{N} f(\mathbf{x}_i) \quad \text{mit} \quad \lim_{N\rightarrow \infty} \frac{1}{N} \sum_{i=1}^{N} f(\mathbf{x}_i) = \left\langle f \right\rangle
 \end{equation}
-Legen wir also ein unendlich dichtes Gitter und evaluieren $f$ an jeder Stelle des Gitters, können wir einen exakten Ausdruck für das Integral aus \textit{\autoref{text}} finden. Da dies praktisch nicht möglich ist, wird oft der Schätzer als genäherten Wert für den Erwartungswert $\tilde{\mu} \approx \mu$ verwendet und das Integral näherungsweise berechnet. In MC-Simulationen werden nun die Funktionswerte $x_i$ zufällig gezogen, da die Anzahl an benötigten Punkten für ein dicht liegendes Gitter exponentiell mit der Dimensionalität des Integrals ansteigt. Wir können die Geschwindigkeit der Konvergenz unserer Näherung erhöhen, wenn wir in \textit{\autoref{ref}} eine produktive Eins in Form einer Wahrscheinlichkeitsdichte $\rho: \Omega \subseteq \mathbb{R}^n \to \mathbb{R}_{\geq 0}, x \mapsto \rho(x)$ mit $\int_{\Omega} \rho(x) \text{d}x = 1$ einführen (\textit{\autoref{text}})
+Da wir den Erwartungswert nicht exakt berechnen können, weil es nicht möglich ist $f$ an unendlich vielen Punkten zu evaluieren, verwenden wir, dass der Schätzer gegen den Erwartungswert konvergiert und nähern $ \tilde{\left\langle f \right\rangle } \approx \left\langle f \right\rangle$. In Monte-Carlo-Integrationen können wir nun die $\mathbf{x}_i$ zufällig ziehen, da wir nicht mehr auf Stützstellen oder ähnliches angewiesen sind und verlieren damit die Abhängigkeit von der Dimensionalität des Integrals. Wir können die Geschwindigkeit der Konvergenz unserer Näherung erhöhen, wenn wir in \textit{\autoref{ref}} eine produktive Eins in Form einer Wahrscheinlichkeitsdichte $\rho: \Omega \subseteq \mathbb{R}^n \to \mathbb{R}_{\geq 0}, x \mapsto \rho(x)$ mit $\int_{\Omega} \rho(x) \text{d}x = 1$ einführen (\textit{\autoref{text}})
 \begin{equation}
-I = \int_{\Omega} f(x) \text{d}x =  \int_{\Omega} \frac{f(x)}{\rho(x)}\rho(x) \text{d}x = \mu_{\rho}\left(\frac{f}{\rho}\right)
+I = \int_{\Omega} f(\mathbf{x}) \text{d}x =  \int_{\Omega} \frac{f(\mathbf{x})}{\rho(\mathbf{x})}\rho(\mathbf{x}) \text{d}\mathbf{x} = \left\langle \left(\frac{f}{\rho}\right) \right\rangle_{\rho} 
 \end{equation}
-Dabei stellt $\mu_{\rho}\left(\frac{f}{\rho}\right)$ den Erwartungswert von $\frac{f}{q}$ unter der Bedingung dar, dass die $x_i$ nach der Wahrscheinlichkeitsverteilung $\rho(x)$ gezogen werden. Der Schätzer ergibt sich dann zu \textit{\autoref{text}}.
+Dabei stellt $\left\langle \left(\frac{f}{\rho}\right) \right\rangle_{\rho}$  den Erwartungswert von $\frac{f}{q}$ unter der Bedingung dar, dass die $\mathbf{x}_i$ nach der Wahrscheinlichkeitsverteilung $\rho(\mathbf{x})$ gezogen werden. Der Schätzer ergibt sich dann zu \textit{\autoref{text}}.
 \begin{equation}
-I \approx \tilde{\mu}_{\rho}\left(\frac{f}{\rho}\right) = \frac{1}{N}\sum_{i=1}^{N}\frac{f(x_i)}{\rho(x_i)}
+I \approx \tilde{\left\langle \left(\frac{f}{\rho}\right) \right\rangle}_{\rho}  = \frac{1}{N}\sum_{i=1}^{N}\frac{f(\mathbf{x}_i)}{\rho(\mathbf{x}_i)}
 \end{equation}
 %TODO Notation für Schätzer, Erwartungswert etc klären
 Die Konvergenz der MC-Simulation ist am Schnellsten, wenn sich die Varianz von \textit{\autoref{text}} minimiert. Die Varianz ist gegeben durch \textit{\autoref{text}}
 \begin{equation}
-\text{Var}\left(\frac{f}{\rho}\right) = \left\langle\left(\frac{f}{\rho} - \left\langle \frac{f}{\rho}\right\rangle \right)^2 \right\rangle = \left\langle \left(\frac{f}{\rho}\right)^2 \right\rangle - \left\langle\frac{f}{\rho} \right\rangle^2 = \frac{1}{N} \sum_{i=1}^{N}\left(\frac{f(x_i)}{\rho(x_i)}\right)^2 - I^2
+\text{Var}\left(\frac{f}{\rho}\right) = \left\langle\left(\frac{f}{\rho} - \left\langle \frac{f}{\rho}\right\rangle \right)^2 \right\rangle = \left\langle \left(\frac{f}{\rho}\right)^2 \right\rangle - \left\langle\frac{f}{\rho} \right\rangle^2 \approx \frac{1}{N} \sum_{i=1}^{N}\left(\frac{f(\mathbf{x}_i)}{\rho(\mathbf{x}_i)}\right)^2 - I^2
 \end{equation}
-Die Varianz minimiert sich also, wenn jeder Summand aus \textit{\autoref{text}} gleich groß ist. Der Vorgang die Wahrscheinlichkeitsdichte $\rho$ an die Form unserer zu integrierenden Funktion $f$ anzupassen, nennt man \textbf{Importance Sampling}. Hierbei zieht man absichtlich die $x_i$ mit höheren Wahrscheinlichkeiten aus den Regionen, in denen auch $f$ den größten Beitrag liefert. 
-\newline
-\newline
-Wir werden im Folgenden simple Monte-Carlo-Methoden und das Importance Sampling verwenden, um aus unseren differentiellen Wirkungsquerschnitten die totalen Wirkungsquerschnitte zu erhalten. Man kann die Varianz und damit die Konvergenz der Simulation noch weiter verbessern, indem man beispielsweise das sogenannte \textbf{Stratified Sampling} mit dem Importance Sampling kombiniert. Beim Stratified Sampling wird $\Omega$ in $l$ Teilmengen unterteilt und aus jeder Teilmenge eine festgelegte Anzahl $n$ an $x_i$ gezogen. Der Effekt des Stratified Sampling ist am Größten, wenn jede Teilmenge die gleiche Varianz liefert.   
+Die Varianz minimiert sich also, wenn jeder Summand aus \textit{\autoref{text}} gleich groß ist. Der Vorgang die Wahrscheinlichkeitsdichte $\rho$ an die Form unserer zu integrierenden Funktion $f$ anzupassen, nennt man \textbf{Importance Sampling}. Hierbei zieht man absichtlich die $\mathbf{x}_i$ mit höheren Wahrscheinlichkeiten aus den Regionen, in denen auch $f$ den größten Beitrag liefert. Die Unsicherheit auf die Integration ergibt sich aus der Standardabweichung des Mittelwerts sprich:
+\begin{equation}
+	\sigma_{\left\langle \frac{f}{\rho}\right\rangle} = \frac{1}{\sqrt{N-1}} \cdot \sqrt{\text{Var}\left(\frac{f}{\rho}\right)}
+\end{equation}
+Wir werden im Folgenden simple Monte-Carlo-Methoden und das Importance Sampling verwenden, um aus unseren differentiellen Wirkungsquerschnitten die totalen Wirkungsquerschnitte zu erhalten.   
 
 
 \chapter{Anwendung von Maschinellem auf den Diphoton Prozess}
@@ -924,9 +924,12 @@ Abgesehen von den hier untersuchten Verwendungsmöglichkeiten gibt es noch unzä
 		Units & Neuronen, Grundbaustein des DNN \\
 		Nodes & Neuronen, Grundbaustein des DNN \\
 		Layer & Schicht von Neuronen \\
+		MSE & Mean-Squared-Error, mittlere quadratische Abweichung \\
+		MAE & Mean-Absolute-Error, mittlere absolute Abweichung \\
+		MAPE & Mean-Absolute-Percentage-Error\\
 		&\\
 	\end{tabular}
-	\caption{Häufig genutzte Abkürzungen}
+	\caption{Häufig genutzte Abkürzungen und Fachvokabular}
 \end{table}
 
 \section{Grafiken}
