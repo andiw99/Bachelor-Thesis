@@ -35,7 +35,8 @@ for model_name in model_paths:
 reweight_model, reweight_transformer = ml.load_model_and_transformer(model_path=reweight_path)
 
 show_3D_plots = False
-use_cut = True
+use_cut = False
+replace_with_nan = True
 loss_function = keras.losses.MeanAbsoluteError(reduction=keras.losses.Reduction.NONE)
 
 #In Features und Labels unterteilen
@@ -71,6 +72,6 @@ for dataset in features:
 #Jetzt plotten irgendwie
 for dataset in predictions:
     keys = ml.get_varying_value(features_pd=features_pd[dataset])
-    ml.make_reweight_plot(features_pd=features_pd[dataset], labels=labels[dataset], predictions=predictions[dataset],
-                  keys=keys, save_path=save_path, x_cut=True, lower_x_cut=0.15, upper_x_cut=0.30, heigth_ratios=[2,1])
+    ml.make_reweight_plot(features_pd=features_pd[dataset], labels=labels[dataset], predictions=predictions[dataset], replace_with_nan=replace_with_nan,
+                  keys=keys, save_path=save_path, x_cut=True, lower_x_cut=0.15, upper_x_cut=0.31, heigth_ratios=[2,1],text_loc=(0.31, 0.87))
 

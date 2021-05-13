@@ -11,7 +11,7 @@ abstract=true, % Abstract verwenden
 twoside, % Zweiseitig
 captions=tableheading, % Tabellenüberschriften mit richtigem Abstand
 BCOR=10mm, % TODO: Bindekorrektur, muss je nach Bindung angepasst werden
-%draft % TODO: Entwurfsmodus am Ende entfernen
+parskip=half,%draft % TODO: Entwurfsmodus am Ende entfernen
 ]{scrreprt}
 
 \usepackage{ifluatex} % Paket, um Vorlage für Lua- und pdfLaTeX zu verwenden
@@ -42,8 +42,11 @@ table-number-alignment=center, % Zahlen in Tabellen zentrieren (mit Option S)
 
 \usepackage{graphicx} % Einbinden von Grafiken
 \usepackage{wrapfig}
+\usepackage{float}
 \usepackage{pdfpages} % Einbinden von PDF-Grafiken
+\usepackage{pdflscape}% Querformat
 \usepackage{booktabs} % schöne Tabellen mit \toprule, \midrule, \bottomrule
+\usepackage{layouts}
 \usepackage{multicol}
 \usepackage{multirow} % mehrzeilige Zellen
 \usepackage{csquotes} % Anführungszeichen mit \enquote
@@ -72,7 +75,7 @@ biblabel=brackets % Verweise als „[1]“
 \usepackage{physics} % Umgebungen/Befehle für Physik
 \usepackage{cancel}
 
-\usepackage{caption} % Anpassung der Bildunterschriften, Tabellenüberschriften
+\usepackage[justification=centering]{caption} % Anpassung der Bildunterschriften, Tabellenüberschriften
 \usepackage{subcaption} % mehrere Unterabbilungen in einer Abbildung, auch Tabellen
 
 
