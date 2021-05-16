@@ -1203,6 +1203,16 @@ def make_comparison_plot(names, all_losses, min_losses=None, avg_losses=None, lo
     ax.set_xticks(x)
     ax.set_xticklabels(names)
     ax.set_xlabel(comparison)
+    if comparison == "Data Transformations":
+        s = "Base 10: Logarithmus zur Basis 10\n" \
+            "FN: Feature-Normalization\n" \
+            "LN: Label-Normalization\n" \
+            "Log: Nur Scaling + Logarithmus\n" \
+            "No Log: Nur Scaling"
+        ax.annotate(s, xy=(0, 1), xytext=(10,-80), xycoords="axes fraction", textcoords="offset points",
+                    bbox=dict(boxstyle="round", facecolor="white", alpha=1,
+                              edgecolor="gainsboro"),
+                    transform=ax.transAxes)
     # negative werte für y lim verhindern
     ylims = ax.get_ylim()
     if ylims[0] < 0:

@@ -7,8 +7,9 @@
  liststotoc,                % Abbildungsverz. im Inhaltsverz. eintragen
  listsleft,                 % Abbildungsverz. an der längsten Nummer ausrichten
  pointlessnumbers,          % kein Punkt nach Überschriftsnummerierung
- cleardoublepage=empty      % Vakatseiten ohne Paginierung
-]{scrbook}
+ cleardoublepage=empty,     % Vakatseiten ohne Paginierung
+ parskip=half,				% Leerzeile als absatz
+]{scrreprt}
 \setlength\parindent{0em}
 
 % Kodierung, Schrift und Sprache auswählen
@@ -38,7 +39,7 @@
 % Darstellung von Fließumgebungen
 \usepackage{flafter,afterpage}
 \usepackage[section]{placeins}
-\usepackage[margin=8mm,font=small,labelfont=bf,format=plain]{caption}
+\usepackage[margin=8mm,font=small,labelfont=bf,format=plain, justification=centering]{caption}
 \usepackage[margin=8mm,font=small,labelfont=bf,format=plain]{subcaption}
 
 \numberwithin{equation}{chapter}
@@ -51,4 +52,4 @@
 % Dieses Paket liefert den Blindtext, der als Platzhalter in den Beispieldateien steht.
 % Das kannst Du also entfernen, wenn Du den Blindtext nicht mehr brauchst.
 \usepackage{lipsum}
-\usepackage{hyperref}
+\usepackage[hidelinks]{hyperref}

@@ -36,7 +36,7 @@ def main():
     loss_name = "Source_loss"
     project_name = ""
 
-    read_name = "Best Parameters" #"best_guess_important_range" #
+    read_name = "Exponential-Activation" #"best_guess_important_range" #
     label_name = "WQ"
     read_path =project_path + project_name + read_name
     transferred_transformer = None
@@ -72,7 +72,7 @@ def main():
     loss_fn = keras.losses.MeanAbsoluteError()
     optimizer = keras.optimizers.Adam
     print("optimizer")
-    hidden_activation = tf.nn.leaky_relu
+    hidden_activation = keras.activations.relu
     output_activation = ml.LinearActiavtion()
     kernel_initializer = tf.keras.initializers.HeNormal()
     bias_initializer = tf.keras.initializers.Zeros()
@@ -84,12 +84,12 @@ def main():
     min_lr = 5e-8
     dropout = False
     dropout_rate = 0.1
-    scaling_bool = True
-    logarithm = True
-    base10 = True
+    scaling_bool = False
+    logarithm = False
+    base10 = False
     shift = False
     label_normalization = False
-    feature_normalization = True
+    feature_normalization = False
     feature_rescaling= False
 
     #ggf Losses einlesen

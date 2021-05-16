@@ -42,7 +42,7 @@
 %\input{befehle}
 \captionsetup{format=plain}
 \addto\captionsngerman{\renewcommand{\figurename}{Abb.}}
-%\addto\captionsngerman{\renewcommand{\equationautorefname}{Gleichung}}
+\addto\captionsngerman{\renewcommand{\equationautorefname}{Gl.}}
 %\addto\captionsngerman{\renewcommand{\autoref}[1]{\def\equationautorefname{Gleichung}\orgautoref{#1}}}
 
 
@@ -190,12 +190,12 @@ Per Kettenregel lässt sich der differentielle Wirkungsquerschnitt in Abhängigk
 \derivative{\sigma}{\eta} =\derivative{\theta}{\eta}\derivative{\sigma}{\theta} =  \frac{Q_q^4e^4}{48\pi s}(1+\tanh^2(\eta))~.
 \end{equation}
 \section{Hadronischer Diphoton Prozess}
-Aufgrund des Confinement kommen Quarks nicht als freie Teilchen vor, sodass lediglich der hadronische Prozess $pp \rightarrow \gamma \gamma$ beobachtet werden kann.  Die Protonen 
+Aufgrund des Confinement kommen Quarks nicht als freie Teilchen vor, sodass lediglich der hadronische Prozess $pp \rightarrow \gamma \gamma$ beobachtet werden kann.  Die Protonen besitzen hierbei
 \begin{wrapfigure}{r}{0.35\textwidth}
 	\includegraphics[width=45mm]{graphics/Kinematik}
 	\caption{Kinematik der Stoßprozesse im Labor- und Schwerpunktssystem}
 \end{wrapfigure}
-besitzen hierbei zwei up-Quarks und ein down-Quark als Valenzquarks, sowie verschiedene Quark-Antiquark-Paare als Seequarks. Prallen zwei Photonen in einem Beschleuniger, beispielsweise dem $\texttt{LHC}$ zusammen, mit hohen Energien aufeinander, wird die Substruktur des Protons aufgelöst und die Konstituenten des Hadrons können miteinander interagieren. Bei diesen Interaktionen können die Quarks dann als quasi-freie Teilchen betrachtet werden.
+ zwei up-Quarks und ein down-Quark als Valenzquarks, sowie verschiedene Quark-Antiquark-Paare als Seequarks. Prallen zwei Photonen in einem Beschleuniger, beispielsweise dem $\texttt{LHC}$ zusammen, mit hohen Energien aufeinander, wird die Substruktur des Protons aufgelöst und die Konstituenten des Hadrons können miteinander interagieren. Bei diesen Interaktionen können die Quarks dann als quasi-freie Teilchen betrachtet werden.
 
 Das Schwerpunktsystem der Quarks unterscheidet sich im Allgemeinen vom Schwerpunktsystem der Protonen, welches im Folgenden als Laborsystem bezeichnet wird. Der Impulsbruchteil eines Quarks innerhalb eines Hadrons ist nicht fest definiert, sodass ihm zunächst einen unbestimmten Bruchteil $\xi$ des Gesamtimpulses zugeordnet wird. Das Proton wird nun in einem System betrachtet, indem es eine sehr hohe Energie  $E \gg m_p$ besitzt, sodass seine Ruhemasse vernachlässigt werden und sein Vierervektor als $\textbf{p}_p = (E, 0, 0, E)$ geschrieben werden kann. Im vorliegenden System können die Transversalimpulse der Partonen vernachlässigt werden, sodass ihr Vierervektor geschrieben werden kann als:
 \begin{equation}
@@ -449,13 +449,13 @@ Der Wirkungsquerschnitt in Abhängigkeit von $\theta$ unterscheidet sich vom vor
 
 Es fällt auf, dass die Architektur des Modells um ein vielfaches komplizierter ist, als die des Modells für $\derivative{\sigma}{\eta}$. Einerseits ist dies aufgrund der Polstellen zu erwarten und andererseits darin begründet, dass komplexere Modelle Probleme generell präziser lösen können und daher aus der Suche hervorgehen. Die Performance des Modells ist in \textit{}\autoref{label} gezeigt. Die Präzision ist trotz der komplizierteren Funktion mit \textit{\autoref{text}} vergleichbar. Durch den Random-Search konnte ein passendes Modell gefunden werden. %TODO Netz mit gleichen Hyperparametern wie eta
 
-Es werden zwei weitere Modelle mit den gleichen Hyperparametern auf einem Intervall $[\epsilon', \pi-\epsilon']$ mit $\epsilon' < \epsilon$ trainiert, wobei die Trainingsdaten des einen Modells nach der Verteilung \textit{\autoref{label}}(\textit{Importance Sampling(IS)}) generiert sind, um die Leistung der drei Modelle zu vergleichen.
-
+Es werden zwei weitere Modelle mit den gleichen Hyperparametern auf einem Intervall $[\epsilon', \pi-\epsilon']$ mit $\epsilon' < \epsilon$ trainiert, wobei die Trainingsdaten des einen Modells nach der Verteilung \textit{\autoref{label}}(\textit{Importance Sampling(IS)}) generiert sind, um die Leistung der drei Modelle zu vergleichen. 
 \begin{wrapfigure}{r}{0.5\textwidth}
 	\centering
 	\includegraphics[width=6cm]{graphics/4}
 	\caption{simples Importance Sampling, das die analytische Funktion annähern soll hier verweis auf Funktion in anhang}
 \end{wrapfigure}
+
 Die Vergleiche sind in \textit{\autoref{text}} und in \textit{\autoref{text}} für $\epsilon' = 0.01$ gezeigt. Wie zu erwarten weicht das Modell, das auf dem Intervall $[\epsilon, \pi-\epsilon]$ trainiert wurde, außerhalb seines Trainingsintervalls stark von der analytischen Funktion ab. Es trifft die Steigung der analytische Funktion am Startpunkt der Extrapolation, höhere Ableitungen vernachlässigt das Modell jedoch. Aufgrund ihres größeren Trainingsintervalls, zeigen die beiden anderen Modelle akzeptable Leistung auch nahe an den Polstellen. In \textit{\autoref{text}} kann man an einigen Stellen am Verhältnis sehen, dass das mit importance gesampelten Trainingsdaten trainierte Netz an den Polstellen besser und im Zentrum schlechter angepasst ist. In \textit{\autoref{text}} a) ist der Definitionsbereich näher an die Polstelle gelegt, um den Verbesserung des IS-gesampelten Modells besser aufzulösen. Anhand von \textit{\autoref{text}} b) wird deutlich, dass der Effekt noch größer ist, wenn keine Überfülle an Trainingsdaten vorhanden ist. Ist also der Umfang an verfügbaren Trainingsdaten klein oder wenig Rechenleistung vorhanden, kann auf Importance Sampling zurückgegriffen werden, um Modelle mit Fokus auf wichtige Bereiche zu trainieren. Dabei ist zu beachten, dass hier ein Kompromiss zwischen Verlässlichkeit nahe der Polstelle und Verlässlichkeit im Zentrum des Definitionsbereiches eingegangen wird.
 
 In \textit{\autoref{text}} sind noch einmal der MAPE (Mean-Absolute-Percentage-Error) der verschiedenen Modelle für verschiendene Testdatensets gezeigt. Hier wird erneut deutlich, dass das Importance Sampling vor allem nützlich ist, wenn Bereiche mit hohen Funktionswerten besonders wichtig sind. Bei der Berechnung des totalen Wirkungsquerschnittes aus dem differentiellen Wirkungsquerschnitt ist genau dies der Fall.
