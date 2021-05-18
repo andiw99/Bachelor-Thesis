@@ -983,8 +983,8 @@ def get_varying_value(features_pd):
 def plot_model(features_pd, labels, predictions,  keys, save_path=None,
                trans_to_pb=True, set_ylabel=None, set_ratio_yscale=None,
                autoscale_ratio=False, autoscale=False, set_yscale=None, set_xscale=None, automatic_legend=False,
-               xticks=None, xtick_labels=None, colors=None, show_ratio=None,
-               text_loc=(0.025, 0.95), fontsize=13, legend_loc="upper right", ratio_size=10):
+               xticks=None, xtick_labels=None, colors=None, show_ratio=None, ratio_minus_one=False, use_sci=False,
+               text_loc=(0.025, 0.95), fontsize=13, legend_loc="upper right", ratio_size=10, text_loc_log=(0.03, 0.2)):
     font = {"family": "normal", "size": fontsize}
     matplotlib.rc("font", **font)
     if colors == None:
@@ -1056,7 +1056,7 @@ def plot_model(features_pd, labels, predictions,  keys, save_path=None,
                         ax_fct.set_yscale("log")
                         ax_ratio.set_xscale("log")
                         legend_loc = "lower left"
-                        text_loc = (0.03, 0.2)
+                        text_loc = text_loc_log
                         log_factor=10
                         xlabel = "$" + key + "$"
                         s = (r"$x_1$ = " + "{:.2f}".format(features_pd["x_1"][0])) * (key != "x_1")\
@@ -1106,7 +1106,7 @@ def plot_model(features_pd, labels, predictions,  keys, save_path=None,
                 for model_name in plot_predictions:
                     predictions_no_nan[model_name] = plot_predictions[model_name][
                         ~np.isnan(plot_predictions[model_name])]
-                    ratios[model_name] = labels_no_nan/predictions_no_nan[model_name]
+                    ratios[model_name] = labels_no_nan/predictions_no_nan[model_name] - ratio_minus_one
                     #stddev der ratios berechnen, für skala
                     ratios_std[model_name] = np.std(ratios[model_name])
                 ratios_std = np.max(np.array([*ratios_std.values()]))
@@ -1126,7 +1126,10 @@ def plot_model(features_pd, labels, predictions,  keys, save_path=None,
 
                 ax_ratio.yaxis.set_label_coords(-0.125,0.5)
                 ax_ratio.grid(True)
-                ax_ratio.set_ylabel(r"ratio", loc="center", rotation=90, fontsize=15)
+                ratio_label = r"ratio"
+                if ratio_minus_one:
+                    ratio_label = r"ratio-1"
+                ax_ratio.set_ylabel(ratio_label, loc="center", rotation=90, fontsize=15)
                 if ratios_std > 0.05:
                     ax_ratio.set_yscale("log")
                     ax_ratio.set_ylim(1-0.05, 1+0.05)
@@ -1134,8 +1137,9 @@ def plot_model(features_pd, labels, predictions,  keys, save_path=None,
                     ax_ratio.set_yticklabels(np.array([0.960, 0.980, 1.000, 1.020, 1.040]))
                 else:
                     try:
-                        ax_ratio.set_ylim(np.mean(ratios)-4*ratios_std, np.mean(ratios) + 4*ratios_std)
+                        ax_ratio.set_ylim(np.mean(np.array([*ratios.values()]))-5*ratios_std, np.mean(np.array([*ratios.values()])) + 6*ratios_std)
                     except:
+
                         ax_ratio.set_ylim(1 - 4 * ratios_std,
                                           1 + 4 * ratios_std)
                 ax_ratio.set_xlabel(xlabel, fontsize=15)
@@ -1143,6 +1147,8 @@ def plot_model(features_pd, labels, predictions,  keys, save_path=None,
                     ax_ratio.set_yscale(set_ratio_yscale)
                 if autoscale_ratio:
                     ax_ratio.autoscale()
+                if use_sci:
+                    ax_ratio.ticklabel_format(axis="y", style="sci", scilimits=(0,0))
                 # prevent scientific notation
                 # ax_ratio.ticklabel_format(useOffset=False)
                 """

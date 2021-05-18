@@ -49,7 +49,7 @@ def main():
     if transfer:
         save_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Transfer/Models/"
 
-        save_name = "no_add_layer_no_fine_tuning"
+        save_name = "time_test_no_TF"
         save_path = save_path + project_name + save_name
         add_layers = int(input("add layers: "))
         fine_tuning = ast.literal_eval(input("fine tuning:"))

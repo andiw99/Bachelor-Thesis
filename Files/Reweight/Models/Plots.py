@@ -15,22 +15,22 @@ model_paths["Predictions"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/p
 #PlottingDataLowX_data = ...
 
 #Pfade in dict speichern
-paths["$x_1$ constant"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Reweight/Data/TrainingData200k_cut_x_08/x_1_constant"
-paths["$x_2$ constant"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Reweight/Data/TrainingData200k_cut_x_08/x_2_constant"
+paths["$x_1$ constant"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Reweight/Data/PlotData10k/x_1_constant"
+paths["$x_2$ constant"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Reweight/Data/PlotData10k/x_2_constant"
 save_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Plots/finished/"
 name = "reweight_itself"
 input("namen geändert?")
 save_path = save_path + name
 label_name = "reweight"
 trans_to_pb = False
-y_label = "reweight"
+y_label = "$\mathit{w}$"
 
 #Daten einlesen
 # Modell und transformer laden
 models = dict()
 transformers = dict()
 for model_name in model_paths:
-    (models[model_name], transformers[model_name]) = ml.load_model_and_transormer(model_path=model_paths[model_name])
+    (models[model_name], transformers[model_name]) = ml.load_model_and_transformer(model_path=model_paths[model_name])
 
 show_3D_plots = False
 use_cut = False
@@ -69,5 +69,6 @@ for dataset in features:
 for dataset in predictions:
     keys = ml.get_varying_value(features_pd=features_pd[dataset])
     ml.plot_model(features_pd=features_pd[dataset], labels=labels[dataset], predictions=predictions[dataset],
-                  keys=keys, save_path=save_path, set_ylabel=y_label, trans_to_pb=trans_to_pb, set_yscale="linear")
+                  keys=keys, save_path=save_path, set_ylabel=y_label, trans_to_pb=trans_to_pb, set_yscale="linear", ratio_minus_one=True,
+                  autoscale_ratio=False, use_sci=True)
 

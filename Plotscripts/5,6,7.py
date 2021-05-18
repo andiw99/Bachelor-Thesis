@@ -9,7 +9,7 @@ import MC
 #Pfade eingeben
 paths = dict()
 model_paths = dict()
-model_paths["Predictions"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Models/best_guess_4M"
+model_paths["Predictions"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Models/best_model"
 #model_path= "/Files/Hadronic/Models/best_guess_4M"
 #more data to plot?
 #PlottingDataLowX_data = ...

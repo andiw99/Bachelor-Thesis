@@ -6,8 +6,8 @@ from matplotlib import pyplot as plt
 
 #Daten präparieren
 epsilon = 0.163
-total = 10000
-name = "TestData10k_ep_0.163"
+total = 2000
+name = "PlottingData2k_ep_0.163"
 importance_sampling = False
 offset = 0.4
 power = 4

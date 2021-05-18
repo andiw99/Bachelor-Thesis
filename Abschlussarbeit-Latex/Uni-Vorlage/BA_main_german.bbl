@@ -35,11 +35,29 @@ Djork-Arn{\'e} Clevert, Thomas Unterthiner, and Sepp Hochreiter.
   (elus).
 \newblock {\em arXiv preprint arXiv:1511.07289}, 2015.
 
+\bibitem{ATLAS}
+ATLAS Collaboration.
+\newblock The atlas experiment at the cern large hadron collider.
+\newblock {\em JINST}, 3:S08003. 437 p, 2008.
+\newblock Also published by CERN Geneva in 2010.
+
 \bibitem{Cuts-Paper}
 ATLAS Collaboration.
 \newblock Measurement of the production cross-section of isolated photon pairs
   in pp collisions at 13 tev with the atlas detector.
 \newblock Technical report, CERN, Geneva, Jul 2020.
+
+\bibitem{CMS}
+CMS Collaboration.
+\newblock The cms experiment at the cern lhc. the compact muon solenoid
+  experiment.
+\newblock {\em JINST}, 3:S08004. 361 p, 2008.
+\newblock Also published by CERN Geneva in 2010.
+
+\bibitem{gradient-descent}
+Haskell~B Curry.
+\newblock The method of steepest descent for non-linear minimization problems.
+\newblock {\em Quarterly of Applied Mathematics}, 2(3):258--261, 1944.
 
 \bibitem{Higgs-Dicso-CMS}
 S.~Chatrchyan et~Al.
@@ -78,6 +96,13 @@ Peter~J Huber.
 \newblock Robust estimation of a location parameter.
 \newblock In {\em Breakthroughs in statistics}, pages 492--518. Springer, 1992.
 
+\bibitem{bayesian}
+Frank Hutter, Holger~H Hoos, and Kevin Leyton-Brown.
+\newblock Sequential model-based optimization for general algorithm
+  configuration.
+\newblock In {\em International conference on learning and intelligent
+  optimization}, pages 507--523. Springer, 2011.
+
 \bibitem{feature-scaling}
 Piotr Juszczak, D~Tax, and Robert~PW Duin.
 \newblock Feature scaling in support vector data description.
@@ -92,6 +117,27 @@ Diederik~P Kingma and Jimmy Ba.
 Andrew~L Maas, Awni~Y Hannun, and Andrew~Y Ng.
 \newblock Rectifier nonlinearities improve neural network acoustic models.
 \newblock In {\em Proc. icml}, volume~30, page~3. Citeseer, 2013.
+
+\bibitem{hyperband}
+Risto Miikkulainen, Jason Liang, Elliot Meyerson, Aditya Rawal, Daniel Fink,
+  Olivier Francon, Bala Raju, Hormoz Shahrzad, Arshak Navruzyan, Nigel Duffy,
+  et~al.
+\newblock Evolving deep neural networks.
+\newblock In {\em Artificial intelligence in the age of neural networks and
+  brain computing}, pages 293--312. Elsevier, 2019.
+
+\bibitem{TL}
+Sinno~Jialin Pan and Qiang Yang.
+\newblock A survey on transfer learning.
+\newblock {\em IEEE Transactions on knowledge and data engineering},
+  22(10):1345--1359, 2009.
+
+\bibitem{sgd}
+Herbert Robbins and David Siegmund.
+\newblock A convergence theorem for non negative almost supermartingales and
+  some applications.
+\newblock In {\em Optimizing methods in statistics}, pages 233--257. Elsevier,
+  1971.
 
 \bibitem{Perceptron}
 Frank Rosenblatt.

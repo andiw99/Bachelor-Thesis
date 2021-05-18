@@ -7,7 +7,7 @@ from matplotlib import pyplot as plt
 
 #Pfade in dict speichern
 paths = dict()
-paths[r"$x^4$-Distribution"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Partonic/PartonicData/TrainingData60k_ep_0.163/"
+paths[r"$x^4$-Distribution"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Partonic/PartonicData/PlottingData2k_ep_0.163/"
 save_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Plots/finished/"
 name = "4"
 #input("namen geändert?")

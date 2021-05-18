@@ -15,7 +15,7 @@ model_paths["Prediction"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/py
 
 #Pfade in dict speichern
 paths = dict()
-paths["$\eta, x_1$ constant"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Partonic/PartonicData/TrainingDataEta10k"
+paths["$\eta, x_1$ constant"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Partonic/PartonicData/PlottingData2k"
 save_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Plots/finished/"
 name = "1"
 input("namen geändert?")

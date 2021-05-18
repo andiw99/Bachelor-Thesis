@@ -36,7 +36,7 @@ def main():
     loss_name = "Source_loss"
     project_name = ""
 
-    read_name = "Exponential-Activation" #"best_guess_important_range" #
+    read_name = "Nothing" #"best_guess_important_range" #
     label_name = "WQ"
     read_path =project_path + project_name + read_name
     transferred_transformer = None
@@ -61,7 +61,7 @@ def main():
     train_frac = 0.95
     batch_size = 256
     training_epochs = 100
-    repeat= 5
+    repeat= 2
     nr_layers = 5
     units = 256
     learning_rate = 1e-2
@@ -72,7 +72,7 @@ def main():
     loss_fn = keras.losses.MeanAbsoluteError()
     optimizer = keras.optimizers.Adam
     print("optimizer")
-    hidden_activation = keras.activations.relu
+    hidden_activation = tf.nn.relu
     output_activation = ml.LinearActiavtion()
     kernel_initializer = tf.keras.initializers.HeNormal()
     bias_initializer = tf.keras.initializers.Zeros()

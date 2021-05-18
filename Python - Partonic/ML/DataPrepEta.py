@@ -4,7 +4,7 @@ import MC
 
 
 def main():
-    eta_total = 10000
+    eta_total = 2000
 
     #Daten präparieren
     diff_WQ_eta = []
@@ -23,7 +23,7 @@ def main():
             "WQ": diff_WQ_eta
         }
     )
-    diff_WQ_eta_data.to_csv(save_path + "TrainingDataEta10k", index=False)
+    diff_WQ_eta_data.to_csv(save_path + "PlottingData2k", index=False)
     print(diff_WQ_eta_data)
 
 

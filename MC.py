@@ -92,9 +92,8 @@ def crack_cut(eta_values, crack_interval=(1.37, 1.52), return_cut = False):
 
 def reweight_cut(features, E=6500, cut_energy=40, cut_eta=2.37, return_cut=False):
     #cut ist True fuer werte die nicht rausgeschnitten werden
-    cut = (np.abs(1/2 * np.log(features[:,1]**2/features[:,0]**2)) < cut_eta) |\
-          (np.sqrt(features[:,0] * features[:,1] * (1-np.tanh(1/2 * np.log(features[:,1]/features[:,0]) -
-                                                              cut_eta * (features[:,1] > features[:,0]) + cut_eta * (features[:,1] < features[:,0])) ** 2)) * E > cut_energy)
+    cut = (np.abs(1/2 * np.log(features[:,1]**2/features[:,0]**2)) < 2 * cut_eta) & \
+          ((np.sqrt(features[:, 0] * features[:, 1]) * E) > cut_energy)
     features = features[cut]
     if return_cut:
         return features, cut

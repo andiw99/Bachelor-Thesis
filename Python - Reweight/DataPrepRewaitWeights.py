@@ -25,14 +25,14 @@ PDF_MMHT = pdf.mkPDF("MMHT2014nnlo68cl", 0)
 
 #Variablen
 E = 6500 #Strahlenergie in GeV, im Vornherein festgelegt?
-x_total = int(500000) #Anzahl an x Werten
+x_total = int(1500) #Anzahl an x Werten
 x_lower_limit = 0.0
 x_upper_limit = 0.8
 loguni_param=0.01
 loguni = False
 use_cut = True
 
-set_name = "TrainingData500k_cut_x_08/"
+set_name = "PlotData1500/"
 path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Reweight/Data/" + set_name
 
 #Test
@@ -65,7 +65,7 @@ while x_1_constant < 0.05 or x_1_constant > 0.15:
     x_1_constant = x_1_Rand[i]
     i += 1
 i=0
-while x_2_constant < 0.05 or x_2_constant > 0.15:
+while x_2_constant < 0.2 or x_2_constant > 0.40:
     if i >= x_total:
         x_2_constant = x_2_Rand[i-1]
         break

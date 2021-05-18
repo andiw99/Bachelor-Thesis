@@ -7,7 +7,7 @@ import numpy as np
 show_3D_plots = True
 
 #Daten einlesen
-set_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Reweight/Data/TrainingData200k_cut_x_08/"
+set_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Reweight/Data/TrainingData500k_new_cut/"
 #x_2 constant
 data_x_2_constant = pd.read_csv( set_path + "x_2_constant")
 #x-constant beide x_1, x_2

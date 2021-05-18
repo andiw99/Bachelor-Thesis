@@ -30,13 +30,13 @@ def main():
 
     time1 = time.time()
     #Daten einlesen
-    data_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Partonic/PartonicData/TrainingData10k_ep_0.01/all"
+    data_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Partonic/PartonicData/TrainingData60k_ep_0.163/all"
     data_name = ""
     project_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Partonic/Models/PartonicTheta/"
     loss_name = "Source_loss"
     project_name = ""
 
-    read_name = "theta_model_full_range_less_data" #"best_guess_important_range" #
+    read_name = "theta_config_wie_eta" #"best_guess_important_range" #
     label_name = "WQ"
     read_path =project_path + project_name + read_name
     transferred_transformer = None
@@ -62,8 +62,8 @@ def main():
     batch_size = 128
     training_epochs = 300
     repeat=5
-    nr_layers = 4
-    units = 128
+    nr_layers = 2
+    units = 64
     learning_rate = 5e-3
     if not any([new_model, transfer, freeze]):
         learning_rate = 5e-6
@@ -92,8 +92,8 @@ def main():
     logarithm = False
     base10 = False
     shift = False
-    label_normalization = True
-    feature_normalization = True
+    label_normalization = False
+    feature_normalization = False
     feature_rescaling= False
 
     #ggf Losses einlesen

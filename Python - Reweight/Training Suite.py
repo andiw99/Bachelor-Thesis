@@ -30,13 +30,13 @@ def main():
 
     time1 = time.time()
     #Daten einlesen
-    data_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Reweight/Data/TrainingData1M_cut_x_08/"
+    data_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Reweight/Data/TrainingData1M_new_cut/"
     data_name = "all"
     project_path = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Reweight/Models/"
     loss_name = "Source_loss"
     project_name = ""
 
-    read_name = "best_parameters_3" #"best_guess_important_range" #
+    read_name = "new_cut" #"best_guess_important_range" #
     label_name = "reweight"
     read_path =project_path + project_name + read_name
     transferred_transformer = None
