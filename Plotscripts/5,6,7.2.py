@@ -9,7 +9,7 @@ import MC
 #Pfade eingeben
 paths = dict()
 model_paths = dict()
-model_paths["Predictions"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Models/Nothing"
+model_paths["Predictions"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Files/Hadronic/Models/Nothing_theta_config"
 #model_path= "/Files/Hadronic/Models/best_guess_4M"
 #more data to plot?
 #PlottingDataLowX_data = ...
@@ -38,7 +38,8 @@ replace_cut = True
 loss_function = keras.losses.MeanAbsoluteError(reduction=keras.losses.Reduction.NONE)
 # y versatz 0.03
 text_loc = (0.8, 0.6)
-text_loc_log = (0.8, 0.725)
+text_loc_log = (0.7, 0.725)
+figsize=(4.8, 7.2)
 
 #In Features und Labels unterteilen
 features_pd = dict()
@@ -83,5 +84,5 @@ for dataset in predictions:
     keys = ml.get_varying_value(features_pd=features_pd[dataset])
     ml.plot_model(features_pd=features_pd[dataset], labels=labels[dataset], predictions=predictions[dataset],
                   keys=keys, save_path=save_path, trans_to_pb=True, text_loc=text_loc, text_loc_log=text_loc_log, autoscale_ratio=True,
-                  autoscale=True, set_ratio_yscale="linear", set_yscale="linear", automatic_legend=True)
+                  autoscale=True, set_ratio_yscale="linear", automatic_legend=True, figsize=figsize)
 

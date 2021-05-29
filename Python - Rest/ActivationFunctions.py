@@ -51,6 +51,7 @@ def main():
         """
         ax.plot(x, y[function_name], label=function_name)
         ax.legend()
+        plt.tight_layout()
         if save_path:
             plt.savefig(save_path + "_" + function_name + ".pdf", format="pdf")
         plt.show()

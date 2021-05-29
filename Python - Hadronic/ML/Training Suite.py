@@ -36,7 +36,7 @@ def main():
     loss_name = "Source_loss"
     project_name = ""
 
-    read_name = "Nothing" #"best_guess_important_range" #
+    read_name = "scaling_theta_config_2" #"best_guess_important_range" #
     label_name = "WQ"
     read_path =project_path + project_name + read_name
     transferred_transformer = None
@@ -61,16 +61,16 @@ def main():
     train_frac = 0.95
     batch_size = 256
     training_epochs = 100
-    repeat= 2
-    nr_layers = 5
-    units = 256
-    learning_rate = 1e-2
+    repeat= 1
+    nr_layers = 4
+    units = 128
+    learning_rate = 5e-3
     if not any([new_model, transfer, freeze]):
         learning_rate = 5e-6
         print("learning_rate für fine tuning reduziert!")
     rm_layers = 1
     loss_fn = keras.losses.MeanAbsoluteError()
-    optimizer = keras.optimizers.Adam
+    optimizer = keras.optimizers.Adam(learning_rate=learning_rate, clipvalue=10)
     print("optimizer")
     hidden_activation = tf.nn.relu
     output_activation = ml.LinearActiavtion()
@@ -80,11 +80,11 @@ def main():
     l2_bias = 0
     lr_patience = 1
     stopping_patience = 3 * lr_patience
-    min_delta= 2e-6
+    min_delta= 2e-10
     min_lr = 5e-8
     dropout = False
     dropout_rate = 0.1
-    scaling_bool = False
+    scaling_bool = True
     logarithm = False
     base10 = False
     shift = False

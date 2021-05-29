@@ -981,10 +981,10 @@ def get_varying_value(features_pd):
     return keys
 
 def plot_model(features_pd, labels, predictions,  keys, save_path=None,
-               trans_to_pb=True, set_ylabel=None, set_ratio_yscale=None,
+               trans_to_pb=True, set_ylabel=None, set_ratio_yscale=None, figsize=(6.4, 7.2),
                autoscale_ratio=False, autoscale=False, set_yscale=None, set_xscale=None, automatic_legend=False,
                xticks=None, xtick_labels=None, colors=None, show_ratio=None, ratio_minus_one=False, use_sci=False,
-               text_loc=(0.025, 0.95), fontsize=13, legend_loc="upper right", ratio_size=10, text_loc_log=(0.03, 0.2)):
+               text_loc=(0.025, 0.95), fontsize=13, legend_loc="upper right", ratio_size=10, text_loc_log=(0.03, 0.2), set_label_coords=(-0.125, 0.5)):
     font = {"family": "normal", "size": fontsize}
     matplotlib.rc("font", **font)
     if colors == None:
@@ -1044,7 +1044,7 @@ def plot_model(features_pd, labels, predictions,  keys, save_path=None,
                 plot_labels = np.array(labels)[order]
                 if trans_to_pb:
                     plot_labels = MC.gev_to_pb(plot_labels)
-                fig, (ax_fct, ax_ratio) = plt.subplots(nrows=2, ncols=1, sharex=True, gridspec_kw={"height_ratios": [2.5,1]}, figsize=(6.4, 7.2))
+                fig, (ax_fct, ax_ratio) = plt.subplots(nrows=2, ncols=1, sharex=True, gridspec_kw={"height_ratios": [2.5,1]}, figsize=figsize)
                 ax_fct.plot(plot_features, plot_labels, label="Analytic", linestyle="solid", color="C1")
                 for i,model_name in enumerate(plot_predictions):
                     ax_fct.plot(plot_features, plot_predictions[model_name], label=model_name, linewidth=2, color=colors[i], linestyle=linestyles[i], alpha=alphas[i])
@@ -1124,7 +1124,7 @@ def plot_model(features_pd, labels, predictions,  keys, save_path=None,
                     xlabel = "$\eta$"
 
 
-                ax_ratio.yaxis.set_label_coords(-0.125,0.5)
+                ax_ratio.yaxis.set_label_coords(set_label_coords[0], set_label_coords[1])
                 ax_ratio.grid(True)
                 ratio_label = r"ratio"
                 if ratio_minus_one:
@@ -1180,8 +1180,11 @@ def make_comparison_plot(names, all_losses, min_losses=None, avg_losses=None, lo
     fig, ax = plt.subplots(figsize=(len(x) * 1. + 0.5, 4.8))
     if type(all_losses[0]) in {list, tuple, np.ndarray}:
         print("hallo")
-        for xe, ye in zip(x, all_losses):
-            ax.scatter([xe] * len(ye), ye, marker="o", facecolors="None", edgecolors="C0")
+        for i, (xe, ye) in enumerate(zip(x, all_losses)):
+            if i == 0:
+                ax.scatter([xe] * len(ye), ye, marker="o", facecolors="None", edgecolors="C0", label="Trials")
+            else:
+                ax.scatter([xe] * len(ye), ye, marker="o", facecolors="None", edgecolors="C0")
     elif type(all_losses[0]) == dict:
         for i,dataset in enumerate(all_losses[0]):
             print(all_losses)
@@ -1200,7 +1203,7 @@ def make_comparison_plot(names, all_losses, min_losses=None, avg_losses=None, lo
             ax.scatter(x, min_losses, marker="o", color="orange", label="Min")  # niedrigster punkt hervorheben
     ax.errorbar(x, avg_losses, yerr=losses_errors,
                 linewidth=0, elinewidth=1, color="C0",
-                capsize=30 /np.sqrt(len(x)))  # errobars zeigen
+                capsize=30 /np.sqrt(len(x)), label="Stddev")  # errobars zeigen
 
     ax.set_ylabel("MAPE")
     ax.set_axisbelow(True)
@@ -1215,7 +1218,7 @@ def make_comparison_plot(names, all_losses, min_losses=None, avg_losses=None, lo
             "LN: Label-Normalization\n" \
             "Log: Nur Scaling + Logarithmus\n" \
             "No Log: Nur Scaling"
-        ax.annotate(s, xy=(0, 1), xytext=(10,-80), xycoords="axes fraction", textcoords="offset points",
+        ax.annotate(s, xy=(0, 1), xytext=(110,-80), xycoords="axes fraction", textcoords="offset points",
                     bbox=dict(boxstyle="round", facecolor="white", alpha=1,
                               edgecolor="gainsboro"),
                     transform=ax.transAxes)
@@ -1228,7 +1231,7 @@ def make_comparison_plot(names, all_losses, min_losses=None, avg_losses=None, lo
         ax.autoscale()
     ax.set_xlim(x[0] - 0.5, x[-1] + 0.5)
     ax.set_ylim(ylims[0], ylims[1] + 0.1 * np.max(min_losses))
-    fig.legend(loc="upper right")
+    ax.legend(loc="best")
     fig.tight_layout()
     if save_path:
         if not os.path.exists(save_path):

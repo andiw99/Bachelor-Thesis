@@ -28,7 +28,7 @@ def main():
     model_paths["No FT"] = project_path + "no_add_layer_no_fine_tuning"
     model_paths["FT"] = project_path + "test"
     model_paths["Source\nrw"] = "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Results/reweight/"
-    model_paths["CT14\nrw"] =  "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Results/reweigth+analytic/"
+    model_paths["Analy.\nrw"] =  "/home/andiw/Documents/Semester 6/Bachelor-Arbeit/pythonProject/Results/reweigth+analytic/"
     #model_paths["IS\n10k"] = project_path + "theta_model_full_range_IS_less_data"
 
     #festlegen ob modelle an Datenmengen getestet werden oder die Losses aus config ausgelesen werden

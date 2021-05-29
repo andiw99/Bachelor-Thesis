@@ -4,6 +4,7 @@
 \renewcommand{\figurename}{Abb.}
 \renewcommand{\equationautorefname}{Gl.}
 \renewcommand{\figureautorefname}{Abb.}
+\sidecaptionvpos{figure}{t}
 %\captionsetup{format=plain}
 
 % Titelpageseite
@@ -15,7 +16,7 @@
   
   \begin{singlespace}\begin{center}\bfseries\Huge
   
-  Anwendung von maschinellem Lernen zur Regression am Beispiel des Diphoton-Prozesses
+  Anwendung von künstlichen neuronalen Netzen zur Regression am Beispiel des Diphoton-Prozesses
   
   \end{center}\end{singlespace}
 
@@ -45,26 +46,26 @@
 % Gutachterseite
 \thispagestyle{empty}\vspace*{48em}
 
-Eingereicht am xx.~Monat~20xx\vspace{1.5em}
+Eingereicht am 25.~Mai~2021\vspace{1.5em}
 \par{\large\begin{tabular}{ll}
- 1. Gutachter: & Prof.~Dr.~XX \\
- 2. Gutachter: & Prof.~Dr.~YY \\
+ 1. Gutachter: & Dr. Frank Siegert \\
+ 2. Gutachter: & Prof.~Dr. Arno Straessner \\
 \end{tabular}}
 
 
 % Abstractseite
 \newpage
 \thispagestyle{empty}
-\begin{center}\large\bfseries Was soll hier hin? \end{center}
+%\begin{center}\large\bfseries Was soll hier hin? \end{center}
 
 Zusammenfassung \\
-Der Wirkungsquerschnitt für die Produktion von Photon-Paaren bei der Partonstreuung $q\overline{q} \rightarrow \gamma \gamma$ wird berechnet. Daraus wird mithilfe von Partondichtefunktionen der Wirkungsquerschnitt für den hadronischen Prozess $pp \rightarrow \gamma \gamma$ ermittelt. Die Anwendung von Methoden des Deep-Learning zur Näherung der differentiellen Wirkungsquerschnitte wird untersucht. Dabei bieten die exponentiellen Variationen der Wirkungsquerschnitte eine wesentliche Herausforderung.
-Weiterhin wird die Eignung und Anwendbarkeit von Transfer-Learning zur schnellen Adaption des Lernergebnisses an andere Partondichtefunktionen untersucht. Schließlich wird von Monte-Carlo-Methoden Gebrauch gemacht, um die differentiellen Wirkungsquerschnitte zu integrieren.
+Der differentielle Wirkungsquerschnitt für die Produktion von Photon-Paaren bei der Partonstreuung $q\overline{q} \rightarrow \gamma \gamma$ wird berechnet. Daraus wird mithilfe von Partondichtefunktionen der Wirkungsquerschnitt für den hadronischen Prozess $pp \rightarrow \gamma \gamma$ ermittelt. Die Anwendung von Methoden des Deep-Learning zur Näherung der differentiellen Wirkungsquerschnitte wird untersucht. Dabei bieten die exponentiellen Variationen der Wirkungsquerschnitte eine wesentliche Herausforderung.
+Weiterhin wird die Eignung und Anwendbarkeit von Transfer-Learning zur schnellen Adaption des Lernergebnisses an andere Partondichtefunktionen untersucht. Sowohl die Regression, als auch das Transfer-Learning, liefern gute Ergebnisse. Schließlich wird von Monte-Carlo-Methoden Gebrauch gemacht, um die differentiellen Wirkungsquerschnitte zu integrieren.
 
 
 \vspace{20em}
 Abstract \\ 
-English: \\
+The differential cross section for the production of photon-pairs in parton scattering $q\overline{q} \rightarrow \gamma \gamma$ is calculated. The result is applied to the hadronic process $pp \rightarrow \gamma \gamma$ using parton distribution functions. The application of deep learning methods to approximate the differential cross sections is investigated. Here, the exponential variations of the cross sections offer a significant challenge. The applicability and suitability of transfer learning to quickly adept the training outcome to other parton density functions is examined. The regression, aswell as transfer-learning, yield good results. Eventually, Monte-Carlo-Methods are used to integrate the differential cross sections. 
  
  
 % Inhaltsverzeichnis
@@ -79,31 +80,30 @@ English: \\
 
 \chapter{Einleitung}
 \pagenumbering{arabic}
-Maschinelles Lernen (ML) ist ein Schlagwort und Konzept, das zwar schon lange im Umlauf ist, jedoch seit einiger Zeit extrem an Beliebtheit gewinnt. Auch in der Physik haben verschiedene Methoden bereits Einzug gehalten. Eine davon ist Deep-Learning, das einen Bereich des maschinellen Lernens bezeichnet, in dem tiefe neuronale Netze verwendet werden. In dieser Arbeit soll die Eignung neuronaler Netzen zur Regression von differentiellen Wirkungsquerschnitten untersucht werden. Dies wird am Beispiel des Diphoton-Prozess durchgeführt, dessen differentieller Wirkungsquerschnitt sowohl auf partonischer Ebene, als auch auf hadronischer Ebene in führender Ordnung analytisch hergeleitet wird.
-%TODO aktuelle Anwendung diphoton
+Maschinelles Lernen (ML) ist ein Schlagwort und Konzept, das zwar schon lange im Umlauf ist, jedoch seit einiger Zeit extrem an Beliebtheit gewinnt. Auch in der Physik haben verschiedene Methoden bereits Einzug gehalten. Eine davon ist Deep-Learning, das einen Bereich des maschinellen Lernens bezeichnet, in dem künstliche neuronale Netze verwendet werden. In dieser Arbeit soll die Eignung neuronaler Netze zur Regression von differentiellen Wirkungsquerschnitten untersucht werden. Dies wird am Beispiel des nicht-resonanten Diphoton-Prozesses durchgeführt, dessen differentieller Wirkungsquerschnitt sowohl auf partonischer Ebene als auch auf hadronischer Ebene in führender Ordnung analytisch hergeleitet wird.
 
-Die Photon-Paar-Produktion in Proton Kollisionen trug durch den Zerfallskanal $H \rightarrow \gamma \gamma$ des Higgs-Bosons wesentlich zu dessen Nachweis  \cite{Higgs-Disco, Higgs-Dicso-CMS} bei. Auch aktuell ist der Prozess interessant, so wird er dazu verwendet sehr massereiche Resonanzen, vorhergesagt von Theorien jenseits des Standardmodells, zu suchen \cite{diphoton-aktuell}. Zur Simulation von Photon-Paar-Produktion werden aufwändige numerische Methoden, wie der Event-Generator SHERPA \cite{SHERPA} verwendet, die sehr rechenintensiv sein können. Machine-Learning-Algorithmen können im Vergleich effizienter sein, indem sie den Wirkungsquerschnitt, nach Vorarbeit eines rechnerisch anspruchsvollen Algorithmus, erlernen. Der Vorteil liegt hierbei darin, die aufwändigen numerischen Methoden zur Berechnung einer ausreichenden Anzahl an Phasenraumpunkten nur einmalig zu verwenden, um mit diesen den ML-Algorithmus zu trainieren und anschließend eine größere Zahl an Punkten zu generieren.
+Die nicht-resonante Photon-Paar-Produktion in Proton Kollisionen stellt den Hintergrund zur Diphoton-Produktion mit resonanten Propagatoren dar, die durch den  Zerfallskanal $H \rightarrow \gamma \gamma$ des Higgs-Bosons wesentlich zu dessen Nachweis  \cite{Higgs-Disco, Higgs-Dicso-CMS} beigetragen hat. Auch aktuell ist der Prozess interessant, so wird er dazu verwendet sehr massereiche Resonanzen, vorhergesagt von Theorien jenseits des Standardmodells, zu suchen \cite{diphoton-aktuell}. Zur Simulation von Photon-Paar-Produktion werden numerische Methoden, wie der Event-Generator SHERPA \cite{SHERPA}, verwendet, die sehr rechenintensiv sein können. Machine-Learning-Algorithmen können im Vergleich effizienter sein, indem sie den Wirkungsquerschnitt, nach Vorarbeit eines rechnerisch anspruchsvollen Algorithmus, erlernen. Der Vorteil liegt hierbei darin, die aufwändigen numerischen Methoden zur Berechnung einer ausreichenden Anzahl an Phasenraumpunkten nur einmalig zu verwenden, um mit diesen den ML-Algorithmus zu trainieren und anschließend eine größere Zahl an Punkten zu generieren.
 
-In \textit{\autoref{2}} wird mit der theoretischen Behandlung des Diphoton-Prozesses im Rahmen der Quantenelektrodynamik begonnen, wobei Ausdrücke für den differentiellen Wirkungsquerschnitt für den partonischen und hadronischen Prozess analytisch hergeleitet werden. \textit{\autoref{3}} beschäftigt sich zunächst mit den Konzepten hinter Maschinellem Lernen und speziell Deep-Learning mit tiefen neuronalen Netzen (DNN). Am Ende des Kapitels werden die Grundlagen einer Monte-Carlo-Integration (MC-Integration) besprochen. Die Anwendung der DNN folgt in \textit{\autoref{4}}, wobei zunächst die differentiellen Wirkungsquerschnitte des Diphoton-Prozesses genähert werden. Anschließend wird das Lernen von Gewichten zur Umgewichtung von Ergebnissen für unterschiedliche Sets von Partondichtefunktionen (PDF) und die Eignung von Transfer-Learning (TL) untersucht. 
+In \textsf{\autoref{2}} wird mit der theoretischen Behandlung des Diphoton-Prozesses im Rahmen der Quanten-elektrodynamik begonnen, wobei Ausdrücke für den differentiellen Wirkungsquerschnitt des partonischen und hadronischen Prozesses analytisch hergeleitet werden. \textsf{\autoref{3}} beschäftigt sich zunächst mit den Konzepten hinter Maschinellem Lernen und speziell Deep-Learning mit tiefen neuronalen Netzen (DNN). Am Ende des Kapitels werden die Grundlagen einer Monte-Carlo-Integration (MC-Integration) besprochen. Die Anwendung der DNN folgt in \textsf{\autoref{4}}, wobei zunächst die differentiellen Wirkungsquerschnitte des Diphoton-Prozesses genähert werden. Anschließend werden das Lernen von Gewichten zur Umgewichtung von Ergebnissen für unterschiedliche Sets von Partondichtefunktionen (PDF) und die Eignung von Transfer-Learning (TL) untersucht. 
 
-In dieser Arbeit verwendete Abkürzungen sind in \textit{\autoref{Abkürzungen}} zusammengefasst.
-Es werden durchweg natürliche Einheiten, sprich $\hbar = c = 1$ verwendet. Vektoren werden mit Fett gedruckten Kleinbuchstaben (Bsp. $\mathbf{x}$) und Matrizen oder Tensoren mit Fett gedruckten Großbuchstaben (Bsp. $\mathbf{M}$) notiert. Speziell Dreiervektoren werden mit einem Pfeil gekennzeichnet (Bsp. $\vec{p}$). Vierervektoren ergeben sich aus dem Kontext. 
+In dieser Arbeit verwendete Abkürzungen sind in \textsf{\autoref{abk}} zusammengefasst.
+Es werden durchweg natürliche Einheiten, sprich $\hbar = c = 1$, verwendet. Vektoren werden mit fett gedruckten Kleinbuchstaben (Bsp. $\mathbf{x}$) und Matrizen oder Tensoren mit fett gedruckten Großbuchstaben (Bsp. $\mathbf{W}$) notiert. Speziell Dreiervektoren werden mit einem Pfeil gekennzeichnet (Bsp. $\vec{p}$). Vierervektoren ergeben sich aus dem Kontext. 
 
-Unter \texttt{https://github.com/andiw99/Bachelor-Thesis} kann der gesamte Python-Code, der während dieser Arbeit entstanden ist, eingesehen werden. Hierbei sind alle Skripte zur Erzeugung der Diagramme im Ordner \glqq Plotscripts\grqq~durchnummeriert zu finden. Alle mit ML in Verbindung stehenden Funktionen und Klassen sind in ml.py definiert. Analoges gilt für MC.py. Es wird TensorFlow \cite{TF} 2.4.1 genutzt, wobei die Skripte auch mit TensorFlow 2.... getestet wurden.
+Unter \texttt{https://github.com/andiw99/Bachelor-Thesis} kann der gesamte Python-Code, der während dieser Arbeit entstanden ist, eingesehen werden. Hierbei sind alle Skripte zur Erzeugung der Diagramme im Ordner \texttt{Plotscripts} durchnummeriert zu finden. Alle mit ML in Verbindung stehenden Funktionen und Klassen sind in \texttt{ml.py} definiert. Analoges gilt für \texttt{MC.py}. Es wird TensorFlow \cite{TF} 2.4.1 genutzt, wobei die Skripte auch mit TensorFlow 2.3.1 getestet wurden.
 
 \chapter{Diphoton-Prozess}
 \label{2}
-\section{Matrixelement des partonischen Diphoton-Prozess}
+\section{Matrixelement des partonischen Diphoton-Prozesses}
 \begin{wrapfigure}[12]{r}{0.5\textwidth}
 	\subfloat[t-Kanal]{\includegraphics[width=0.22\textwidth]{graphics/t}}
 	\quad
 	\subfloat[u-Kanal]{\includegraphics[width=0.22\textwidth]{graphics/u}}
-	\caption{Feynman-Diagramme des Diphoton-Prozesses $q\overline{q} \rightarrow \gamma \gamma$ führender Ordnung}
+	\caption{Die Feynman-Diagramme führender Ordnung des Diphoton-Prozesses $q\overline{q} \rightarrow \gamma \gamma$ werden aufgestellt.}
 	\label{feynman-diagramme}
 \end{wrapfigure}
-Zunächst wird der differentielle Wirkungsquerschnitt des partonischen Diphoton-Prozesses $q\overline{q} \rightarrow \gamma \gamma$ aus den Feynman-Regeln der Quantenelektrodynamik (QED) in führender Ordnung hergeleitet. Es werden hochrelativistische Quarks betrachtet, deren Ruhemasse vernachlässigt werden kann.
+Zunächst wird der differentielle Wirkungsquerschnitt des partonischen Diphoton-Prozesses $q\overline{q} \rightarrow \gamma \gamma$ aus den Feynman-Regeln der Quantenelektrodynamik in führender Ordnung hergeleitet. Es werden hochrelativistische Quarks betrachtet, deren Ruhemasse vernachlässigt werden kann.
 
-In \textit{\autoref{feynman-diagramme}} sind die Feynman Diagramme führender Ordnung gezeigt. Hieraus können die Matrixelemente aus \textit{\autoref{Matrixelem_1}} abgeleitet werden. Es werden die Notation $\gamma^\mu p_\mu=\cancel{p}$, die Mandelstam-Variablen\footnote{$t = (p_1 - p_3)^2$, $u = (p_1 - p_4)^2$}, sowie $\epsilon_\mu(p_i) \equiv \epsilon_{\mu, \lambda_i}$ verwendet, um die Matrixelemente zu vereinfachen (siehe \textit{\autoref{Matrixelem_2}}). $\lambda_i$ beschreibt die Polarisation des Photons.
+In \textsf{\autoref{feynman-diagramme}} sind die Feynman Diagramme führender Ordnung gezeigt. Hieraus können die Matrixelemente aus \textsf{\autoref{Matrixelem_1}} abgeleitet werden. Es werden die Notation $\gamma^\mu p_\mu=\cancel{p}$, die Mandelstam-Variablen\footnote{$t = (p_1 - p_3)^2$, $u = (p_1 - p_4)^2$} sowie $\epsilon_\mu(p_i) \equiv \epsilon_{\mu, \lambda_i}$ verwendet, um die Matrixelemente zu vereinfachen (siehe \textsf{\autoref{Matrixelem_2}}). $\lambda_i$ beschreibt die Polarisation des Photons.
 \begin{align}
 \begin{split}
 \label{Matrixelem_1}
@@ -117,7 +117,7 @@ In \textit{\autoref{feynman-diagramme}} sind die Feynman Diagramme führender Or
 \label{Matrixelem_2}
 \end{split}
 \end{align}
-Die Vierervektoren sind wie in \textit{\autoref{Kinematik}} gewählt und in \textit{\autoref{vierervektoren}} aufgeführt. Die Mandelstam-Variablen ergeben sich zu \textsf{\autoref{Mandelstam}}.
+Die Vierervektoren sind wie in \textsf{\autoref{Kinematik}} gewählt und in \textsf{\autoref{vierervektoren}} aufgeführt. Die Mandelstam-Variablen ergeben sich zu \textsf{\autoref{Mandelstam}}.
 \begin{equation}
 p_1 = \left(\begin{array}{c}p \\ 0 \\ 0 \\ p\end{array}\right) \quad 	p_2 = \left(\begin{array}{c}p \\ 0 \\ 0 \\ -p\end{array}\right) \quad p_3 = \left(\begin{array}{c}p \\ \sin(\theta)p \\ 0 \\ \cos(\theta)p \end{array}\right) \quad p_4 = \left(\begin{array}{c}p \\ -\sin(\theta)p \\ 0 \\ -\cos(\theta)p \end{array}\right)
 \label{vierervektoren}
@@ -134,7 +134,7 @@ Das totale Matrixelement wird durch Summation der Anteile des u- und t-Kanals be
 &= \mathcal{F} \left[ \overline{\nu}(p_1) \Gamma u(p_2)\right]~,
 \end{aligned}
 \end{equation}
-wobei die Ersetzungen  aus \textit{\autoref{ersetzungen}} gewählt wurden.
+wobei die Ersetzungen  aus \textsf{\autoref{ersetzungen}} gewählt wurden.
 \begin{equation}
 \begin{split}
 \Gamma_t = \gamma^\mu \epsilon^*_{\mu, \lambda_3} (\cancel{p}_1- \cancel{p}_3)  \gamma^\nu \epsilon^*_{\nu, \lambda_4} \quad &\text{und} \quad \Gamma_u = \gamma^\rho \epsilon^*_{\rho, \lambda_4} (\cancel{p}_1- \cancel{p}_4)  \gamma^\sigma \epsilon^*_{\sigma, \lambda_3} \\
@@ -144,7 +144,7 @@ wobei die Ersetzungen  aus \textit{\autoref{ersetzungen}} gewählt wurden.
 \end{split}
 \label{ersetzungen}
 \end{equation}
-Bei der Berechnung des gemittelten Quadrats des Betrages des Matrixelementes, müssen die möglichen Anfangszustände der Quarks und Endzustände der Photonen berücksichtigt werden. Während die Endzustände eine Summe über mögliche Helizitäten $s_3, s_4$ und Polarisationen $\lambda_3, \lambda_4$ ergeben, können die Quarks drei verschiedene Farbzustände und jeweils zwei verschiedene Helizitäten annehmen, sodass die Anfangszustände einen Faktor $1/12$ liefern:
+Bei der Berechnung des gemittelten Quadrats des Betrages des Matrixelementes müssen die möglichen Anfangszustände der Quarks und Endzustände der Photonen berücksichtigt werden. Während die Endzustände eine Summe über mögliche Helizitäten $s_3, s_4$ und Polarisationen $\lambda_3, \lambda_4$ ergeben, können die Quarks drei verschiedene Farbzustände und jeweils zwei verschiedene Helizitäten annehmen, sodass die Anfangszustände einen Faktor $1/12$ liefern:
 \begin{equation}
 \left\langle  \abs{\mathcal{M}}^2\right\rangle = \frac{1}{12} \sum_{s_3, s_4} \sum_{\lambda_3, \lambda_4} \abs{\mathcal{M}}^2~.
 \label{Betragsmatrixelemnt}
@@ -158,16 +158,16 @@ wobei $\overline{\Gamma} = \gamma^0\Gamma^\dagger\gamma^0 = \frac{\overline{\Gam
 \begin{equation}
 \overline{\Gamma}_t = \gamma^\nu  \epsilon_{\nu, \lambda_4} (\cancel{p}_1- \cancel{p}_3)  \gamma^\mu \epsilon_{\mu, \lambda_3} \quad \text{und} \quad \overline{\Gamma}_u = \gamma^\sigma \epsilon_{\sigma, \lambda_3} (\cancel{p}_1- \cancel{p}_4)  \gamma^\rho \epsilon_{\rho, \lambda_4} ~.
 \end{equation}
-\textit{\autoref{Helizitäten}} wird damit zu:
+\textsf{\autoref{Helizitäten}} wird damit zu:
 \begin{equation}
 \text{Tr}\left[ \Gamma \cancel{p}_2 \overline{\Gamma} \cancel{p}_1 \right] = \text{Tr}\left[\frac{1}{a^2} \Gamma_t \cancel{p}_2 \overline{\Gamma}_t \cancel{p}_1 + \frac{1}{ab} \Gamma_t \cancel{p}_2 \overline{\Gamma}_u \cancel{p}_1 + \frac{1}{ba} \Gamma_u \cancel{p}_2 \overline{\Gamma}_t \cancel{p}_1 + \frac{1}{b^2} \Gamma_u \cancel{p}_2 \overline{\Gamma}_u \cancel{p}_1\right]~.
 \label{Spur}
 \end{equation}
-Bei Einsetzen von \textit{\autoref{Spur}} in \textit{\autoref{Betragsmatrixelemnt}} ergeben sich Terme in folgendem Schema:
+Bei Einsetzen von \textsf{\autoref{Spur}} in \textsf{\autoref{Betragsmatrixelemnt}} ergeben sich Terme in folgendem Schema:
 \begin{equation}
 T_{ij} = \frac{1}{12} \sum_{\lambda_3, \lambda_4} \mathcal{F}^2~\text{Tr}\left[ \frac{1}{ij} \Gamma\left(i\right) \cancel{p}_2 \overline{\Gamma}\left(j\right) \cancel{p}_1 \right] \quad \text{mit} \quad i,j \in \left\lbrace a,b\right\rbrace~.
 \end{equation}
-Hierbei wird $\Gamma(a) = \Gamma_t$ und $ \Gamma(b) = \Gamma_u$ identifiziert. Zunächst wird in \textit{\autoref{T_aa}} der Fall $i = j$ evaluiert, wobei diverse Spur-Methoden und Identitäten der Dirac-Matrizen verwendet werden.
+Hierbei wird $\Gamma(a) = \Gamma_t$ und $ \Gamma(b) = \Gamma_u$ identifiziert. Zunächst wird in \textsf{\autoref{T_aa}} der Fall $i = j$ evaluiert, wobei diverse Spur-Methoden und Identitäten der Dirac-Matrizen verwendet werden.
 \begin{equation}
 \begin{aligned}
 T_{aa} &= \frac{\mathcal{F}^2}{12a^2} \sum_{\lambda_3, \lambda_4}~\text{Tr}\left[ \gamma^\mu \epsilon^*_{\mu,\lambda_3} (\cancel{p}_1- \cancel{p}_3)  \gamma^\nu \epsilon_{\nu, \lambda_4}^* \cancel{p}_2 \gamma^{\nu'} \epsilon_{\nu', \lambda_4} (\cancel{p}_1- \cancel{p}_3)  \gamma^{\mu'} \epsilon_{\mu', \lambda_3} \cancel{p}_1 \right] \\
@@ -180,7 +180,7 @@ T_{aa} &= \frac{\mathcal{F}^2}{12a^2} \sum_{\lambda_3, \lambda_4}~\text{Tr}\left
 \end{aligned}
 \label{T_aa}
 \end{equation}
-Wobei die Vollständigkeitsrelation für reale Photonen (siehe \textit{\autoref{Vollständigkeit}}) verwendet wurde. Es folgt analog:
+Hierbei wurde die Vollständigkeitsrelation für reale Photonen (siehe \textsf{\autoref{Vollständigkeit}}) verwendet. Es folgt analog:
 \begin{align}
 &T_{bb} = \frac{8\mathcal{F}^2}{3b^2}(p_4\cdot p_2)(p_4\cdot p_1)~. \\
 &\sum_{\lambda = 1}^{2} \epsilon^\mu_{\lambda} \epsilon^{*\nu}_{\lambda} = -g^{\mu \nu}
@@ -198,7 +198,7 @@ und analog:
 \begin{equation}
 T_{ba} = \frac{4\mathcal{F}^2}{3ab} \left[\left( p_1\cdot p_2\right) \left[ -2 \left( p_1 \cdot p_3 \right) + \left(p_3 \cdot p_4\right)\right] - (p_1\cdot p_4)(p_2\cdot p_3) + (p_1\cdot p_3)(p_2\cdot p_4)\right]
 \end{equation}
-Beim Einsetzen der expliziten Vierervektoren aus \textit{\autoref{vierervektoren}}, fällt auf, dass $T_{ab} + T_{ba} = 0$. Die Summe über die Helizitäten und Polarisationen wurde nun ausgeführt, sodass \textit{\autoref{Betragsmatrixelemnt}} umgeschrieben werden kann zu:
+Beim Einsetzen der expliziten Vierervektoren aus \textsf{\autoref{vierervektoren}} fällt auf, dass $T_{ab} + T_{ba} = 0$. Die Summe über die Helizitäten und Polarisationen wurde nun ausgeführt, sodass \textsf{\autoref{Betragsmatrixelemnt}} umgeschrieben werden kann zu:
 \begin{equation}
 \begin{aligned}
 \left\langle  \abs{\mathcal{M}}^2\right\rangle &= \frac{8}{3}\mathcal{F}^2 \left(\frac{1}{a^2}(p_3\cdot p_2)(p_3\cdot p_1) + \frac{1}{b^2} (p_4\cdot p_2)(p_4\cdot p_1) \right) \\
@@ -210,12 +210,12 @@ Hierbei ist  $\eta = -\ln\left(\tan\left(\frac{\theta}{2}\right)\right)$ die Pse
 \section{Differentieller Wirkungsquerschnitt des partonischen Prozesses}
 \label{2.2}
 Mithilfe von Fermis goldener Regel kann aus dem Betragsquadrat des Übergangsmatrixelementes der Wirkungsquerschnitt berechnet werden.
-Im Schwerpunktsystem mit vernachlässigbaren Ruhemassen ergibt sich der Zusammenhang in \textit{\autoref{Fermi}}, wobei $\text{d}\Omega = \sin(\theta)\text{d}\theta\text{d}\varphi$ das Raumwinkelelement und $s = (p_1 + p_2)^2$ der Betrag der Schwerpunktsenergie bezeichnet.
+Im Schwerpunktsystem mit vernachlässigbaren Ruhemassen ergibt sich der Zusammenhang in \textsf{\autoref{Fermi}}, wobei $\text{d}\Omega = \sin(\theta)\text{d}\theta\text{d}\varphi$ das Raumwinkelelement und $s = (p_1 + p_2)^2$ das Quadrat der Schwerpunktsenergie bezeichnet.
 \begin{equation}
 \sigma = \frac{1}{64\pi^2s} \int \left\langle  \abs{\mathcal{M}}^2\right\rangle \text{d}\Omega = \frac{1}{32\pi s} \int \left\langle  \abs{\mathcal{M}}^2\right\rangle \sin(\theta) \text{d}\theta
 \label{Fermi}
 \end{equation}
-Für den differentiellen Wirkungsquerschnitt $\derivative{\sigma}{\theta}$ ergibt sich \textit{\autoref{diff_WQ_theta}}, wobei ein Symmetriefaktor $\frac{1}{2}$ hinzukommt, da die beiden Photonen im Endzustand identisch sind.
+Für den differentiellen Wirkungsquerschnitt $\derivative{\sigma}{\theta}$ ergibt sich \textsf{\autoref{diff_WQ_theta}}, wobei ein Symmetriefaktor $\frac{1}{2}$ hinzukommt, da die beiden Photonen im Endzustand identisch sind.
 \begin{equation}
 \derivative{\sigma}{\theta} = \frac{1}{2} \cdot \frac{Q_q^4e^4}{24\pi s}\frac{1+\cos^2(\theta)}{\sin(\theta)} 
 \label{diff_WQ_theta}
@@ -232,25 +232,25 @@ Aufgrund des \textit{Confinement} kommen Quarks nicht als freie Teilchen vor, so
 	\caption{Kinematik der Stoßprozesse im Labor- und Schwerpunktssystem}
 	\label{Kinematik}
 \end{wrapfigure}
-   und ein down-Quark als Valenzquarks, sowie verschiedene Quark-Antiquark-Paare als Seequarks. Prallen zwei Protonen mit hohen Energien aufeinander, wird die Substruktur des Protons aufgelöst und die Konstituenten des Hadrons können miteinander interagieren. Bei diesen Interaktionen können die Quarks dann als quasi-freie Teilchen betrachtet werden.
+   und ein down-Quark als Valenzquarks sowie verschiedene Quark-Antiquark-Paare als Seequarks. Prallen zwei Protonen mit hohen Energien aufeinander, wird die Substruktur des Protons aufgelöst und die Konstituenten des Hadrons können miteinander interagieren. Bei diesen Interaktionen können die Quarks als quasi-freie Teilchen betrachtet werden.
 
-Das Schwerpunktsystem der Quarks unterscheidet sich im Allgemeinen vom Schwerpunktsystem der Protonen (Laborsystem). Der Impulsbruchteil eines Quarks innerhalb eines Hadrons ist nicht fest definiert, sodass ihm zunächst ein unbestimmter Bruchteil $x$ des Gesamtimpulses zugeordnet wird. Das Proton wird nun in einem System betrachtet, indem es eine sehr hohe Energie  $E \gg m_p$ besitzt, sodass seine Ruhemasse vernachlässigt werden und sein Vierervektor als $\textbf{p}_p = (E, 0, 0, E)$ geschrieben werden kann. Im vorliegenden System können die Transversalimpulse der Partonen vernachlässigt werden, sodass ihr Vierervektor sich zu \textsf{\autoref{Vierervektor-Parton}} ergibt.
+Das Schwerpunktsystem der Quarks unterscheidet sich im Allgemeinen vom Schwerpunktsystem der Protonen (Laborsystem). Der Impulsbruchteil eines Quarks innerhalb eines Hadrons ist nicht fest definiert, sodass ihm zunächst ein unbestimmter Bruchteil $x$ des Gesamtimpulses zugeordnet wird. Das Proton wird nun in einem System betrachtet, indem es eine sehr hohe Energie  $E \gg m_p$ besitzt, sodass seine Ruhemasse vernachlässigt und sein Vierervektor als $\textbf{p}_p = (E, 0, 0, E)$ geschrieben werden kann. Im vorliegenden System können die Transversalimpulse der Partonen vernachlässigt werden, sodass ihr Vierervektor sich zu \textsf{\autoref{Vierervektor-Parton}} ergibt.
 \begin{equation}
 \label{Vierervektor-Parton}
 \textbf{p}_q = (x E, 0, 0, x E) = x \textbf{p}_p ~.
 \end{equation}
-Findet bei einer Interaktion ein Impulsübertrag $\textbf{q}$ statt, so geht der Vierervektor des Partons $x \textbf{p}_p \rightarrow (x \textbf{p}_p + \textbf{q})$ über. Durch Einsetzen der invarianten Masse beider Zustände (siehe \textit{\autoref{invariante masse}}) ineinander, kann nach dem Impusbruchteil $x$ aufgelöst werden (siehe \textit{\autoref{bjorken}}).
+Findet bei einer Interaktion ein Impulsübertrag $\textbf{q}$ statt, so geht der Vierervektor des Partons in $x \textbf{p}_p \rightarrow (x \textbf{p}_p + \textbf{q})$ über. Durch Einsetzen der invarianten Masse beider Zustände (siehe \textsf{\autoref{invariante masse}}) ineinander kann nach dem Impusbruchteil $x$ aufgelöst werden (siehe \textsf{\autoref{bjorken}}).
 \begin{align}
 \left(x \textbf{p}_p\right)^2 = m_q^2 \quad &\text{und} \quad \left(x \textbf{p}_p + q\right)^2 = \left(x \textbf{p}_p\right)^2 + 2x \textbf{p}_p \cdot \textbf{q} + \textbf{q}^2 = m_q^2
 \label{invariante masse} \\
 2x \textbf{p}_p \cdot \textbf{q} + \textbf{q}^2 = 0 \quad &\Rightarrow \quad x = \frac{-\textbf{q}^2}{2\textbf{p}_p\cdot \textbf{q}}
 \label{bjorken}
 \end{align}
-Das $x$ in \textit{\autoref{bjorken}} ist hierbei die Bjorken-Skalenvariable. Sie repräsentiert bei hohen Proton-Impulsen den Impulsbruchteil, den ein Parton im Proton trägt. 
+Das $x$ in \textsf{\autoref{bjorken}} identifiziert sich als die Bjorken-Skalenvariable. Sie repräsentiert bei hohen Proton-Impulsen den Impulsbruchteil, den ein Parton im Proton trägt. 
 
-Da es nicht möglich ist die Impulsbruchteile vor der Reaktion zu kennen, wird der Prozess im Schwerpunktsystem der kollidierenden Protonen beschrieben. Hier folgt der Impulsbruchteil $x$ einer Wahrscheinlichkeitsverteilung, der \textit{Partondichtefunktion} (PDF) $f_{i}(x, Q^2)$, des Protons. Diese PDFs beschreiben die Wahrscheinlichkeitsdichte, bei einer Energieskala $Q^2 = -\textbf{q}^2$, das entsprechende Parton $i$ mit dem Impulsbruchteil $x$ zu finden. Sie können nicht aus ersten Prinzipien abgeleitet und müssen experimentell bestimmt werden. 
+Da es nicht möglich ist, die Impulsbruchteile vor der Reaktion zu kennen, wird der Prozess im Schwerpunktsystem der kollidierenden Protonen beschrieben. Hier folgt der Impulsbruchteil $x$ einer Wahrscheinlichkeitsverteilung, der \textit{Partondichtefunktion} (PDF) $f_{i}(x, Q^2)$ des Protons. Diese PDFs beschreiben die Wahrscheinlichkeitsdichte, bei einer Energieskala $Q^2 = -\textbf{q}^2$ das entsprechende Parton $i$ mit dem Impulsbruchteil $x$ zu finden. Da sie nicht aus ersten Prinzipien abgeleitet werden können, müssen sie experimentell bestimmt werden. 
 
-Die Partondichtefunktionen können genutzt werden, um einen Ausdruck für den totalen Wirkungsquerschnitt $pp \rightarrow \gamma \gamma $ zu finden. Ist der totale Wirkungsquerschnitt eines partonischen Prozesses zwischen den Partonen $i$ und $j$, bei den festgelegten Impulsbruchteilen $x_1$ und $x_2$ und der Energieskala $Q^2$ (genannt $\tilde{\sigma}_{i,j}(x_1, x_2, Q^2)$) bekannt, dann kann mithilfe der PDF der Wirkungsquerschnitt $\sigma_{i,j}$ für die Reaktion der Partonen $i$ und $j$ bei dem Zusammenstoß von zwei Protonen berechnet werden (siehe \textit{\autoref{totaler_WQ_ein_quark}}).
+Die Partondichtefunktionen können genutzt werden, um einen Ausdruck für den totalen Wirkungsquerschnitt $pp \rightarrow \gamma \gamma $ zu finden. Ist der totale Wirkungsquerschnitt eines partonischen Prozesses zwischen den Partonen $i$ und $j$ bei den festgelegten Impulsbruchteilen $x_1$ und $x_2$ und der Energieskala $Q^2$ bekannt (genannt $\tilde{\sigma}_{i,j}(x_1, x_2, Q^2)$), dann kann mithilfe der PDF der Wirkungsquerschnitt $\sigma_{i,j}$ für die Reaktion der Partonen $i$ und $j$ bei dem Zusammenstoß von zwei Protonen berechnet werden (siehe \textsf{\autoref{totaler_WQ_ein_quark}}).
 \begin{equation}
 \sigma_{i,j} = \int f_i(x_1, Q^2)f_j(x_2, Q^2) \tilde{\sigma}_{i,j}(x_1, x_2, Q^2)\text{d}x_1\text{d}x_2
 \label{totaler_WQ_ein_quark}
@@ -260,21 +260,21 @@ Der totale Wirkungsquerschnitt ergibt sich dann als Summe aller möglichen $\sig
 \sigma = \sum_{q} \left(\sigma_{q,\overline{q}} + \sigma_{\overline{q},q} \right)~. 
 \label{totaler_WQ_als_summe}
 \end{equation}
-In \textit{\autoref{2.2}} wurde der differentielle Wirkungsquerschnitt für den partonischen Prozess $\sigma_p$ im Schwerpunktsystem der Konstituenten berechnet. $\tilde{\sigma}_{q,\overline{q}}(x_1, x_2, Q^2)$ ergibt sich damit nach \textit{\autoref{WQ_ein_quark}}.
+In \textsf{\autoref{2.2}} wurde der differentielle Wirkungsquerschnitt für den partonischen Prozess $\sigma_p$ im Schwerpunktsystem der Konstituenten berechnet. $\tilde{\sigma}_{q,\overline{q}}(x_1, x_2, Q^2)$ ergibt sich damit nach \textsf{\autoref{WQ_ein_quark}}.
 \begin{equation}
 \tilde{\sigma}_{q,\overline{q}}(x_1, x_2, Q^2) = \int \frac{\text{d}\sigma_{p}}{\text{d}\eta}\left(x_1,x_2, Q^2\right)\text{d} \eta
 \label{WQ_ein_quark}
 \end{equation}
-\textit{\autoref{WQ_ein_quark}} gilt im Schwerpunktsystem der Partonen und muss im Folgenden in das Laborsystem transformiert werden. Weiterhin muss die Mandelstam-Variable $s$, die das Quadrat der Schwerpunktsenergie der Partonen darstellt, in Abhängigkeit von $x_1, x_2$ ausgedrückt werden. Für die Partonen $q$ und $\overline{q}$ mit den Impulsbruchteilen $x_1$ und $x_2$ lassen sich im Schwerpunktsystem der beiden Hadronen ihre Vierervektoren schreiben als \textit{\autoref{vierervektoren_hadronen}}, wobei $E$ die Strahlenergie bezeichnet.
+\textsf{\autoref{WQ_ein_quark}} gilt im Schwerpunktsystem der Partonen und muss im Folgenden in das Laborsystem transformiert werden. Weiterhin muss die Mandelstam-Variable $s$ in Abhängigkeit von $x_1, x_2$ ausgedrückt werden. Für die Partonen $q$ und $\overline{q}$ mit den Impulsbruchteilen $x_1$ und $x_2$ lassen sich ihre Vierervektoren im Schwerpunktsystem der beiden Hadronen schreiben als \textsf{\autoref{vierervektoren_hadronen}}, wobei $E$ die Strahlenergie bezeichnet.
 \begin{equation}
 \textbf{p}_q = \left(x_1E, 0, 0, x_1E\right) \quad \text{und} \quad \textbf{p}_{\overline{q}} = \left(x_2E, 0, 0, -x_2E\right)
 \label{vierervektoren_hadronen}
 \end{equation}
-Mit \textit{\autoref{vierervektoren_hadronen}} ergibt sich die Schwerpunktenergie zu:
+Mit \textsf{\autoref{vierervektoren_hadronen}} ergibt sich die Schwerpunktenergie zu:
 \begin{equation}
 \sqrt{s} = 2\sqrt{x_1x_2}E~.
 \end{equation}
-Im folgenden werden Variablen im Laborsystem ungestrichen und Variablen im Schwerpunktsystem der Partonen gestrichen benannt. Die Pseudo-Rapidität, die sich für masselose Teilchen additiv bei Inertialsystemwechsel verhält, transformiert sich, wenn sich das Schwerpunktsystem der Partonen mit der Geschwindigkeit $\beta$ zum Laborsystem bewegt, nach \textit{\autoref{eta_trafo}}.
+Im Folgenden werden Variablen im Laborsystem ungestrichen und Variablen im Schwerpunktsystem der Partonen gestrichen benannt. Die Pseudo-Rapidität, die sich für masselose Teilchen additiv bei Inertialsystemwechsel verhält, transformiert sich, wenn sich das Schwerpunktsystem der Partonen mit der Geschwindigkeit $\beta$ zum Laborsystem bewegt, nach \textsf{\autoref{eta_trafo}}.
 \begin{equation}
 \eta' = \eta + \frac{1}{2}\ln(\frac{1-\beta}{1+\beta}) \quad \Rightarrow \quad \frac{\text{d}\eta'}{\text{d}\eta} = 1 
 \label{eta_trafo}
@@ -284,17 +284,17 @@ Damit ergibt sich für den Wirkungsquerschnitt im Laborsystem:
 \frac{\text{d}\sigma_p}{\text{d}\eta} = \frac{\text{d}\eta'}{\text{d}\eta} \frac{\text{d}\sigma_p}{\text{d}\eta'} = \frac{Q_q^4e^4}{48\pi s}(1+\tanh^2(\eta')).
 \label{diff_WQ_schwerpunkt}
 \end{equation}
-Die Geschwindigkeit $\beta$ ergibt sich mit den Dreierimpulsen $\vec{p}$ zu \textit{\autoref{beta}}.
+Die Geschwindigkeit $\beta$  wird aus den Dreierimpulsen $\vec{p}$ erhalten:
 \begin{equation}
-\beta = \frac{\abs{\vec{p}_q + \vec{p}_{\overline{q}}}}{m_q + m_{\overline{q}}} = \frac{(x_1 - x_2)E}{(x_1 + x_2)E} = \frac{x_1 - x_2}{x_1 + x_2}
+\beta = \frac{\abs{\vec{p}_q + \vec{p}_{\overline{q}}}}{m_q + m_{\overline{q}}} = \frac{(x_1 - x_2)E}{(x_1 + x_2)E} = \frac{x_1 - x_2}{x_1 + x_2}~.
 \label{beta}
 \end{equation}
-Durch Einsetzen der gefunden Ausdrücke für $s, \eta'$, und $\beta$ in \textit{\autoref{diff_WQ_schwerpunkt}}, ergibt sich mit $Q^2 = 2 x_1 x_2 E^2$ insgesamt für die differentiellen Wirkungsquerschnitt im Laborsystem:
+Durch Einsetzen der gefundenen Ausdrücke für $s, \eta'$ und $\beta$ in \textsf{\autoref{diff_WQ_schwerpunkt}}, ergibt sich mit $Q^2 = 2 x_1 x_2 E^2$ insgesamt für den differentiellen Wirkungsquerschnitt im Laborsystem:
 \begin{equation}
 \derivative{\sigma_p}{\eta}\left(x_1, x_2, Q^2, q\right) = \frac{Q_q^4e^4}{96\pi Q^2} \left(1+\tanh^2\left(\eta + \frac{1}{2}\ln(\frac{x_2}{x_1})\right)\right)~.
 \label{diff_WQ_labor}
 \end{equation}
-Schließlich können mithilfe von \textit{\autoref{totaler_WQ_ein_quark}}, \textit{\autoref{WQ_ein_quark}} und \textit{\autoref{totaler_WQ_als_summe}} die Ausdrücke \textit{\autoref{totaler_WQ}} für den totalen und \textit{\autoref{diff_WQ_hadron}} für den dreifach differentiellen Wirkungsquerschnitt gefunden werden.
+Schließlich können mithilfe von \textsf{\autoref{totaler_WQ_ein_quark}}, \textsf{\autoref{WQ_ein_quark}} und \textsf{\autoref{totaler_WQ_als_summe}} die Ausdrücke \textsf{\autoref{totaler_WQ}} für den totalen und \textsf{\autoref{diff_WQ_hadron}} für den dreifach differentiellen Wirkungsquerschnitt gefunden werden.
 \begin{align}
 \label{totaler_WQ}
 \sigma = \sum_{q} \int \left[f_q(x_1, Q^2)f_{\overline{q}}(x_2, Q^2) +f_{\overline{q}}(x_1, Q^2)f_{q}(x_2, Q^2) \right] \derivative{\sigma_p}{\eta} \text{d}x_1\text{d}x_2\text{d}\eta \\
@@ -302,8 +302,8 @@ Schließlich können mithilfe von \textit{\autoref{totaler_WQ_ein_quark}}, \text
 \label{diff_WQ_hadron} 
 \end{align}
 \section{Umgewichtung zwischen PDF-Sets}
-Das quantitative Ergebnis von \textit{\autoref{diff_WQ_hadron}} hängt von der verwendeten Partondichtefunktionen ab. Je nach Messung und Anpassung ergeben sich kleine Unterschiede zwischen den verschiedenen Sets. Die \textit{Umgewichtung} entspricht einem Umrechnungsfaktor zwischen differentiellen Wirkungsquerschnitten, die mit verschiedenen Partondichtefunktionen berechnet wurden. Aus \textit{\autoref{diff_WQ_hadron}}  ergeben sich die Gewichte zwischen den PDF-Sets $f^{(1)}$ und $f^{(2)}$ zu \textit{\autoref{Gewichte}}.
-%kann, bis auf die Quarkladung,  $\derivative{\sigma_p}{\eta}$ aus der Summe herausgezogen werden, sodass sich für die Gewichte zwischen den PDF-Sets $f^{(1)}$ und $f^{(2)}$ \textit{\autoref{Gewichte}} ergibt.
+Das quantitative Ergebnis von \textsf{\autoref{diff_WQ_hadron}} hängt von der verwendeten Partondichtefunktion ab. Je nach Messung und Anpassung ergeben sich kleine Unterschiede zwischen den verschiedenen Sets. Die \textit{Umgewichtung} entspricht einem Umrechnungsfaktor zwischen differentiellen Wirkungsquerschnitten, die mit verschiedenen Partondichtefunktionen berechnet wurden. Aus \textsf{\autoref{diff_WQ_hadron}}  ergeben sich die Gewichte zwischen den PDF-Sets $f^{(1)}$ und $f^{(2)}$ zu \textsf{\autoref{Gewichte}}.
+%kann, bis auf die Quarkladung,  $\derivative{\sigma_p}{\eta}$ aus der Summe herausgezogen werden, sodass sich für die Gewichte zwischen den PDF-Sets $f^{(1)}$ und $f^{(2)}$ \textsf{\autoref{Gewichte}} ergibt.
 \begin{equation}
 w\left(x_1, x_2, Q^2\right) = \frac{ \sum_{q} Q_q^4 \left[f_q^{(1)}(x_1, Q^2)f_{\overline{q}}^{(1)}(x_2, Q^2) +f_{\overline{q}}^{(1)}(x_1, Q^2)f_{q}^{(1)}(x_2, Q^2) \right]}{\sum_{q} Q_q^4 \left[f_q^{(2)}(x_1, Q^2)f_{\overline{q}}^{(2)}(x_2, Q^2) +f_{\overline{q}}^{(2)}(x_1, Q^2)f_{q}^{(2)}(x_2, Q^2) \right]}
 \label{Gewichte}
@@ -311,44 +311,44 @@ w\left(x_1, x_2, Q^2\right) = \frac{ \sum_{q} Q_q^4 \left[f_q^{(1)}(x_1, Q^2)f_{
 \chapter{Maschinelles Lernen und tiefe neuronale Netzwerke}
 \label{3}
 \section{Einführung in Maschinelles Lernen}
-Das Konzept \glqq Maschinelles Lernen\grqq~befasst sich damit, aus Informationen, beispielsweise Messwerte, ein statistisches Modell zu entwickeln, das die Muster hinter den Lerndaten erkennt und übertragen kann. Es werden die Teilgebiete Klassifizierung und Regression unterschieden.
+Das Konzept \textit{Maschinelles Lernen} befasst sich damit, aus Informationen, beispielsweise Messwerte, ein statistisches Modell zu entwickeln, das die Muster hinter den Lerndaten erkennt und übertragen kann. Es werden die Teilgebiete Klassifizierung und Regression unterschieden.
 
-\textbf{Klassifizierung} ordnet Objekten ihre jeweilige Gruppe, auch genannt \textit{Label} zu. Dies geschieht auf Grundlage der Eigenschaften eines Objektes, den sogenannten \textit{Features}.
-In dieser Arbeit wird \textbf{Regression} behandelt, wobei hier anstatt einer diskreten Zuordnung eine reelle Zahl ausgegeben wird. Wird eine Funktion $f: \mathbb{R}^n \rightarrow \mathbb{R}, \mathbf{x} \mapsto f(\mathbf{x})$ betrachtet, werden die Einträge des Vektors $\mathbf{x}$ als Features und der Funktionswert $f(\mathbf{x}) \in \mathbb{R}$ als Label bezeichnet. Am Beispiel des hadronischen Diphoton Prozess \textit{\autoref{diff_WQ_hadron}}, kann man $x_1, x_2, \eta$ als Features und den zugehörigen differentiellen Wirkungsquerschnitt als Label identifizieren. 
+\textbf{Klassifizierung} ordnet Objekten ihre jeweilige Gruppe, auch genannt \textit{Label}, zu. Dies geschieht auf Grundlage der Eigenschaften eines Objektes, den sogenannten \textit{Features}.
+In dieser Arbeit wird \textbf{Regression} behandelt, wobei hier anstatt einer diskreten Zuordnung eine reelle Zahl ausgegeben wird. Wird eine Funktion $f: \mathbb{R}^n \rightarrow \mathbb{R}, \mathbf{x} \mapsto f(\mathbf{x})$ betrachtet, werden die Einträge des Vektors $\mathbf{x} \in \mathbb{R}^n$ als Features und der Funktionswert $f(\mathbf{x}) \in \mathbb{R}$ als Label bezeichnet. Am Beispiel des hadronischen Diphoton-Prozesses \textsf{\autoref{diff_WQ_hadron}} können $x_1, x_2, \eta$ als Features und der zugehörige differentielle Wirkungsquerschnitt als Label identifiziert werden. 
 Im \textbf{überwachten} Lernen sind alle Trainingsdaten mit Labels versehen, sodass die Vorhersage des Modells mit dem wahren Ergebnis abgeglichen werden und das Netz seine Parameter entsprechend anpassen kann, um eine minimale Abweichung zu erreichen. 
 
 Die konkrete Art des Machine-Learning, die in dieser Arbeit untersucht wird, ist das Deep-Learning, dessen Prinzip auf künstlichen neuronalen Netzwerken beruht. Diese neuronalen Netze sollen im folgenden verwendet werden, um einen Regressionsalgorithmus zu entwickeln, der gegebenenfalls hochdimensionale Funktionen erlernen und damit die Effizienz der numerischen Berechnung von differentiellen Wirkungsquerschnitten steigern kann. 
 \section{Neuronale Netze}
 Eine Veranschaulichung des Konzeptes eines neuronalen Netzes ist in \textsf{\autoref{Perceptron-Bild}} gezeigt.
 Den Grundbaustein eines DNN, in dem die elementaren Berechnungen durchgeführt werden, stellt das Neuron dar, dessen Name durch das biologische Nervensystem inspiriert ist.
-Diese Neuronen, die auch \textit{Units} genannt werden, können unterschiedlich stark aktiviert sein. Die Units sind in Schichten, genannt \textit{Layern}, organisiert, zwischen denen die Ausgabewerte der Neuronen hin- und hertransferiert werden. Die Units des Layers $l$ nehmen als Funktionsargumente die Aktivierung von Neuronen der Schicht $l-1$ und geben ihrerseits wieder einen reellen Wert aus. Während im ersten Layer, genannt Input-Layer, die Aktivierung der Neuronen durch den Wert der eingehenden Features gegeben ist, beherbergt die letzte Schicht, der sogenannte Output-Layer nur noch eine Node, dessen Aktivierung die Vorhersage des Netzes darstellt. 
+Diese Neuronen, die auch \textit{Units} genannt werden, können unterschiedlich stark aktiviert sein. Die Units sind in Schichten, genannt \textit{Layern}, organisiert, zwischen denen die Ausgabewerte der Neuronen hin- und hertransferiert werden. Die Units des Layers $l$ nehmen als Funktionsargumente die Aktivierung von Neuronen der Schicht $l-1$ und geben ihrerseits wieder einen reellen Wert aus. Während im ersten Layer, genannt Input-Layer, die Aktivierung der Neuronen durch den Wert der eingehenden Features gegeben ist, beherbergt die letzte Schicht, der sogenannte Output-Layer, nur noch eine Node, dessen Aktivierung die Vorhersage des Netzes darstellt. 
 
 \begin{wrapfigure}[13]{r}{0.4\textwidth}
 	\includegraphics[width=0.4\textwidth]{graphics/NeuralNetwork}
-	\caption{Konzept eines mehrschichtigen Perzeptron \cite{Perceptron}, Kreise stellen Neuronen dar.}
+	\caption{Das Konzept eines mehrschichtigen Perzeptron \cite{Perceptron} mit Kreisen als Neuronen ist dargestellt.}
 	
 	\label{Perceptron-Bild}
 \end{wrapfigure}
-Es wird sich im folgenden auf vollständig verbundene Feedforward-Netze beschränkt. Während sich vollständig verbunden darauf bezieht, dass ein Neuron mit allen Neuronen der vorhergehenden Schicht verbunden ist, versteht man unter Feedforward-Netzen, dass die Ausgabe von Units der Schicht $l-1$ nur Neuronen in Layer $l$ beeinflusst.
+Es wird sich im Folgenden auf vollständig verbundene \textit{Feedforward}-Netze beschränkt. Während sich vollständig verbunden darauf bezieht, dass ein Neuron mit allen Neuronen der vorhergehenden Schicht verbunden ist, versteht man unter Feedforward-Netzen, dass die Ausgabe von Units der Schicht $l-1$ nur Neuronen in Layer $l$ beeinflusst.
 
-Jedes Neuron stellt zunächst eine lineare Funktion von den Ausgaben des vorhergegangen Layers $l-1$ dar, die im Vektor $\mathbf{y}_{l-1}$ zusammengefasst sind. Die Ausgabe des $n$-ten Neurons der Schicht l, bezeichnet mit $y_l^n$, wird als Skalarprodukt zwischen den Gewichten der Node $\mathbf{w}_{l}^n$ dargestellt, wobei zusätzlich das Bias $b_l^n$ addiert wird. Auf diese Lineare Funktion wird anschließend eine nichtlineare Aktivierungsfunktion $\sigma$ angewendet, die es dem Netz ermöglicht nichtlineare Zusammenhänge zu erlernen.
+Jedes Neuron stellt zunächst eine lineare Funktion von den Ausgaben des vorhergegangen Layers $l-1$ dar, die im Vektor $\mathbf{y}_{l-1}$ zusammengefasst sind. Die Ausgabe des $n$-ten Neurons der Schicht l, bezeichnet mit $y_l^n$, wird als Skalarprodukt zwischen den Gewichten der Node $\mathbf{w}_{l}^n$ dargestellt, wobei zusätzlich das Bias $b_l^n$ addiert wird. Auf diese Lineare Funktion wird anschließend eine nichtlineare Aktivierungsfunktion $\sigma$ angewendet, die es dem Netz ermöglicht, nichtlineare Zusammenhänge zu erlernen:
 \begin{equation}
-y_l^n = \sigma\left(\mathbf{w}_{l}^n \cdot \mathbf{y}_{l-1} + b_{l}^n\right)
+y_l^n = \sigma\left(\mathbf{w}_{l}^n \cdot \mathbf{y}_{l-1} + b_{l}^n\right)~.
 \label{function-per-node}
 \end{equation}
-Für den ersten Layer gilt  $\mathbf{y}_0 = \mathbf{x}$, die Features entsprechen also $y_0$. In einem vollständig verbundenen Netz ergibt sich pro Node eine lineare Gleichung der Form \textit{\autoref{function-per-node}}. Insgesamt können die Rechenoperation, die in einem Layer stattfindet also als Matrixmultiplikation formuliert werden. Die Vektoren $\mathbf{w}_{l}^n$ werden hierbei zu den Zeilen der Matrix $\mathbf{W}_l$, die  $b_{l}^n$ in Vektoren zusammengefasst.
+Für den ersten Layer entsprechen die Features $\mathbf{x}$ der Ausgabe $\mathbf{y}_0=\mathbf{x}$. In einem vollständig verbundenen Netz ergibt sich pro Node eine lineare Gleichung der Form \textsf{\autoref{function-per-node}}. Insgesamt können die Rechenoperationen, die in einem Layer stattfinden, als Matrixmultiplikation formuliert werden. Die Vektoren $\mathbf{w}_{l}^n$ werden hierbei zu den Zeilen der Matrix $\mathbf{W}_l$, die  $b_{l}^n$ in Vektoren zusammengefasst (siehe \textsf{\autoref{OP-eines-Layers}}).
 \begin{equation}
+\label{OP-eines-Layers}
 \mathbf{y}_l = \sigma\left(\mathbf{W}_l\cdot \mathbf{y}_{l-1} + \mathbf{b}_l\right)
 \end{equation}
-Im Neuron des Output-Layers findet schließlich die Ausgabe des Funktionswertes $y$ statt. Das Ziel ist es nun, die Abweichung des Ausgabewertes $y$ des Netzes vom wahren Wert $\tilde{y}$ zu minimieren. Mathematisch wird die Abweichung als eine Metrik definiert und das Erlernen der freien Parameter eines künstlichen neuronalen Netzes wird damit zum Optimierungsproblem. Im Kontext von ML wird die zu minimierende Metrik, die abhängig von allen Gewichten $\mathbf{W}$ und Biases $\mathbf{b}$ ist, als Kostenfunktion oder Verlustfunktion (Loss-Funktion) bezeichnet, wobei hier eine mögliche Wahl die mittlere quadratische Abweichung ist.
+Im Neuron des Output-Layers findet schließlich die Ausgabe des Funktionswertes $y$ statt. Das Ziel ist es nun, die Abweichung des Ausgabewertes $y$ vom wahren Wert $\tilde{y}$ zu minimieren. Mathematisch wird die Abweichung als eine Metrik definiert, sodass das Erlernen der freien Parameter eines künstlichen neuronalen Netzes zum Optimierungsproblem wird. Im Kontext von ML wird die zu minimierende Metrik, die abhängig von allen Gewichten $\mathbf{W}$ und Biases $\mathbf{b}$ ist, als Kostenfunktion oder Verlustfunktion (Loss-Funktion) bezeichnet, wobei hier eine mögliche Wahl die mittlere quadratische Abweichung ist:
 \begin{equation}
-C\left(\mathbf{W}, \mathbf{b}\right) = \frac{1}{N}\sum_{i=1}^{N}\left(y^{(i)} - \tilde{y}^{(i)}\right)^2
+C\left(\mathbf{W}, \mathbf{b}\right) = \frac{1}{N}\sum_{i=1}^{N}\left(y^{(i)} - \tilde{y}^{(i)}\right)^2~.
 \end{equation}
-Als Kostenfunktion kann prinzipiell jede Metrik verwendet werden, die zielführend erscheint und es muss je nach Problemstellung abgewogen werden, welche Wahl die besten Ergebnisse liefert.
-Da die analytische Berechnung von Extremstellen der Verlustfunktion von neuronalen Netzen nicht möglich ist, wird auf \textit{Gradient-Descent} \cite{gradient-descent} zurückgegriffen. Hierbei wird, beim Output-Layer beginnend, der Gradient der Kostenfunktion berechnet und per Kettenregel zum vorherigen Layer fortgepflanzt. Dieser Vorgang, für alle Units einen Gradienten zu berechnen, nennt sich \textit{Backpropagation} und führt in der Anwendung auf die Methode des automatischen Ableitens zurück. Die Gradienten werden immer gemittelt für eine Anzahl an Trainingspunkten, genannt Batch, berechnet und auf die Gewichte angewendet, sodass man sich einem lokalen, oder auch globalen, Minimum nähern kann (Stochastic Gradient Descent, SGD \cite{sgd}).
+Als Kostenfunktion kann prinzipiell jede Metrik verwendet werden, die zielführend erscheint, sodass je nach Problemstellung abgewogen werden muss, welche Wahl die besten Ergebnisse liefert. Da die analytische Berechnung von Extremstellen der Verlustfunktion von neuronalen Netzen nicht möglich ist, wird auf Gradientenabstieg (\textit{Gradient-Descent} \cite{gradient-descent}) zurückgegriffen. Hierbei wird, beim Output-Layer beginnend, der Gradient der Kostenfunktion berechnet und per Kettenregel zum vorherigen Layer fortgepflanzt. Dieser Vorgang, für alle Units einen Gradienten zu berechnen, nennt sich \textit{Backpropagation} und führt in der Anwendung auf die Methode des automatischen Differenzierens zurück. Die Gradienten werden gemittelt für eine Anzahl an Trainingspunkten, genannt Batch, berechnet und auf die Gewichte angewendet, sodass sich einem lokalen oder auch globalen, Minimum genähert werden kann (\textit{Stochastic Gradient Descent}, SGD \cite{sgd}).
 \section{Training und Hyperparameter}
 \label{Training und Hyperparameter}
-Man nennt Parameter, die Programmierende vorher festlegen müssen und die nicht vom Algorithmus erlernt werden, Hyperparameter. Es werden im Weiteren die folgende Hyperparameter besprochen, wobei nicht zwischen solchen Hyperparametern, die die Architektur des Netzes bestimmen und Trainingsparametern, die das Lernverhalten bestimmen, differenziert wird:
+Parameter, die Programmierende vorher festlegen müssen und nicht vom Algorithmus erlernt werden, werden Hyperparameter genannt. Es werden im Weiteren die folgende Hyperparameter besprochen, wobei nicht zwischen solchen Hyperparametern, die die Architektur des Netzes bestimmen, und Trainingsparametern, die das Lernverhalten bestimmen, differenziert wird:
 \begin{multicols}{2}
 	\begin{itemize}
 	\setlength\itemsep{0cm}
@@ -365,31 +365,31 @@ Man nennt Parameter, die Programmierende vorher festlegen müssen und die nicht 
 	\end{itemize}
 \end{multicols}
 Die Architektur eines neuronalen Netzes wird durch die Anzahl an \textbf{Layer und Units} festgelegt.
-Tiefere neuronale Netze mit größeren Anzahlen an Neuronen sind in der Lage kompliziertere Sachverhalte genauer zu lernen, allerdings steigt die Anzahl an zu trainierenden Parametern und auszuführenden Rechnungen. Bei zu komplexen Modellen für simple Sachverhalte mit wenigen Trainingspunkten kommt es häufig zur Überanpassung, bei der sich das Modell zu sehr auf die vorliegenden Daten spezialisiert und seine Generalisierungsfähigkeit verliert.
+Tiefere neuronale Netze mit größeren Anzahlen an Neuronen sind in der Lage, kompliziertere Sachverhalte genauer zu lernen, allerdings steigt die Anzahl zu trainierender Parameter und auszuführender Rechnungen an. Bei zu komplexen Modellen für simple Sachverhalte mit wenigen Trainingspunkten kommt es häufig zur Überanpassung, bei der sich das Modell zu sehr auf die vorliegenden Daten spezialisiert und seine Generalisierungsfähigkeit verliert.
 
-Die \textbf{Loss-Funktion} bestimmt das Lernverhalten des Netzes maßgeblich, denn für sie werden letztendlich die Gradienten berechnet. Die in dieser Arbeit verwendeten Kostenfunktionen sind in \textit{\autoref{Loss-Funktionen-Tabelle}} definiert. %TODO ist der Satz so okay?
+Die \textbf{Loss-Funktion} bestimmt das Lernverhalten des Netzes maßgeblich, denn für sie werden letztendlich die Gradienten berechnet. Die in dieser Arbeit verwendeten Kostenfunktionen sind in \textsf{\autoref{Loss-Funktionen-Tabelle}} definiert.
 
-Die \textbf{Aktivierungsfunktion} bricht die Linearität des Netzes und sorgt dafür, dass dieses nichtlineare Funktionen erlernen kann.  Die Form und Ableitung der Aktivierungsfunktion bestimmt den Gradienten während der Backpropagation. Speziell für Aktivierungsfunktionen mit verschwindenden Ableitungen, besonders die namensgebende Funktion ReLU \cite{ReLU}, kann das \textit{Dying-ReLU-Problem} auftreten. Hierbei werden durch große Gradienten die Gewichte eines Neurons so verändert, dass es, fast unabhängig von seinen Funktionswerten, nur noch Null ausgibt\footnote{Null speziell für ReLU}. Da die Ableitung in diesem Definitionsbereich ebenfalls Null ist, kann sich das Neuron nicht regenerieren und trägt im Folgenden nicht mehr zum Lernprozess des Netzes bei. Die untersuchten Aktivierungsfunktionen sind in \textit{\autoref{Aktivierungsfunktionen}} gezeigt.
+Die \textbf{Aktivierungsfunktion} bricht die Linearität des Netzes und sorgt dafür, dass dieses nichtlineare Funktionen erlernen kann.  Die Form und Ableitung der Aktivierungsfunktion bestimmt den Gradienten während der Backpropagation. Für Aktivierungsfunktionen mit verschwindenden Ableitungen, besonders die namensgebende Funktion ReLU \cite{ReLU}, kann das \textit{Dying-ReLU-Problem} auftreten. Hierbei werden durch große Gradienten die Gewichte eines Neurons so verändert, dass es, fast unabhängig von seinen Funktionswerten, nur noch null ausgibt\footnote{null speziell für ReLU}. Da die Ableitung in diesem Definitionsbereich ebenfalls null ist, kann sich das Neuron nicht regenerieren und trägt im Folgenden nicht mehr zum Lernprozess des Netzes bei. Die untersuchten Aktivierungsfunktionen sind in \textsf{\autoref{Aktivierungsfunktionen}} gezeigt.
 
 An welchem Punkt des hochdimensionalen Phasenraums der Kostenfunktion der Lernprozess beginnt, wird von der \textbf{Initialisierung} festgelegt. Die Initialisierung der Gewichte ist eng verknüpft mit der verwendeten Aktivierungsfunktion. Zum Beispiel hat sich die HeNormal-Initialisierung \cite{He} für die ReLU-Aktivierungsfunktion etabliert.
 
-Die hier besprochenen Lernalgorithmen basieren auf Gradientenabstieg. Die konkrete Implementation des Gradient-descent, die sich gegebenenfalls an die vorliegende Situation anpasst, wird \textbf{Optimizer} genannt. Die \textbf{Learning-Rate} ist hierbei der Faktor, mit dem der Gradient skaliert wird, bevor er auf die Gewichte angewendet wird. Diese muss so gewählt werden, dass das Lernen weder in einem zu hohen lokalen Maximum zum Erliegen kommt, noch so groß ist, dass es zu Sprüngen über das Minimum kommt. Einige auf Gradientenabstieg basierende Optimizer sind in \textit{\autoref{optimizer}} erläutert.
+Die hier besprochenen Lernalgorithmen basieren auf Gradientenabstieg. Die konkrete Implementation des Gradient-descent, die sich gegebenenfalls an die vorliegende Situation anpasst, wird \textbf{Optimizer} genannt. Die \textbf{Learning-Rate} ist hierbei der Faktor, mit dem der Gradient skaliert wird, bevor er auf die Gewichte angewendet wird. Diese muss so gewählt werden, dass das Lernen weder in einem zu hohen lokalen Maximum zum Erliegen kommt noch so groß ist, dass es zu Sprüngen über das Minimum kommt. Einige auf Gradientenabstieg basierende Optimizer sind in \textsf{\autoref{optimizer}} erläutert.
 
 Die \textbf{Batch-Größe} beschreibt, wie viele Objekte in einem Durchgang vom neuronalen Netz behandelt werden. Große Batch-Größen dämpfen Ausreißer und beschleunigen die Trainingszeit, wobei ein Training mit kleineren Batches detailreicher und genauer sein kann. 
 
-Die Anzahl \textbf{Trainingsepochen} beschreibt, wie oft während des Lernvorgangs über die Trainingsdaten iteriert wird. Die Präzision eines neuronalen Netzes konvergiert idealerweise, daher kann eine Abbruchbedingung als minimale Verbesserung zwischen Epochen festgelegt werden. 
+Die Anzahl an \textbf{Trainingsepochen} beschreibt, wie oft während des Lernvorgangs über die Trainingsdaten iteriert wird. Die Präzision eines neuronalen Netzes konvergiert idealerweise, daher kann eine Abbruchbedingung als minimale Verbesserung zwischen Epochen festgelegt werden. 
 
-Hat man Features, deren numerische Reichweite stark auseinandergeht, kann es sich lohnen die Eingabewert zu \textbf{normalisieren}. Das bedeutet, alle Features auf ein festgelegtes Intervall, zum Beispiel $I=[1,0]$ anzupassen. So wird verhindert, dass einem Feature mit großem numerischen Wert zu viel Bedeutung zugeordnet wird.
+Liegen Features vor, deren numerische Reichweite stark auseinandergeht, kann es sich lohnen, die Eingabewert zu \textbf{normalisieren}. Das bedeutet, alle Features auf ein festgelegtes Intervall, zum Beispiel $I=[1,0]$, zu transformieren. So wird verhindert, dass einem Feature mit großem numerischen Wert zu viel Bedeutung zugeordnet wird.
 
 \label{random-search}
-Das Finden der besten Hyperparameter ist ein weiteres Optimierungsproblem, das abgesehen von der Suche der besten Gewichte gelöst werden muss. Für die Methoden des Grid- oder Random-Search wird ein Gitter an Hyperparametern festgelegt. Anschließend werden im ersten Fall alle und im zweiten lediglich zufällige Gitterpunkte trainiert und evaluiert. Fortgeschrittenere Methoden der Hyperparameteroptimierung wie Bayesian-Search \cite{bayesian} oder Hyperband \cite{hyperband}, sollen in kürzerer Zeit bessere Parameter finden. Die Hyperparameteroptimierung kann bei vielen Parametern oder langen Lerndauern sehr aufwändig sein. 
+Das Finden der besten Hyperparameter ist ein weiteres Optimierungsproblem, das abgesehen von der Suche der besten Gewichte gelöst werden muss. Für die Methoden der Gitter- oder Zufalls-Suche wird ein Gitter an Hyperparametern festgelegt. Anschließend werden im ersten Fall alle und im zweiten lediglich zufällige Gitterpunkte trainiert und evaluiert. Fortgeschrittenere Methoden der Hyperparameteroptimierung wie Bayessche Optimierung \cite{bayesian} oder Evolutionäre Optimierung \cite{hyperband} sollen in kürzerer Zeit bessere Parameter finden. Die Hyperparameteroptimierung kann bei vielen Parametern oder langen Lerndauern sehr aufwändig sein. 
 
-\textbf{Implementierung mit Keras und Tensorflow}
-Die Implementierung des ML-Algorithmus ist in dieser Arbeit mit der Open-Source Python-Bibliothek TensorFlow und Keras \cite{Keras} umgesetzt. Keras fungiert hierbei als eine high-level API für TensorFlow. Das Erstellen eines Netzes wird mit den Modulen vereinfacht und sowohl Loss-Funktion, Optimizer als auch Initialisierungen sind bereits implementiert. Es können sowohl vorgefertigte Layer angepasst werden, als auch Layer und Trainingsroutine selbst schreiben, wobei die vorgefertigten Layer über einige Methoden verfügen, die den Umgang mit dem Netz komfortabler machen und das Speichern und Laden vereinfachen. 
+\textbf{Implementierung mit Keras und Tensorflow:}
+Die Implementierung des ML-Algorithmus ist in dieser Arbeit mit der Open-Source Python-Bibliothek TensorFlow und Keras \cite{Keras} umgesetzt. Keras fungiert hierbei als eine high-level API für TensorFlow. Das Erstellen eines Netzes wird mit den Modulen vereinfacht und sowohl Loss-Funktion, Optimizer als auch Initialisierungen sind bereits implementiert. Es können sowohl vorgefertigte Layer angepasst als auch Layer und Trainingsroutine selbst geschrieben werden, wobei die vorgefertigten Layer über einige Methoden verfügen, die den Umgang mit dem Netz komfortabler machen und das Speichern und Laden vereinfachen. 
 
 \section{Transfer-Learning}
 \label{transfer-learning}
-Um die hohen Zeit- und Rechenkosten des Trainings zu verringern, können bereits trainierte Modelle an ein neues Problem anpasst werden. Außerdem kann mit dem sogenannten \textbf{Transfer-Learning}, die Menge an Daten, die benötigt wird, um ein brauchbares Modell zu erhalten, signifikant verringert werden. \\
+Um die hohen Zeit- und Rechenkosten des Trainings zu verringern, können bereits trainierte Modelle an ein neues Problem anpasst werden. Außerdem kann mit diesem sogenannten \textbf{Transfer-Learning} die Menge an Daten, die benötigt wird, um ein brauchbares Modell zu erhalten, signifikant verringert werden. \\
 Die Grundidee des Transfer-Learning besteht darin, dass der Algorithmus sein bereits erlerntes statistisches Modell auf eine andere Situation überträgt und gegebenenfalls nur noch die numerischen Ausgaben anpassen muss. Es ist beobachtet worden \cite{TL}, dass Transfer-Learning die folgenden Vorteile bringt: 
 \begin{itemize}
 	\setlength\itemsep{0cm}
@@ -397,68 +397,69 @@ Die Grundidee des Transfer-Learning besteht darin, dass der Algorithmus sein ber
 	\item Höherer Start, höhere Asymptote und höhere Steigung der Lernkurve
 	\item signifikant weniger Messwerte benötigt, um brauchbare Ergebnisse zu erreichen
 \end{itemize}
-Konkret wird im Laufe dieser Arbeit das Transfer-Learning verwendet, um den differentiellen Wirkungsquerschnitt, berechnet mit einem PDF-Set, auf selbige, berechnet mit einem anderen PDF-Set, zu übertragen. Dabei wird von beiden angesprochenen Aspekten profitiert, da einerseits die Trainingszeit reduziert werden kann, als auch die Zeit zur Datengeneration verkürzt wird.
+Konkret wird im Laufe dieser Arbeit das Transfer-Learning verwendet, um den differentiellen Wirkungsquerschnitt, berechnet mit einem PDF-Set, auf selbige, berechnet mit einem anderen PDF-Set, zu übertragen. Dabei wird von beiden angesprochenen Aspekten profitiert, da einerseits die Trainingszeit reduziert und andererseits die Zeit zur Datengeneration verkürzt werden kann.
 
 Transfer-Learning folgt üblicherweise dem Ablauf:
 \begin{itemize}
 	\setlength\itemsep{0cm}
 	\setlength{\parskip}{0cm}
-	\item Zunächst wird ein sogenanntes Source-Model an einer Source-Datenmenge bis zur Konvergenz trainiert. 
+	\item Zunächst wird ein sogenanntes Quellen-Model an einer Quellen-Datenmenge bis zur Konvergenz trainiert. 
 	\item Eine kleinere Datenmenge an Zielwerten wird erstellt.
-	\item Die oberste oder einige der oberen Schichten (sprich der Output-Layer und wenige darunterliegende Layer) werden entfernt.
+	\item Die oberste, oder einige der oberen Schichten (sprich der Output-Layer und wenige darunterliegende Layer), werden entfernt.
 	\item Die Gewichte der restlichen Layer werden zunächst fixiert, um diese nicht durch große Gradienten zu zerstören.
 	\item Die entfernten Schichten werden mit neuen, trainierbaren Neuronen ersetzt.
 	\item Schließlich wird das neue Modell an der kleinern Datenmenge trainiert.
-	\item Als optionaler Letzter Schitt wird das sogenannte \textit{Fine-Tuning}(FT) eingesetzt. Bei diesem werden die fixierten Gewichte wieder gelöst.
+	\item Als optionaler letzter Schitt wird das sogenannte \textit{Fine-Tuning}(FT) eingesetzt. Bei diesem werden die fixierten Gewichte wieder gelöst.
 \end{itemize}
 
 
 \section{Monte-Carlo-Integration}
 Monte-Carlo-Integration unterscheidet sich von anderen numerischen Integrationsmethoden vor allem dadurch, dass die Konvergenz der Integration keine Abhängigkeit von der Dimensionalität des Integrals aufweist. Monte-Carlo-Methoden konvergieren hierbei immer mit $\propto \frac{1}{\sqrt{N}} $, wobei $N$ die Anzahl der ausgewerteten Phasenraumpunkte ist. Es wird hierbei Gebrauch vom Gesetz der Großen Zahlen gemacht und die Integrale mittels Wahrscheinlichkeitstheorie gelöst. \\
 \\\
-Betrachte eine Funktion $f: \Omega \subseteq \mathbb{R}^n \rightarrow \mathbb{R}, \mathbf{x} \mapsto f(\mathbf{x})$ und definiere ihren Erwartungswert $\left\langle f(\mathbf{X})\right\rangle $ auf $\Omega$, wobei $\mathbf{X}$ uniform auf $\Omega$ gezogen wird.
+Betrachte eine Funktion $f: \Omega \subseteq \mathbb{R}^n \rightarrow \mathbb{R}, \mathbf{x} \mapsto f(\mathbf{x})$ und definiere ihren Erwartungswert $\left\langle f(\mathbf{X})\right\rangle $ auf $\Omega$, wobei $\mathbf{X}$ uniform auf $\Omega$ gezogen wird, als:
 \begin{equation}
-\left\langle f(\mathbf{X})\right\rangle  = \left\langle f\right\rangle  = \frac{1}{\norm{\Omega}}\int_{\Omega} f(\mathbf{x}) \text{d}\mathbf{x}
+\left\langle f(\mathbf{X})\right\rangle  = \left\langle f\right\rangle  = \frac{1}{\norm{\Omega}}\int_{\Omega} f(\mathbf{x}) \text{d}\mathbf{x}~.
 \label{Erwartungswert-Def} 
 \end{equation}
-Es wird nun das Gesetz der Großen Zahlen angewendet und somit einen Schätzer für den Erwartungswert von $f$ (\textit{\autoref{schätzer}}) gefunden.
+Es wird nun das Gesetz der Großen Zahlen angewendet und somit ein Schätzer für den Erwartungswert von $f$ (\textsf{\autoref{schätzer}}) gefunden.
 \begin{equation}
 \tilde{\left\langle f \right\rangle } = \frac{1}{N} \sum_{i=1}^{N} f(\mathbf{x}_i) \quad \text{mit} \quad \lim_{N\rightarrow \infty} \frac{1}{N} \sum_{i=1}^{N} f(\mathbf{x}_i) = \left\langle f \right\rangle
 \label{schätzer}
 \end{equation}
-Da der Erwartungswert nicht exakt berechnet werden kann, weil es nicht möglich ist $f$ an unendlich vielen Punkten zu evaluieren, wird genutzt, dass der Schätzer gegen den Erwartungswert konvergiert und $\tilde{\left\langle f \right\rangle } \approx \left\langle f \right\rangle$ genähert. Die Geschwindigkeit der Konvergenz der Näherung kann erhöht werden, indem in \textit{\autoref{Erwartungswert-Def}} eine produktive Eins in Form einer Wahrscheinlichkeitsdichte $\rho: \Omega \subseteq \mathbb{R}^n \to \mathbb{R}_{\geq 0}, x \mapsto \rho(x)$ mit $\int_{\Omega} \rho(x) \text{d}x = 1$ eingeführt wird (\textit{\autoref{prod-eins}})
+Da der Erwartungswert nicht exakt berechnet werden kann, weil es nicht möglich ist, $f$ an unendlich vielen Punkten zu evaluieren, wird genutzt, dass der Schätzer gegen den Erwartungswert konvergiert und $\tilde{\left\langle f \right\rangle } \approx \left\langle f \right\rangle$ genähert. Die Geschwindigkeit der Konvergenz der Näherung kann erhöht werden, indem in \textsf{\autoref{Erwartungswert-Def}} eine produktive Eins in Form einer Wahrscheinlichkeitsdichte $\rho: \Omega \subseteq \mathbb{R}^n \to \mathbb{R}_{\geq 0}, x \mapsto \rho(x)$ mit $\int_{\Omega} \rho(x) \text{d}x = 1$ eingeführt wird (\textsf{\autoref{prod-eins}}).
 \begin{equation}
 I = \int_{\Omega} f(\mathbf{x}) \text{d}x =  \int_{\Omega} \frac{f(\mathbf{x})}{\rho(\mathbf{x})}\rho(\mathbf{x}) \text{d}\mathbf{x} = \left\langle \left(\frac{f}{\rho}\right) \right\rangle_{\rho}
 \label{prod-eins} 
 \end{equation}
-Dabei stellt $\left\langle \left(\frac{f}{\rho}\right) \right\rangle_{\rho}$  den Erwartungswert von $\frac{f}{\rho}$ unter der Bedingung dar, dass die $\mathbf{x}_i$ nach der Wahrscheinlichkeitsverteilung $\rho(\mathbf{x})$ gezogen werden. Der Schätzer ergibt sich dann zu \textit{\autoref{Schätzer als Summe}}.
+Dabei stellt $\left\langle \left(\frac{f}{\rho}\right) \right\rangle_{\rho}$  den Erwartungswert von $\frac{f}{\rho}$ unter der Bedingung dar, dass die $\mathbf{x}_i$ nach der Wahrscheinlichkeitsverteilung $\rho(\mathbf{x})$ gezogen werden. Der Schätzer ergibt sich dann zu \textsf{\autoref{Schätzer als Summe}}.
 \begin{equation}
 I \approx \tilde{\left\langle \left(\frac{f}{\rho}\right) \right\rangle}_{\rho}  = \frac{1}{N}\sum_{i=1}^{N}\frac{f(\mathbf{x}_i)}{\rho(\mathbf{x}_i)}
 \label{Schätzer als Summe}
 \end{equation}
-Die Konvergenz der MC-Integration ist am Schnellsten, wenn sich die Varianz von \textit{\autoref{Schätzer als Summe}} minimiert. Die Varianz ist gegeben durch \textit{\autoref{Varianz}}.
+Die Konvergenz der MC-Integration ist am schnellsten, wenn die Varianz von \textsf{\autoref{Schätzer als Summe}} minimiert wird. Die Varianz ist gegeben durch \textsf{\autoref{Varianz}}.
 \begin{equation}
 \text{Var}\left(\frac{f}{\rho}\right) = \left\langle\left(\frac{f}{\rho} - \left\langle \frac{f}{\rho}\right\rangle \right)^2 \right\rangle = \left\langle \left(\frac{f}{\rho}\right)^2 \right\rangle - \left\langle\frac{f}{\rho} \right\rangle^2 \approx \frac{1}{N} \sum_{i=1}^{N}\left(\frac{f(\mathbf{x}_i)}{\rho(\mathbf{x}_i)}\right)^2 - I^2
 \label{Varianz}
 \end{equation}
-Die Varianz minimiert sich also, wenn jeder Summand aus \textit{\autoref{Varianz}} gleich groß ist. Der Vorgang die Wahrscheinlichkeitsdichte $\rho$ an die Form unserer zu integrierenden Funktion $f$ anzupassen, nennt man \textbf{Importance Sampling} (IS). Hierbei zieht man absichtlich die $\mathbf{x}_i$ mit höheren Wahrscheinlichkeiten aus den Regionen, in denen auch $f$ den größten Beitrag liefert. Die Unsicherheit auf die Integration ergibt sich aus der Standardabweichung des Mittelwerts, sprich:
+Die Varianz minimiert sich also, wenn jeder Summand aus \textsf{\autoref{Varianz}} gleich groß ist. Der Vorgang, die Wahrscheinlichkeitsdichte $\rho$ an die Form der zu integrierenden Funktion $f$ anzupassen, wird \textbf{Impor-tance Sampling} (IS) genannt. Hierbei werden absichtlich die $\mathbf{x}_i$ mit höheren Wahrscheinlichkeiten aus den Regionen gezogen, in denen $f$ den größten Beitrag liefert. Die Unsicherheit auf die Integration ergibt sich aus der Standardabweichung des Mittelwerts, sprich:
 \begin{equation}
 \sigma_{\left\langle \frac{f}{\rho}\right\rangle} = \frac{1}{\sqrt{N-1}} \cdot \sqrt{\text{Var}\left(\frac{f}{\rho}\right)}~.
 \label{uncertainty-mc}
 \end{equation}
 Es werden im Folgenden simple Monte-Carlo-Methoden und das Importance Sampling verwendet, um aus den differentiellen Wirkungsquerschnitten die totalen Wirkungsquerschnitte zu erhalten.   
-\chapter{Anwendung von Maschinellem Lernen auf den Diphoton Prozess}
+\chapter{Anwendung von Maschinellem Lernen auf den Diphoton-Prozess}
 \label{4}
 \section{Diphoton-Prozess auf Parton-Ebene}
 \label{4.1}
-Zunächst werden neuronale Netze zur Regression der eindimensionalen differentiellen Wirkungsquerschnitte aus \textit{\autoref{2.2}} benutzt. Dabei werden geeignete Wertebereiche gewählt, sprich $\theta \in [\epsilon, \pi - \epsilon]$ bzw. $\eta \in [-3, 3]$, wobei das Verhalten des DNN für verschiedene $\epsilon$ evaluiert wird. Kleine $\epsilon$ sind hierbei interessant, weil der Wirkungsquerschnitt für $\epsilon = 0$ am Rand des Intervalls divergiert und somit das Verhalten von neuronalen Netzen an Polstellen untersucht werden kann. Die quantitativen Werte im nächsten Abschnitt sind für einen $d\overline{d} \rightarrow \gamma \gamma$-Prozess mit einer Schwerpunktsenergie von $\sqrt{s} = 200~\text{GeV}$ berechnet. Die Trainingspunkte werden zufällig nach einer, wenn nicht explizit anders angegebenen, uniformen Verteilung generiert.  
+Zunächst werden neuronale Netze zur Regression der eindimensionalen differentiellen Wirkungsquerschnitte aus \textsf{\autoref{2.2}} benutzt. Dabei werden geeignete Wertebereiche gewählt, sprich $\theta \in [\epsilon, \pi - \epsilon]$ bzw. $\eta \in [-3, 3]$, wobei das Verhalten des DNN für verschiedene $\epsilon$ evaluiert wird. Kleine $\epsilon$ sind hierbei interessant, weil der Wirkungsquerschnitt für $\epsilon = 0$ am Rand des Intervalls divergiert und somit das Verhalten von neuronalen Netzen an Polstellen untersucht werden kann. Die quantitativen Werte im nächsten Abschnitt sind für einen $d\overline{d} \rightarrow \gamma \gamma$-Prozess mit einer Schwerpunktsenergie von $\sqrt{s} = 200~\text{GeV}$ berechnet. Die Trainingspunkte werden zufällig nach einer, wenn nicht explizit anders angegebenen, uniformen Verteilung generiert.  
 Es werden im Weiteren nur Netze mit der gleichen Anzahl an Neuronen in jedem Layer verwendet.
 
 \textbf{Modell für $\mathbf{\frac{d\sigma}{d\eta}}$:} 
-Der differentielle Wirkungsquerschnitt in Abhängigkeit der Pseudo-Rapidität ist eine gutartige Funktion ohne Pol- oder Sprungstellen. \textit{\autoref{diff_WQ_eta}} reduziert sich von der Form auf eine $\tanh^2$-Funktion, deren Wertebereich sich über $[0,1)$ erstreckt und damit schon von vornherein auf einen geeigneten Wertebereich normiert ist. Der Vorfaktor wird mit einer Skalierung der Funktionswerte behandelt, auf die später weiter eingegangen wird. 
-Für diese einfache Aufgabe werden die Hyperparameter wie in \textit{\autoref{Hyperparameter-Eta}} gewählt und keine weiteren Optimierungen, wie für die folgenden Modelle, durchgeführt. Es werden in Zukunft standardmäßig der Kernel-Initializer {HeNormal} verwendet und das Bias auf Null zu initialisieren.
+Der differentielle Wirkungsquerschnitt in Abhängigkeit der Pseudo-Rapidität ist eine gutartige Funktion ohne Pol- oder Sprungstellen. \textsf{\autoref{diff_WQ_eta}} reduziert sich von der Form auf eine $\tanh^2$-Funktion, deren Wertebereich sich über $[0,1)$ erstreckt und damit schon von vornherein auf einen geeigneten Wertebereich normiert ist. Der Vorfaktor wird mit einer Skalierung der Funktionswerte behandelt, auf die später weiter eingegangen wird. 
+Für diese einfache Aufgabe werden die Hyperparameter wie in \textsf{\autoref{Hyperparameter-Eta}} gewählt und keine weiteren Optimierungen, wie für die folgenden Modelle, durchgeführt. Es werden in Zukunft standardmäßig der Kernel-Initializer {HeNormal} verwendet und das Bias auf null initialisiert.
 \begin{table}[hbt]
 	\centering
+	\caption{Die gewählten Hyperparameter des Modells $\frac{\text{d}\sigma}{d\eta}$ sind gezeigt.}
 	\begin{tabular}{ll}
 		Hyperparameter & Wert \\
 		\hline \hline
@@ -473,8 +474,8 @@ Für diese einfache Aufgabe werden die Hyperparameter wie in \textit{\autoref{Hy
 		Batch-Größe & 128 \\
 		Max. Epochen & 300 \\
 		Anzahl Trainingspunkte $\quad$& 10000\\
+		\hline
 	\end{tabular}
-	\caption{Hyperparameter des Modells $\frac{\text{d}\sigma}{d\eta}$}
 	\label{Hyperparameter-Eta}
 \end{table}
 Das Training an sich wird für alle folgenden Modelle von den, in Keras implementierbaren, \texttt{Callbacks} geregelt:
@@ -485,103 +486,147 @@ Das Training an sich wird für alle folgenden Modelle von den, in Keras implemen
 	\item \texttt{ReduceLROnPlateau}: Erzielt das Training bezogen auf eine bestimmte Metrik nicht einen Mindestfortschritt, wird die Learning-Rate reduziert.
 	\item \texttt{EarlyStopping}: Erzielt das Training bezogen auf eine bestimmte Metrik für eine gewisse Epochenanzahl keinen Mindestfortschritt, wird das Training gestoppt.
 \end{itemize}
-Die Wahl der genauen Konfiguration der Callbacks ist in \textit{\autoref{Callbacks}} festgehalten.
-Die gelernte Funktion im Vergleich mit den analytischen Werten ist in \textit{\autoref{partonic_models} (a)}  gezeigt. Die Werte überlagern sich gut, sodass auf den ersten Blick kein Unterschied festzustellen ist. Bei Betrachtung des Verhältnisses wird deutlich, dass sich der Unterschied auf ca. $0.1\%$ beläuft. 
+Die Wahl der genauen Konfiguration der Callbacks ist in \textsf{\autoref{Callbacks}} festgehalten.
+Die gelernte Funktion im Vergleich mit den analytischen Werten ist in \textsf{\autoref{partonic_models} (a)}  gezeigt. Die Werte überlagern sich gut, sodass auf den ersten Blick kein Unterschied festzustellen ist. Bei Betrachtung des Verhältnisses wird deutlich, dass sich der Unterschied auf ca. $0.1\%$ beläuft. 
 \begin{figure}[hbt]
 	\centering
 	\subfloat[Vergleich DNN - analytische Werte für $\derivative{\sigma}{\eta}$]{\includegraphics[width=6.5cm]{graphics/1_eta}}
 	\subfloat[Vergleich DNN - analytische Werte für $\derivative{\sigma}{\theta}$  auf $\theta \in {[\epsilon, \pi - \epsilon]}$ für $\epsilon=0.163$]{	\includegraphics[width=6.5cm]{graphics/2}}
-	\caption{Vorhersage der neuronalen Netze für den Wirkungsquerschnitt des partonischen Diphoton-Prozess}
+	\caption{Es sind die Vorhersagen der neuronalen Netze für den Wirkungsquerschnitt des partonischen Diphoton-Prozesses abgebildet.}
 	\label{partonic_models}
 \end{figure}
 
 \textbf{Modell für $\mathbf{\frac{d\sigma}{d\theta}}$:}
-Der Wirkungsquerschnitt in Abhängigkeit von $\theta$ unterscheidet sich vom vorherigen funktionalen Zusammenhang durch seine Polstellen. Da numerisch nicht mit Polstellen umgegangen werden kann, muss der Trainingsbereich auf $[\epsilon, \pi-\epsilon]$ eingeschränkt werden. Aus physikalischer Sicht ist das legitim, da die Polstellen im Strahlengang des Speicherrings liegen und damit nicht messbar sind. Detektoren, wie ATLAS \cite{ATLAS} und CMS \cite{CMS}, können Photonen mit Pseudo-Rapiditäten bis zu ca. $\abs{\eta} \leq 2.5$ messen, was einem $\epsilon \approx 0.163$ entspricht. Durch Normierung der Labels auf das Intervall $[-1, 1]$, kann dem Modell der Umgang mit den Polstellen erleichtert werden. Da gute Modelle hier nicht mehr trivial gefunden werden können, wird auf eine automatische, zufällige Suche zurückgegriffen (Random-Search, siehe \textsf{\autoref{random-search}}). Die Such-Parameter mit Ergebnis sind in \textit{\autoref{hyperparameter-theta}} festgehalten.
+Der Wirkungsquerschnitt in Abhängigkeit von $\theta$ unterscheidet sich vom vorherigen funktionalen Zusammenhang durch seine Polstellen. Da numerisch nicht mit Polstellen umgegangen werden kann, muss der Trainingsbereich auf $[\epsilon, \pi-\epsilon]$ eingeschränkt werden. Aus physikalischer Sicht ist das legitim, da die Polstellen im Strahlengang des Speicherrings liegen und damit nicht messbar sind. Detektoren, wie ATLAS \cite{ATLAS} und CMS \cite{CMS}, können Photonen mit Pseudo-Rapiditäten bis zu ca. $\abs{\eta} \leq 2.5$ messen, was einem $\epsilon \approx 0.163$ entspricht. Durch Normierung der Labels auf das Intervall $[-1, 1]$ kann dem Modell der Umgang mit den Polstellen erleichtert werden. Da gute Modelle hier nicht mehr trivial gefunden werden können, wird auf eine automatische, zufällige Suche zurückgegriffen (Zufalls-Suche, siehe \textsf{\autoref{random-search}}). Die Such-Parameter mit Ergebnis sind in \textsf{\autoref{hyperparameter-theta}} festgehalten.
 
-Es fällt auf, dass die Architektur des Modells um ein vielfaches komplizierter ist, als die des Modells für $\derivative{\sigma}{\eta}$. Einerseits ist dies aufgrund der Polstellen zu erwarten und andererseits darin begründet, dass komplexere Modelle Probleme generell präziser lösen können und daher aus der Suche hervorgehen. Die Performance des Modells ist in \textit{\autoref{partonic_models}, (b)} gezeigt. Die Präzision ist trotz der komplizierteren Funktion mit \textit{\autoref{partonic_models}, (a)} vergleichbar. Durch den Random-Search konnte ein passendes Modell gefunden werden. %TODO Netz mit gleichen Hyperparametern wie eta
-
-Es werden zwei weitere Modelle mit den gleichen Hyperparametern auf einem Intervall $[\epsilon', \pi-\epsilon']$ mit $\epsilon' < \epsilon$ trainiert, wobei die Trainingsdaten des einen Modells nach der Verteilung in \textit{\autoref{theta-dist}} (Importance Sampling) generiert sind, um die Leistung der drei Modelle zu vergleichen.
-
-\begin{wrapfigure}{r}{0.4\textwidth}
+Das Modell besitzt mit doppelt so vielen Neuronen pro Layer und zwei zusätzlichen Layern um einen Faktor zwölf mehr freie Parameter als das Modell für $\derivative{\sigma}{\eta}$. Dies kann zum einen auf die Problematik der Polstellen zurückgeführt werden, zum anderen aber auch ein Effekt der Hyperparameteroptimierung sein, da komplexere Modelle Probleme generell präziser lösen können. Die Performance des Modells ist in \textsf{\autoref{partonic_models} (b)} gezeigt. Die Präzision ist trotz der komplizierteren Funktion
+\begin{wrapfigure}[16]{r}{0.4\textwidth}
 	\centering
 	\includegraphics[width=0.4\textwidth]{graphics/4}
-	\caption{Importance Sampling, das analytische Funktion annähert (siehe \textsf{\autoref{theta-dist-eq}})}
+	\caption{Die Verteilung des Importance Sampling, die die analytische Funktion annähert ist gezeigt (siehe \textsf{\autoref{theta-dist-eq}}).}
 	\label{theta-dist}
 \end{wrapfigure}
-Die Vergleiche sind in \textsf{\autoref{theta-comparison}} für $\epsilon' = 0.01$ gezeigt. Wie zu erwarten weicht das Modell, das auf dem Intervall $[\epsilon, \pi-\epsilon]$ trainiert wurde, außerhalb seines Trainingsintervalls stark von der analytischen Funktion ab. Es trifft die Steigung der analytische Funktion am Startpunkt der Extrapolation, höhere Ableitungen vernachlässigt das Modell jedoch. Aufgrund ihres größeren Trainingsintervalls, zeigen die beiden anderen Modelle akzeptable Leistung auch nahe an den Polstellen. In \textsf{\autoref{theta-comparison} (a)} kann man an einigen Stellen am Verhältnis sehen, dass das mit IS-generierten Trainingsdaten trainierte Netz an den Polstellen besser und im Zentrum schlechter angepasst ist. In \textsf{\autoref{theta-comparison} (c)}  ist der Definitionsbereich näher an die Polstelle gelegt, um den Verbesserung des IS-gesampelten Modells besser aufzulösen. Anhand von \textsf{\autoref{theta-comparison} (d)}  wird deutlich, dass der Effekt noch größer ist, wenn keine Überfülle an Trainingsdaten vorhanden ist. Ist also der Umfang an verfügbaren Trainingsdaten klein oder wenig Rechenleistung vorhanden, kann auf Importance Sampling zurückgegriffen werden, um Modelle mit Fokus auf wichtige Bereiche zu trainieren. Dabei ist zu beachten, dass hier ein Kompromiss zwischen Verlässlichkeit nahe der Polstelle und Verlässlichkeit im Zentrum des Definitionsbereiches eingegangen wird.
+ mit \textsf{\autoref{partonic_models} (a)} vergleichbar. Im Vergleich mit den Ergebnissen, die das Modell für $\derivative{\sigma}{\theta}$ mit der Konfiguration aus $\textsf{\autoref{Hyperparameter-Eta}}$ erreicht (siehe \textsf{\autoref{theta-bad-config}}), zeigt sich, dass durch die zufällige Suche ein um den Faktor fünf präziseres Modell gefunden werden konnte.
 
-In \textsf{\autoref{theta-comparison} (b)} ist noch einmal der MAPE (Mean-Absolute-Percentage-Error) der verschiedenen Modelle für verschiedene Testdatensets gezeigt. Hier wird erneut deutlich, dass das Importance Sampling vor allem nützlich ist, wenn Bereiche mit hohen Funktionswerten besonders wichtig sind. Bei der Berechnung des totalen Wirkungsquerschnittes aus dem differentiellen Wirkungsquerschnitt ist genau dies der Fall.
+Es werden zwei weitere Modelle mit den gefundenen Hyperparametern auf einem alternativen Intervall $[\epsilon', \pi-\epsilon']$ trainiert, welches näher an die Polstelle heranreicht ($\epsilon' < \epsilon$).  Dabei werden die Trainingsdaten des einen Modells nach der Verteilung in \textsf{\autoref{theta-dist}} (Importance Sampling (IS)) generiert und die des anderen wie zuvor aus einer uniformen Verteilung gezogen. Zwei zusätzliche Modelle werden analog mit weniger Trainingspunkten trainiert, um eine Knappheit an Trainingspunkten zu simulieren. 
 
+In \textsf{\autoref{theta-comparison}} wird die Leistung der Modelle für $\epsilon' = 0.01$ gezeigt. Wie zu erwarten weicht das Modell, das auf dem Intervall $[\epsilon, \pi-\epsilon]$ trainiert wurde, außerhalb seines Trainingsintervalls stark von der analytischen Funktion ab. Es trifft die Steigung der analytische Funktion am Startpunkt der Extrapolation, höhere Ableitungen werden vom Modell jedoch nicht erfasst. Aufgrund ihres größeren Trainingsintervalls zeigen die beiden anderen Modelle akzeptable Leistungen auch nahe an den Polstellen. In \textsf{\autoref{theta-comparison} (a)} ist an einigen Stellen am Verhältnis zu sehen, dass das mit IS-generierten Trainingsdaten trainierte Netz an den Polstellen besser und im Zentrum schlechter angepasst ist.
+%\begin{figure}
+%	\centering
+%	\captionsetup{
+%		format=plain,
+%		margin=0em,
+%		labelsep=newline,
+%		justification=justified,
+%		singlelinecheck=false
+%	}
+%	\floatbox[{\capbeside\thisfloatsetup{capbesideposition={right,top},capbesidewidth=6cm}}]{figure}[\FBwidth]
+%	{\caption{Vergleich des MAPE der unterschiedlich generierten Trainingsdatensätze (x-Achse) an unterschiedlich generierten Testdatensätzen (Legende). Die Beschriftung der x-Achse gibt die Menge an Trainingsdaten an und ob diese per Importance Sampling generiert wurden. Alle Modell wurden auf ${[\epsilon’, \pi - \epsilon’]}$ für $\epsilon’=0.01$ trainiert.}\label{MAPE-comp-theta-modelle}}
+%	{\includegraphics[width=6cm]{graphics/26}}
+%\end{figure}
+\begin{SCfigure}
+	\centering
+	\captionsetup{
+		format=plain,
+		margin=0.5em,
+		labelsep=newline,
+		justification=justified,
+		singlelinecheck=false
+	}
+	{\caption{Ein Vergleich des MAPE der unterschiedlich generierten Trainingsdatensätze (x-Achse) an unterschiedlich generierten Testdatensätzen (Legende) ist gezeigt. Die Beschriftung der x-Achse gibt die Menge an Trainingsdaten an und ob diese per Importance Sampling generiert wurden. Alle Modell wurden auf ${[\epsilon’, \pi - \epsilon’]}$ für $\epsilon’=0.01$ trainiert.}\label{MAPE-comp-theta-modelle}}
+	{\includegraphics[width=6.5cm]{graphics/26}}
+\end{SCfigure}
+In \textsf{\autoref{theta-comparison} (b)}  ist der Definitionsbereich näher an die Polstelle gelegt, um die Verbesserung des IS-Modells besser aufzulösen. Anhand von \textsf{\autoref{theta-comparison} (c)}  wird deutlich, dass der Effekt noch größer ist, wenn keine Überfülle an Trainingsdaten vorhanden ist. Ist also der Umfang an verfügbaren Trainingsdaten klein oder wenig Rechenleistung vorhanden, kann auf Importance Sampling zurückgegriffen werden, um Modelle mit Fokus auf wichtige Bereiche zu trainieren. Dabei ist zu beachten, dass hier ein Kompromiss zwischen Verlässlichkeit nahe der Polstelle und Verlässlichkeit im Zentrum des Definitionsbereiches eingegangen wird.
+
+In \textsf{\autoref{MAPE-comp-theta-modelle}} ist noch einmal der MAPE (Mean-Absolute-Percentage-Error) der verschiedenen Modelle für unterschiedlich generierte Testdatensätze gezeigt. Hier wird erneut deutlich, dass das Importance Sampling vor allem nützlich ist, wenn Bereiche mit hohen Funktionswerten besonders wichtig sind. Bei der Berechnung des totalen Wirkungsquerschnittes aus dem differentiellen Wirkungsquerschnitt ist genau dies der Fall.
 \begin{figure}[h]
 	\centering
-	\subfloat[$\derivative{\sigma}{\theta}$ auf $\theta \in {[\epsilon’, \pi - \epsilon’]}$ für $\epsilon’=0.01$]{\includegraphics[width=6.5cm]{graphics/3}}
-	\subfloat[MAPE für verschiedene Test-Datensets]{\includegraphics[width=6.5cm]{graphics/26}} \\
-	\subfloat[Modelle mit 60000 Traningspunkten]{\includegraphics[width=6.5cm]{graphics/3.1}}
-	\subfloat[Modelle mit 10000 Trainingspunkten]{\includegraphics[width=6.5cm]{graphics/3.2}}
-	\caption{Vergleich der Performance auf unterschiedlichen Intervallen von verschiedenen Theta-Modellen, die mit verschiedenen Datenmengen trainiert wurden.}
+	\subfloat[$\derivative{\sigma}{\theta}$ auf $\theta \in {[\epsilon’, \pi - \epsilon’]}$ für $\epsilon’=0.01$]{\includegraphics[width=6.5cm]{graphics/3}} \\
+	\captionsetup{justification=justified}	
+	\subfloat[Modelle mit 60000 Traningspunkten, nahe der Polstelle]{\includegraphics[width=6.5cm]{graphics/3.1}} 
+	\subfloat[Modelle mit 10000 Trainingspunkten, nahe der Polstelle]{\includegraphics[width=6.5cm]{graphics/3.2}}
+	\caption{Die Performance auf unterschiedlichen Intervallen von verschiedenen Theta-Modellen wird verglichen. In Blau: Modell, das auf ${[\epsilon, \pi - \epsilon]}$ mit $\epsilon = 0.163$ trainiert wurde. In Grün: Modell, das auf ${[\epsilon’, \pi - \epsilon’]}$ mit $\epsilon’=0.01$ trainiert wurde. In Rot: Modell, das auf ${[\epsilon’, \pi - \epsilon’]}$ mit $\epsilon’=0.01$ trainiert wurde, wobei die Punkte nach \textsf{\autoref{theta-dist}} generiert wurden.}
 	\label{theta-comparison}
 \end{figure}
 \section{Diphoton-Prozess auf Hadron-Ebene}
-\subsection{Allgemeines und Phasenraumschnitte}
-Im Gegensatz zu den bisher diskutierten Prozessen, ist die Reaktion $pp \rightarrow \gamma \gamma$ beobachtbar und messbar. Der Wirkungsquerschnitt soll am Beispiel einer Messung im ATLAS-Detektor behandelt werden. Es werden einige Beschränkungen auf die Events angewendet, die sich an einer realen Messung orientieren und durch die Detektorgeometrie motiviert sind, da dieser nicht den gesamten Raumwinkelbereich abdecken kann. Die generierten Phasenraumpunkte werden selektiert und der Algorithmus nur an solchen Messpunkten trainiert, die auch praktisch detektierbar wären. Die verwendeten Selektionen sind angelehnt an ATLAS Collaboration \cite{Cuts-Paper} und aufgelistet in \textsf{\autoref{Selektionen}}.
+\subsection{Phasenraumselektion}
+Im Gegensatz zu den bisher diskutierten Prozessen ist die Reaktion $pp \rightarrow \gamma \gamma$ messbar. Der Wirkungsquerschnitt soll am Beispiel einer Messung des ATLAS-Detektors behandelt werden. Es werden einige Selektionskriterien auf die Events angewendet, die sich an einer realen Messung orientieren und durch die Detektorgeometrie motiviert sind, da dieser nicht den gesamten Raumwinkelbereich abdecken kann. Die generierten Phasenraumpunkte werden selektiert und der Algorithmus nur an solchen Messpunkten trainiert, die auch praktisch detektierbar wären. Die verwendeten Selektionen sind angelehnt an \cite{Cuts-Paper} und aufgelistet in \textsf{\autoref{Selektionen}}.
 \begin{table}[bp]
 	\centering
+	\caption{Event-Selektion für den hadronischen Diphoton-Prozess in Anlehnung an Messung von ATLAS \cite{Cuts-Paper}.}
 	\begin{tabular}{|c|c|}
 		\hline
 		Typ & Selektion \\
 		\hline
-		Photon-Energie & $\abs{p_T} > 40$ GeV \\
+		Photon-Energie & $\abs{p_\text{T}} > 40$ GeV \\
 		Photon Winkel & $\abs{\eta_{\gamma, \gamma'}} < 2.37$ ohne $1.37 < \abs{\eta_{\gamma, \gamma'}} < 1.52$ \\
 		Impulsbruchteil & $x_{1,2} < 0.7 $\\
 		\hline
 	\end{tabular}
-	\caption{Event-Selektion für den hadronischen Diphoton-Prozess in Anlehnung an Messung von ATLAS \cite{Cuts-Paper}}
 	\label{Selektionen}
 \end{table}
-Dabei sind $\gamma$ und ${\gamma'}$ die Bezeichnungen für die beiden Photonen und $p_{T,\gamma} = p_{T,\gamma'} = p_T$ beschreibt den Impuls der produzierten Photonen transversal zum Strahlengang. \textsf{\autoref{diff_WQ_hadron}} ist, aufgrund der Abhängigkeit der PDF, für große $x_1, x_2$ extrem klein und fällt zusätzlich stark ab, es werden daher außerdem Ereignisse mit $x > 0.7$ herausgenommen. Dieser Schnitt vernachlässigt den Phasenraumbereich mit extrem kleinen Labels und erleichtert dem DNN den Lernprozess. 
+Dabei sind $\gamma$ und ${\gamma'}$ die Bezeichnungen für die beiden Photonen und $p_{\text{T},\gamma} = p_{\text{T},\gamma'} = p_\text{T}$ beschreibt den Impuls der produzierten Photonen transversal zum Strahlengang. \textsf{\autoref{diff_WQ_hadron}} ist, aufgrund der Abhängigkeit der PDF, für große $x_1, x_2$ extrem klein und fällt zusätzlich stark ab, daher werden außerdem Ereignisse mit $x > 0.7$ vernachlässigt. Dieser Schnitt entfernt den Phasenraumbereich mit extrem kleinen Labels und erleichtert dem DNN den Lernprozess. 
 
 
-Da sich das Laborsystem vom Schwerpunktsystem der kollidierenden Quarks unterscheidet, sichergestellt werden, dass beide Photonen die $\eta$-Selektion erfüllen (siehe \textsf{\autoref{Kinematik}}). Werden $\eta_{\gamma}$ und $\eta_{\gamma'}$ in entgegengesetzte Richtungen gemessen, berechnen sich diese aus $\eta'$ der Photonen im Schwerpunktsystem der Quarks nach: 
+Da sich das Laborsystem vom Schwerpunktsystem der kollidierenden Quarks unterscheidet, muss sichergestellt werden, dass beide Photonen die $\eta$-Selektion erfüllen (siehe \textsf{\autoref{Kinematik}}). Werden $\eta_{\gamma}$ und $\eta_{\gamma'}$ in entgegengesetzte Richtungen gemessen, berechnen sich diese aus $\eta'$ der Photonen im Schwerpunktsystem der Quarks nach: 
 \begin{equation}
 \eta_{\gamma} = \eta' -\frac{1}{2}\ln(\frac{x_2}{x_1}) \quad \text{sowie} \quad \eta_{\gamma'} = \eta’ + \frac{1}{2}\ln(\frac{x_2}{x_1})~.
 \end{equation}
-$\eta_{\gamma'}$ kann somit in Abhängigkeit von $\eta_{\gamma}$ dargestellt werden als:
+Die Pseudo-Rapidität $\eta_{\gamma'}$ kann somit in Abhängigkeit von $\eta_{\gamma}$ dargestellt werden als:
 \begin{equation} 
 \eta_{\gamma'} = \eta_{\gamma} + \frac{1}{2}  \ln(\frac{x_2^2}{x_1^2})
 \end{equation}
 Lorentztransformation von \textsf{\autoref{vierervektoren}} liefert für den Transversalimpuls:
 \begin{equation}
-	p_T = \sqrt{x_1 x_2 \left[1-\tanh[2](\eta_{\gamma} + \frac{1}{2}\ln(\frac{x_2}{x_1}))\right]}E~, \quad \text{wobei} \quad p = \frac{1}{2} \sqrt{s} = \sqrt{x_1 
+	p_\text{T} = \sqrt{x_1 x_2 \left[1-\tanh[2](\eta_{\gamma} + \frac{1}{2}\ln(\frac{x_2}{x_1}))\right]}E~, \quad \text{wobei} \quad p = \frac{1}{2} \sqrt{s} = \sqrt{x_1 
 	x_2} E~.
 	\label{p_T}
 \end{equation}
-Für die Berechnung von \textsf{\autoref{diff_WQ_hadron}} verwenden wird das PDF-Set CT14nnlo von LHAPDF \cite{LHAPDF} verwendet, wobei positive Beiträge von Charm- und Strange-Quark berücksichtigt und Top- und Bottom-Quark vernachlässigt werden. Die Strahlenergie beträgt $E = 6500 \text{GeV}$.
-\subsection{Schwierigkeiten und Lösungsansätze} %TODO Lorentztrafo für p_t cut
-\textbf{Schwierigkeiten:}
-Im Vergleich zu den vorhergegangenen Prozessen hat sich nun die Dimensionalität des Problems, sowie die Gutartigkeit der Funktion verändert. Die Partondichtefunktionen, die den dreidimensionalen Wirkungsquerschnitt bestimmen, fallen exponentiell mit ihren Impulsbruchteilen $x_1$ und $x_2$ ab und besitzen Polstellen für $x \rightarrow 0$\footnote{wobei die PDFs numerisch ab $x_{\text{min}} \approx 10^{-9}$ eingefroren werden.}. Die Labels variieren daher von $10^{3}~\text{pb}$ bis zu $10^{-20}~\text{pb}$. Wie sich herausgestellt hat, lässt sich diese Form und exponentielle Sensitivität für Veränderungen in $x$ mit der linearen Natur der Operationen eines DNN nur begrenzt reproduzieren.
-Außerdem haben die stark variierenden Labels zur Folge, dass eine gängige Loss-Funktion wie der Mean-Squared- oder Mean-Absolute-Error lediglich Punkte mit hohen Wirkungsquerschnitten berücksichtigen und damit die Vorhersagen schon ab einem kleinen $x$ unbrauchbar werden würden. 
+Für die Berechnung des Wirkungsquerschnittes nach \textsf{\autoref{diff_WQ_hadron}} wird das PDF-Set CT14nnlo von LHAPDF \cite{LHAPDF} verwendet, wobei positive Beiträge von Charm- und Strange-Quark berücksichtigt und Top- und Bottom-Quark vernachlässigt werden. Die Strahlenergie beträgt $E = 6500~\text{GeV}$.
+\subsection{Schwierigkeiten und Lösungsansätze} 
+Im Vergleich zu den vorhergegangenen Prozessen haben sich nun die Dimensionalität des Problems sowie die Gutartigkeit der Funktion verändert. Die Partondichtefunktionen, die den dreidimensionalen Wirkungsquerschnitt bestimmen, fallen exponentiell mit ihren Impulsbruchteilen $x_1$ und $x_2$ ab und besitzen Polstellen für $x \rightarrow 0$\footnote{wobei die PDFs numerisch ab $x_{\text{min}} \approx 10^{-9}$ eingefroren werden.}. Die Labels variieren daher von $10^{3}~\text{pb}$ bis zu $10^{-20}~\text{pb}$. Es kommt hinzu, dass die meisten quantitativen Werte des Wirkungsquerschnittes in standardmäßig verwendeten Einheiten, sprich $1/\text{GeV}^2$ und $\text{pb}$, viel kleiner als eins sind.
 
-Erschwerend kommt hinzu, dass die quantitativen Werte des Wirkungsquerschnittes in standardmäßig verwendeten Einheiten, sprich $1/\text{GeV}^2$ und $\text{pb}$, viel kleiner als eins sind. Dies führt einerseits dazu, dass die Loss-Funktion \textit{Mean-Squared-Logarithmic-Error}(MSLE), die Phasenraumbereiche mit kleinen Funktionswerten nicht vernachlässigen würde, nicht anwendbar ist und verstärkt andererseits das Dying-ReLU-Problem (siehe \textsf{\autoref{Training und Hyperparameter}}). Es ist aufgefallen, dass quantitativ kleine Labels dazu führen können, dass durch starke Überschätzung der Labels direkt nach der Initialisierung des Netzes, viele Neuronen bereits nach den ersten Batches absterben. Es ist entscheidend, dies zu verhindern, um brauchbare Ergebnisse zu erhalten. Während den Untersuchungen wurde beobachtet, dass es sehr mühsam ist, eine gute Initialisierung zu finden, die das Problem verhindert. Zusammenfassend sind die zu lösenden Probleme:
-\begin{itemize}
-	\item Starke Variation der Labels inklusive Polstellen, stellt nur schwierig zu erlernende Form für das neuronale Netz dar und erfordert eine nicht-triviale Kostenfunktion, die nicht nur exklusiv den Bereich um die Polstelle berücksichtigt.
-	\item Quantitativ kleine Labels verstärken das Dying-ReLU Problem und fürhen dazu, dass MSLE nicht ohne Weiteres anwendbar ist. 
-\end{itemize}
-\textbf{Lösungsansätze:}
-%Modelle, die ohne Rücksicht auf die angesprochenen Hindernisse trainiert werden, geben\footnote{im Falle von ReLU-Aktivierung} häufig Null aus, weil die Labels sehr nah an Null sind und die Gewichte der Neuronen so lange verkleinert werden, bis fast alle inaktiv sind.
-Um das Problem der vernachlässigten Phasenraumbereiche zu lösen, wurde die bereits erwähnte Loss-Funktion MSLE getestet (siehe \textit{\autoref{MSLE}}), da es hier ausschließlich auf das Verhältnis zwischen Label und Vorhersage. Um nicht mit negativen Werten zu arbeiten, wird generell $y \rightarrow y + 1$ transformiert. Da für die vorliegenden Labels jedoch $y \ll 1$ und damit $\ln(1+y) \approx y$ gilt, würde so lediglich ein ineffizienterer MSE implementiert werden. 
+Wird ein naiver Ansatz mit gleicher Hyperparameterkonfiguration wie der des $\derivative{\sigma}{\theta}$-Modells (\textsf{\autoref{hyperparameter-theta}}), jedoch ohne Skalierung und Label-Normalisierung, unter Nutzung der ReLU-Aktivierungsfunktion verwendet, führt dies zu einem Netz, das einen konstanten Wert ausgibt (siehe \textsf{\autoref{DyingReluAction}} (a)). Die Ursache dafür ist das in \textsf{\autoref{Training und Hyperparameter}} angesprochene Dying-ReLU-Problem.  Die quantitativ kleinen Labels führen dazu, dass durch starke Überschätzung der Funktionswerte direkt nach der Initialisierung des Netzes viele Neuronen bereits nach den ersten Batches inaktiv werden. Im vorliegenden Fall ist das Dying-ReLU-Problem so stark ausgeprägt, dass alle Neuronen des letzten Layers lediglich null zurückgeben und die Ausgabe des Netzes vom Bias des Output-Neurons bestimmt wird. 
+
+Durch die, in den bereits diskutierten Modellen verwendete, Skalierung der Labels kann sichergestellt werden, dass das Netz die Labels nach der Initialisierung nicht über-, sondern unterschätzt und die Gewichte der Neuronen zunächst anwachsen. Wie in \textsf{\autoref{DyingReluAction} (b)} zu beobachten ist, kann durch die Skalierung erreicht werden, dass das Modell zumindest in Phasenraumbereichen mit großen Wirkungsquerschnitten sinnvolle Ergebnisse liefert. Die starke Variation der Labels führt dazu, dass Loss-Funktionen wie der \textit{Mean-Squared-} oder \textit{Mean-Absolute-Error} lediglich Punkte mit hohen Wirkungsquerschnitten berücksichtigen und damit Vorhersagen schon ab einem kleinen $x$ unbrauchbar werden.
+
+Die Loss-Funktion \textit{Mean-Squared-Logarithmic-Error} (MSLE) vernachlässigt Phasenraumbereiche mit kleinen Funktionswerten nicht, da es mit dieser Funktion ausschließlich auf das Verhältnis zwischen Label und Vorhersage ankommt (siehe \textsf{\autoref{MSLE}}). Um nicht mit negativen Werten zu arbeiten, wird $y \rightarrow y + 1$ transformiert. Die Skalierung unterstützt hierbei den Effekt des MSLE indirekt, da ohne die Skalierung aufgrund von $\ln(1+y) \approx y$ bei $y \ll 1$ der MSLE stark dem MSE ähnelt. Der Logarithmus kann bereits vor der Loss-Funktion angewendet werden, was einerseits flexibler in der Verwendung der Loss-Funktion ist und andererseits den Rechenaufwand reduziert\footnote{im Vergleich damit den Logarithmus einzeln für jeden Batch zu berechnen}. Durch die Kombination von Skalierung und Anwendung des Logarithmus können funktionierende Ergebnisse erhalten werden, wie in \textsf{\autoref{DyingReluAction} (c)} zu sehen ist.
 \begin{equation}
-C\left(\mathbf{M}, \mathbf{b}\right) = \frac{1}{N} \sum_{i=1}^{N} \left(\ln(y^{(i)}) - \ln(\tilde{y}^{(i)})\right)^2 = \frac{1}{N} \sum_{i=1}^{N} \left(\ln(\frac{y^{(i)})}{\tilde{y}^{(i)}})\right)^2
+C\left(\mathbf{W}, \mathbf{b}\right) = \frac{1}{N} \sum_{i=1}^{N} \left(\ln(y^{(i)}) - \ln(\tilde{y}^{(i)})\right)^2 = \frac{1}{N} \sum_{i=1}^{N} \left(\ln(\frac{y^{(i)})}{\tilde{y}^{(i)}})\right)^2
 \label{MSLE}
 \end{equation}
-Daher wird die, in den bereits diskutierten Modellen verwendete, Skalierung implementiert. Wie sich im Laufe der Arbeit mit den künstlichen neuronalen Netzen gezeigt hat, beugt die Skalierung das Dying-ReLU-Problem vor und lässt Gebrauch des MSLE machen.
 
-Andere Versuche um mit dem Dying-ReLU-Problem umzugehen sind die Verwendung von Aktivierungsfunktionen mit nicht-verschwindender Ableitung wie \texttt{Leaky-ReLU} oder \texttt{ELU} (siehe \textit{\autoref{Aktivierungsfunktionen}}), die den Neuronen ermöglichen soll, sich zu regenerieren, oder die Übergabe eines \textit{Clipvalue/Clipnorm}-Parameters an den Optimizer, der den Gradienten reguliert.
+Andere Versuche, um mit dem Dying-ReLU-Problem umzugehen, sind die Verwendung von Aktivierungsfunktionen mit nicht-verschwindender Ableitung wie \textit{Leaky-ReLU} oder \textit{ELU} (siehe \textsf{\autoref{Aktivierungsfunktionen}}), die es den Neuronen ermöglichen sollen, sich zu regenerieren, oder die Übergabe eines \textit{Clipvalue}-Parameters an den Optimizer, der den Gradienten reguliert. Hierbei werden Komponenten des Gradienten, die den Clipvalue übersteigen, abgeschnitten. Im Weiteren wird jedem Optimizer ein Clipvalue von zwei übergeben. 
+\begin{figure}[ht]
+	\centering
+	\subfloat[keine Transformation]{\includegraphics[width=5cm]{graphics/6.2}}
+	\subfloat[Skalierung]{\includegraphics[width=5cm]{graphics/6.3}}
+	\subfloat[Skalierung und Logarithmus]{\includegraphics[width=5cm]{graphics/6.4}}
+	\captionsetup{justification=justified}
+	\caption{Es ist schrittweise der Effekt der Label-Transformationen gezeigt. In (a) gibt das Netz aufgrund des Dying-ReLU-Problems lediglich null aus. In (b) wird durch die Skalierung der Phasenraumbereich mit großen Labels erlernt. Durch die Kombination von Skalierung und Logarithmus können in (c) akzeptable Genauigkeiten erreicht werden.} 
+	\label{DyingReluAction}
+\end{figure}
 
-Die Skalierung wird im Folgenden mit einem Transformator-Objekt realisiert, der die vorliegenden Labels nach $\tilde{y} \rightarrow \tilde{y}/{\tilde{y}_{min}}$
-anpasst, wobei $\tilde{y}_{min}$ das kleinste Label im Trainigsdatensatz bezeichnet. Der Transformator wird mit seinen Variablen abgespeichert und kann bei Bedarf wieder initialisiert werden, um die Ausgaben des DNN auf reale Werte zurückzuskalieren. 
-Da bereits ein Transformator verwendet wird, kann der Logarithmus bereits vor der Loss-Funktion angewendet werden, was einerseits flexibler in der Verwendung der Loss-Funktionen und andererseits rechnerisch effizienter ist\footnote{als den Logarithmus einzeln für jeden Batch zu berechnen}. Die Label-Normalisierung aus dem vohergehenden Modell wurde praktisch auch im Transformator umgesetzt.
+Die Skalierung und weitere Transformationen werden im Folgenden mit einem Transformator-Objekt realisiert, das die vorliegenden Labels nach den jeweiligen Vorschriften in \textsf{\autoref{mathe-daten-transformationen}} anpasst. Eine weitere Transformation, die untersucht wird, ist die Normalisierung der Labels auf das Intervall $[-1, 1]$, welche bereits für das Modell $\derivative{\sigma}{\theta}$ verwendet wurde.
+\begin{table}
+	\centering
+	\captionsetup{justification=justified}
+	\caption{Die Vorschriften der verwendeten Daten-Transformationen sind gezeigt. $\tilde{y}$ bezeichnet die Labels, $x$ ein Feature, $\overline{x}$ den Mittelwert und $\sigma_x$ die Standardabweichung des Features. $\tilde{y}^{(ln)}$ bezeichnet die bereits nach Log transformierten Labels und $\tilde{y}_{\text{min/max}}$ das größte bzw. kleinste Label des Datensatzes.}
+	\begin{tabular}{lll}
+		\multicolumn{3}{c}{\textbf{Daten-Transformationen}} \\[5pt]
+		Abkürzung & Bezeichnung & Implementierung \\
+		\hline\\[-10pt]
+		No Log & Nur Skalierung & $\tilde{y} \rightarrow \frac{\tilde{y}}{\tilde{y}_{\text{min}}}$ \\
+		Log & Logarithmus & $\tilde{y} \rightarrow \ln(\frac{\tilde{y}}{\tilde{y}_{\text{min}}}) =: \tilde{y}^{\text{(ln)}}$ \\
+		Base 10 & Logarithmus zur Basis 10 & $\tilde{y} \rightarrow \log_{10}(\frac{\tilde{y}}{\tilde{y}_{\text{min}}})$ \\
+		LN & Label-Normalization & $\tilde{y} \rightarrow \frac{2\tilde{y}^{\text{(ln)}}}{\tilde{y}^{\text{(ln)}}_{\text{max}}} - 1$\\
+		FN \cite{FN} & Feature-Normalization & $x \rightarrow {(x - \overline{x})}/{\sigma_x}$ \\
+		\hline
+	\end{tabular}
+	\label{mathe-daten-transformationen}
+\end{table}
 
-Durch die Anwendung des Logarithmus ist nun sichergestellt, dass lediglich das Verhältnis zwischen den rücktransformierten Labels und Vorhersagen für das Training relevant ist und nicht nur ein Phasenraumbereich ausschließlich gelernt wird. Da dennoch der Bereich um die Polstelle und Phasenraumbereiche mit größeren Labels wichtiger sind, wird an dieser Stelle erneut das Importance Sampling zur Generierung der Trainingspunkte verwendet. Die Verteilungen sind in \textit{\autoref{IS-hadron}} gezeigt.  
+Durch die Anwendung des Logarithmus ist sichergestellt, dass lediglich das Verhältnis zwischen den rücktransformierten Labels und Vorhersagen für das Training relevant ist und nicht nur ein Phasenraumbereich exklusiv gelernt wird. Da dennoch der Bereich um die Polstelle und Phasenraumbereiche mit größeren Labels wichtiger sind, wird erneut Importance Sampling zur Generierung der Trainingspunkte verwendet. Die zur Generation der Punkte genutzten Verteilungen sind in \textsf{\autoref{IS-hadron}} zusammengefasst.  
 \begin{equation}
 \begin{aligned}
 \rho(x) &= \frac{1}{(x + \alpha)\ln(\frac{x_{\text{max}} + \alpha}{x_{\text{min}}+ \alpha})} \qquad \text{mit} \qquad \alpha = 0.005 \\
@@ -592,74 +637,73 @@ Durch die Anwendung des Logarithmus ist nun sichergestellt, dass lediglich das V
 \end{aligned}
 \label{IS-hadron}
 \end{equation}
-Bei gegebenen Parametern und Nach Anwendung der Selektionen(\textit{\autoref{Selektionen}}) beläuft sich die Sample-Effizienz auf bei gegebenen Parametern auf $\approx 40\%$. Die im Weiteren angegeben Zahlen an Trainingsdaten sind die generierten Punkte bevor die Schnitte angewendet wurden.
+Mit der Anzahl der generierten Phasenraumpunkte $n_{\text{total}}$ und der Anzahl der nach \textsf{\autoref{Selektionen}} herausgefilterten Punkte $n_{\text{cut}}$ beläuft sich die Effizienz der Generation $k$ auf $k = \frac{n_{\text{total}} - n_{\text{cut}}}{n_{\text{total}}} \approx 40 \%$. Im Weiteren wird die Anzahl an Trainingsdaten als $n_{\text{total}}$ angegeben.
 
-\textbf{Training und Ergebnis:} Zur Hyperparameteroptimierung wird erneut ein Random Search verwendet. Auch mit der intensiven Behandlung vorliegenden Situation hat nicht jede Hyperparameter-Suche akzeptable Ergebnisse geliefert. Unser Problem ist stark abhängig von den verwendeten Parametern. %Mit anderen Suchmethoden wie Bayesian Search oder Hyperband konnte keine Verbesserung der Hyperparametersuche festgestellt werden. 
-%TODO Bayesian-Search und Hyperband ausprobieren
-Die Hyperparameter einer erfolgreichen Suche sind in \textsf{\autoref{Hyperparameter-Hadron}} aufgelistet. 
-%TODO Umrechnung in pb für Grafik 8
+\textbf{Training und Ergebnis:} Zur Hyperparameteroptimierung wird erneut eine zufällige Suche verwendet. Die Abhängigkeit der Leistung des Netzes von den Hyperparametern und welche Parameter optimiert werden, wird in \textsf{\autoref{Vergleich}} im Detail untersucht. Die Hyperparameter einer erfolgreichen Suche sind in \textsf{\autoref{Hyperparameter-Hadron}} aufgelistet. 
 \begin{figure}[tbp] %TODO falsches Modell geplottet?
 	\centering
+	\captionsetup{justification=justified}
 	\subfloat[Schnitt in $\eta$, $ x_1 \approx x_2$]{\includegraphics[width=6.5cm]{graphics/5}}
 	\subfloat[Schnitt in $\eta$, $ x_1 \neq x_2$]{\includegraphics[width=6.5cm]{graphics/8}} \\
 	\subfloat[Schnitt in $x_1$, $x_2$ klein]{\includegraphics[width=6.5cm]{graphics/6}} 
 	\subfloat[Schnitt in $x_1$, $x_2$ groß]{\includegraphics[width=6.5cm]{graphics/9}} \\
 	\subfloat[Schnitt in $x_2$, $x_1$ klein]{\includegraphics[width=6.5cm]{graphics/7}}
 	\subfloat[Schnitt in $x_2$, $x_1$ groß]{\includegraphics[width=6.5cm]{graphics/10}}
-	\caption{Vergleich DNN - analytische Werte für $\frac{\text{d} \sigma}{\text{d}x_1\text{d}x_2\text{d}\eta}$ für verschiedene Phasenraumbereiche. Fehlende Werte sind durch die Selektionen (\textsf{\autoref{Selektionen}}) ausgeschlossen.}
+	\caption{Der Vergleich der Vorhersagen des DNN mit analytische Werten für $\frac{\text{d} \sigma}{\text{d}x_1\text{d}x_2\text{d}\eta}$ ist für verschiedene Phasenraumbereiche gezeigt. Die fehlenden Werte sind durch die Selektionen (\textsf{\autoref{Selektionen}}) ausgeschlossen.}
 	\label{Schnitte Hadron}
 \end{figure}
-%TODO schlechtes Modell für hadron zeigen?
 
-In \textsf{\autoref{Schnitte Hadron}} sind Schnitte des dreidimensionalen Wirkungsquerschnittes an verschiedenen Phasenpunkten gezeigt. Im Vergleich mit \textsf{\autoref{Problems-in-action}} zeigt sich, dass die intensive Behandlung der Hyperparameter und der Daten-Transformationen Erfolge zeigt. Die maximale Abweichung beträgt an den meisten Stellen lediglich $0.5\%$. Für Ausnahmefälle erreicht sie bis zu $\approx 1\%$. Es lässt sich leicht der Moment erkennen, ab dem die x-Werte gefiltert wurden. Wie schon im Modell für $\frac{d\sigma}{d\theta}$, verläuft die Vorhersage des Modells linear weiter und entfernt sich somit von den analytischen Werten. Für große $x$ wird das Modell den Wirkungsquerschnitt gegebenenfalls um Größenordnungen überschätzen. Da jedoch nur der integrierte Wirkungsquerschnitt über $x_1, x_2$ überhaupt messbar ist und dieser sich nicht merklich durch diese Abweichung beeinflussen lässt, ist die große Differenz in diesem Phasenraumbereich vernachlässigbar. 
-\subsection{Vergleich von Hyperparametern}
-Es soll nun direkt die Abhängigkeit der Performance von den Hyperparameter untersucht werden. Dafür wird die Konfiguration benutzt, die im Vorhergehenden durch den Random Search gefunden wurde und in jedem Training ein Hyperparameter variiert. Da die Anzahl an Neuronen und Layern stark korreliert ist, werden zusätzlich verschiedene Kombinationen an Layern und Units . Die Modelle werden nach dem MAPE eines Sets an Testdaten beurteilt, das genauso gesampelt ist wie die Trainingsdaten (siehe \textit{\autoref{IS-hadron}}). Jedes Modell wird fünf mal mit zufälligen Initialisierungen an zwei Millionen gesampelten Phasenraumpunkten trainiert, um die statistische Schwankung der Güte des Modells einschätzen zu können. Die eingezeichneten Fehlerbalken (z.B. \textit{\autoref{Daten-Transformationen}}) sollen die Schwankung verdeutlichen und sind kein Maß dafür, welchen MAPE das Netz in der Praxis erreichen kann. Ausreißer sind aus den Messungen herausgefiltert, um die Skalierung in sinnvollem Rahmen zu halten. 
-
-\textbf{Loss-Funktion:}
-In \textsf{\autoref{Vgl-HyperparameterI} (a)}  ist der Vergleich von drei verschiedenen Kostenfunktionen gezeigt. Für Probleme mit stark variierenden Labels setzt sich der Mean-Absolute-Error durch, da dieser weniger sensitiv auf Ausreißer oder, in unserem Fall, Polstellen ist. Der Huber-Loss \cite{huber}, der eine Kombination des linearen Fehlers und des quadratischen Fehlers darstellt, schlägt sich insgesamt besser als der reine quadratische Fehler, kann insgesamt jedoch nicht mit dem linearen Fehler mithalten. 
-\begin{figure}[bt!] %TODO
+In \textsf{\autoref{Schnitte Hadron}} sind Schnitte des dreidimensionalen Wirkungsquerschnittes an verschiedenen Phasenpunkten gezeigt. Im Vergleich mit dem zuvor diskutierten Ergebnis der naiven Hyperparameterwahl (\textsf{\autoref{DyingReluAction}}) zeigt sich, dass die Optimierung der Hyperparameter und die Anwendung der Daten-Transformationen unerlässlich für ein anwendbares Ergebnis sind. Die maximale Abweichung beträgt an den meisten Stellen lediglich $0.5\%$. Für Ausnahmefälle erreicht sie bis zu $\approx 1\%$. Es lässt sich leicht der Moment erkennen, ab dem die x-Werte vernachlässigt wurden. Wie schon im Modell für $\frac{d\sigma}{d\theta}$, verläuft die Vorhersage des Modells linear weiter und entfernt sich somit von den analytischen Werten. Für große $x$ wird das Modell den Wirkungsquerschnitt gegebenenfalls um Größenordnungen überschätzen. Da jedoch nur der integrierte Wirkungsquerschnitt über $x_1, x_2$ überhaupt messbar ist und sich dieser nicht merklich durch diese Abweichung beeinflussen lässt, ist die große Differenz in diesem Phasenraumbereich vernachlässigbar. 
+\subsection{Evaluation der Hyperparameterwahl}
+\label{Vergleich}
+Es soll nun direkt die Abhängigkeit der Leistung der Modelle von den Hyperparameter untersucht werden. Dafür wird die beste Konfiguration benutzt, die im Vorhergehenden durch die zufällige Suche gefunden wurde und in jedem Training ein Hyperparameter variiert. Da die Wahl der Anzahl an Neuronen und Layern stark korrelierten Einfluss auf die Leistung des Netzes besitzt, werden zusätzlich verschiedene Kombinationen an Layern und Units getestet. Die Modelle werden nach dem MAPE eines Satzes an Testdaten beurteilt, das genauso generiert ist wie die Trainingsdaten (siehe \textsf{\autoref{IS-hadron}}). Jedes Modell wird fünf Mal mit zufälligen Initialisierungen an zwei Millionen gezogenen Phasenraumpunkten trainiert, um die statistische Schwankung der Güte des Modells einschätzen zu können. Die eingezeichneten Fehlerbalken (z.B. \textsf{\autoref{Daten-Transformationen}}) sollen die Schwankung verdeutlichen und sind kein Maß dafür, welchen MAPE das Netz in der Praxis erreichen kann. Ausreißer werden aus den Darstellungen ausgelassen, um die wesentlichen Abhängigkeiten sichtbar zu halten. 
+\begin{figure}[b!] 
 	\centering
 	\includegraphics[width=14cm]{graphics/17,18}
-	\caption{Vergleich des MAPE von Daten-Transformationen (siehe \textit{\autoref{mathe-daten-transformationen}}) für eine Standardkonfiguration}
+	\caption{Die Daten-Transformationen (siehe \textsf{\autoref{mathe-daten-transformationen}}) werden anhand des MAPE für eine Standardkonfiguration verglichen.}
 	\label{Daten-Transformationen}
 \end{figure}
 
-\textbf{Optimizer:} Der Vergleich des Optimizers \textsf{\autoref{Vgl-HyperparameterI} (c)} überrascht, da generell der Adam-Optimizer \cite{Adam} erfahrungsgemäß die besten Ergebnisse zeigt und als Weiterentwicklung des RMSprop \cite{RMSprop} gilt. RMSprop lierfert hier konstant etwas bessere Ergebnisse, wobei man jedoch beachten muss, dass bei solchen kleinen Abweichungen fünf Trainingsläuft nicht genug sind, um zu beurteilen welcher Optimizer nun besser beeignet ist. Der normale Stochastic-Gradient-Descent erzielt signifikant schlechtere Ergebnisse. 
+\textbf{Daten-Transformationen:}
+Welche Daten-Transformationen für das vorliegende Problem funktionieren, ist in \textsf{\autoref{Daten-Transformationen}} gezeigt. An dieser Stelle soll erneut die Wichtigkeit dieser Transformationen hervorgehoben werden. Während die Literatur viel die Normalisierung oder das Reskalieren der Features behandelt (Bsp. \cite{FN, feature-scaling}), werden die Labels oft von Transformationen ausgenommen. Für spezielle Regressionsprobleme, wie es hier vorliegt, können diese jedoch der Schlüssel dazu sein, überhaupt konvergierende Modelle zu erhalten. \textsf{\autoref{Daten-Transformationen}} zeigt, dass verschiedene Implementationen brauchbare Ergebnisse liefern und es wichtiger ist, die Skalierung und den Logarithmus anzuwenden. Trainingsläufe weder mit Skalierung, noch Anwendung des Logarithmus sind nicht aufgeführt, da der Fehler nicht vergleichbar ist.
 
-\textbf{Trainingsdaten:}
-Die Größe des Sets an Trainingsdaten ist in \textsf{\autoref{Vgl-HyperparameterI} (e)}  verglichen. Wie erwartet nimmt der Fehler des Modells mit der Zahl an vorhandenen Trainingsdaten ab. Das gleiche gilt voraussichtlich für die Unsicherheit auf dem Ergebnis, auch wenn in unserem Fall das Modell, das mit den meisten Trainingsdaten einen Ausreißer zeigt. Man erkennt jedoch auch, dass die Performance des Modells konvergiert und mehr als vier Millionen gesampelte Daten zu keiner signifikanten Verbesserung führen. 
+\textbf{Architektur:}
+Die Architektur in \textsf{\autoref{Vgl-Architekturen}} zu vergleichen, ist von Interesse, da zu sehen ist, dass eine zum Problem passende Architektur effektiver ist als die Komplexität des Modells. Das Modell (32, 10)\footnote{wobei die Modelle nach dem Schema (Units, Nr of Layers) benannt sind} mit  9665 zu trainierenden Parametern zeigt im Vergleich bessere Leistung als das Modell (1024, 2) mit 1054721 freien Parametern\footnote{Zur Berechnung der zu trainierenden Parameter eines Modells siehe \textsf{\autoref{freie parameter}}.}. Die Modelle (128, 6), (256,5), (384, 4) zeigen, trotz stark variierenden Anzahlen an freien Parametern, sehr gute Genauigkeit. Beachtet werden muss jedoch, dass die rechnerische Effizienz nicht nur aus der Anzahl an freien Parametern bestimmt werden kann, sondern eine komplizierte Abhängigkeit von verschiedenen Einflussfaktoren zeigt.   
 
-\textbf{Learning-Rate:}
-An dem Vergleich der Learning-Rates, der in \textsf{\autoref{Vgl-HyperparameterI}, (f)} gezeigt ist, kann man ein interessantes Verhalten des Netzes erkennen. Für eine Learning-Rate von $1 \cdot 10^{-3}$ verändert sich der mittlere Fehler lediglich unwesentlich, woraus geschlossen werden kann, dass unabhängig der Initialisierung das selbe lokale Minimum gefunden wird. Die Unsicherheit der Performance wird danach mit der Learning-Rate größer, es werden höhere und tiefere lokale Minima gefunden. Bei einer zu kleinen anfänglichen Lernrate, kommt der Lernvorgang bereits in einem hohen Minimum zum Erliegen. Es kann daher gut sein kann, seine anfängliche Learning-Rate etwas größer zu initialisieren, da man so diversere lokale Minima finden kann. Beachte jedoch, dass dieser Ansatz nur in Kombination mit einem Zeitplan zur Reduzierung der Lernrate funktioniert und dass \grqq Dying-ReLU\glqq-Problem verstärken oder sogar auslösen kann. 
+
+\textbf{Aktivierungsfunktionen:} 
+Die Abwandlungen der ReLU-Funktion zeigen sehr gute Ergebnisse, einsehbar in \textsf{\autoref{Vgl-HyperparameterII} (a)}. Die gewöhnliche ReLU zeigt jedoch schlechtere Leistung. Eine plausible Erklärung hierfür liefert wiederum das Dying-ReLU-Problem in Kombination mit der vergleichsweise hohen anfänglichen Lernrate.  
 \begin{figure}[bt!]
 	\centering
-	\includegraphics[width=13cm]{graphics/33-comp}
-	\caption{Vergleich des MAPE für verschiedene Modell-Architekturen.
-		x-Achsenbeschriftung in (Units, Nr of Layers)}
+	\captionsetup{justification=justified}
+	\includegraphics[width=11cm]{graphics/33-comp}
+	\caption{Verschiedene Modell-Architekturen werden anhand des MAPE für eine Standardkonfiguration verglichen. Die
+		x-Achsenbeschriftung ist geschrieben als (Units, Nr of Layers).}
 	\label{Vgl-Architekturen}
 \end{figure}
 
-\textbf{Daten-Transformationen:}
-Welche Daten-Transformationen für unser Problem funktionieren, ist in \textsf{\autoref{Daten-Transformationen}} gezeigt. An dieser Stelle soll erneut die Wichtigkeit dieser Transformationen hervorgehoben werden. Während die Literatur viel die Normalisierung oder das Reskalieren der Features behandelt (Bsp. \cite{FN, feature-scaling}), werden die Labels oft von Transformationen ausgenommen. Für spezielle Regressionsprobleme, wie es bei uns vorliegt, können diese jedoch der Schlüssel dazu sein, überhaupt konvergierende Modelle zu erhalten. \textsf{\autoref{Daten-Transformationen}} zeigt, dass verschiedene Implementationen brauchbare Ergebnisse liefern und es wichtiger ist, überhaupt die Skalierung und den Logarithmus anzuwenden. Trainingsläufe ohne Skalierung, noch Anwendung des Logarithmus sind nicht aufgeführt, da der Fehler nicht vergleichbar ist.
-
-
-\textbf{Achitektur:} %TODO nr of layers ist nr der hidden layers ohne output oder normalisierung
-Die Architektur in \textit{\autoref{Vgl-Architekturen}} zu vergleichen ist interessant, da man sehen kann, dass eine passende Architektur zum Problem effektiver ist als die Komplexität des Modells. Das Modell mit den wenigsten zu trainierenden Parametern zeigt im Vergleich bessere Leistung als das komplexeste\footnote{Zur Berechnung der Komplexität eines Modells siehe \textit{\autoref{freie parameter}}} Modell. Die Modelle (128, 6), (256,5), (384, 4) zeigen unabhängig von ihren trainierbaren Parameter sehr gute Genauigkeit. Beachte jedoch, dass die rechnerische Effizienz nicht nur von der Anzahl an freien Parametern abhängt. 
-% TODO trainable params unter die Architektur der Modelle
-
-\textbf{Anzahl an Layer und Units pro Layer:} %TODO 64 als erstes bei units dann sieht es aus wie kurve
-Sowohl für die Anzahl an Layer und der Units pro Layer verläuft nach einer Kurve, die ihr Minimum bei unseren optimalen Parametern hat (siehe \textsf{\autoref{Vgl-HyperparameterI} (b), (d)}). Der Schritt zum jeweils simpleren Modell ist klein und kann bei Bedarf einen Kompromiss zwischen Geschwindigkeit und Genauigkeit darstellen. 
-
-\textbf{Aktivierungsfunktionen:} %TODO Link zu den Abbildungen hier?
-Die Abwandlungen der ReLU-Funktion zeigen sehr gute Ergebnisse, einsehbar in \textsf{\autoref{Vgl-HyperparameterII} (a)}. Die gewöhnliche ReLU zeigt jedoch schlechtere Leistung. Eine plausible Erklärung hierfür liefert wiederum das \grqq Dying ReLU\grqq-Problem in Kombination mit unserer vergleichsweise hohen anfänglichen Lernrate.  
-
 \textbf{Batch-Sizes:}
-Ein Trainingsvorgang ist bei größerer Batch-Size (siehe \textsf{\autoref{Vgl-HyperparameterII} (b)}) mit passender Hardware zwar schneller, zeigt jedoch eindeutig größere Abweichungen. Aufgrund von zu wenigen Messdaten ist nicht klar, ob ein Modell, das mit großen Batches trainiert wird, in der gleichen Zeit, oder überhaupt, so tiefe Minima wie die kleineren erreichen können. 
+Ein Trainingsvorgang ist bei größerer Batch-Size (siehe \textsf{\autoref{Vgl-HyperparameterII} (b)}) mit passender Hardware zwar schneller, zeigt jedoch eindeutig größere Abweichungen.
+
+\textbf{Loss-Funktion:}
+In \textsf{\autoref{Vgl-HyperparameterI} (a)}  ist der Vergleich von drei verschiedenen Kostenfunktionen gezeigt. Für Probleme mit stark variierenden Labels setzt sich der Mean-Absolute-Error durch, da dieser weniger sensitiv auf Ausreißer oder, hier, Polstellen ist. Der Huber-Loss \cite{huber}, der eine Kombination des linearen Fehlers und des quadratischen Fehlers darstellt, schlägt sich insgesamt besser als der reine quadratische Fehler, kann insgesamt jedoch nicht mit dem linearen Fehler mithalten. 
+
+\textbf{Anzahl an Layer und Units pro Layer:}
+Die Abweichung verläuft sowohl für die Anzahl an Layern als auch der Units pro Layer nach einer Kurve, die ihr Minimum bei den ermittelten optimalen Parametern hat (siehe \textsf{\autoref{Vgl-HyperparameterI} (b), (d)}). Der Schritt zum jeweils simpleren Modell ist klein und kann bei Bedarf einen Kompromiss zwischen Geschwindigkeit und Genauigkeit darstellen. 
+
+\textbf{Optimizer:} Der Vergleich des Optimizers \textsf{\autoref{Vgl-HyperparameterI} (c)} überrascht, da generell der Adam-Optimizer \cite{Adam} als Weiterentwicklung des RMSprop \cite{RMSprop} gilt. RMSprop liefert hier konstant etwas bessere Ergebnisse, wobei jedoch beachtet werden muss, dass bei solchen kleinen Abweichungen fünf Trainingsläufe nicht genug sind, um zu beurteilen, welcher Optimizer besser geeignet ist. Der Stochastic-Gradient-Descent erzielt signifikant schlechtere Ergebnisse. 
+
+\textbf{Trainingsdaten:}
+Die Größe des Sets an Trainingsdaten ist in \textsf{\autoref{Vgl-HyperparameterI} (e)}  verglichen. Wie erwartet nimmt der Fehler des Modells mit der Zahl an vorhandenen Trainingsdaten ab. Es zeigt sich, dass die Performance des Modells konvergiert und mehr als vier Millionen generierte Daten zu keiner signifikanten Verbesserung führen. 
+
+\textbf{Learning-Rate:}
+An dem Vergleich der Learning-Rates, der in \textsf{\autoref{Vgl-HyperparameterI}, (f)} gezeigt ist, kann ein interessantes Verhalten des Netzes erkannt werden. Für eine anfängliche Learning-Rate von $1 \cdot 10^{-3}$ verändert sich der MAPE lediglich unwesentlich, woraus geschlossen werden kann, dass unabhängig der Initialisierung dasselbe lokale Minimum gefunden wird. Die Abhängigkeit der Genauigkeit von der zufälligen Initialisierung wird danach mit der Learning-Rate größer, sodass höhere und tiefere lokale Minima gefunden werden. Bei einer zu kleinen anfänglichen Lernrate kommt der Lernvorgang bereits in einem hohen Minimum zum Erliegen. Es kann daher gut sein, seine anfängliche Learning-Rate etwas größer zu initialisieren, da so diversere lokale Minima gefunden werden können. Beachtet werden muss jedoch, dass dieser Ansatz nur in Kombination mit einem Zeitplan zur Reduzierung der Lernrate funktioniert und das Dying-ReLU-Problem verstärken oder auslösen kann. 
+ 
 \begin{figure}[hb!]
 	\centering
-	\subfloat[Activation-Functions]{\includegraphics[width=7cm]{graphics/19}}
+	\subfloat[Aktivierungsfunktionen]{\includegraphics[width=7cm]{graphics/19}}
 	\subfloat[Batch-Sizes]{\includegraphics[width=7cm]{graphics/20}}
-	\caption{Vergleich von Hyperparametern (I) am MAPE eines Testdatensets für eine Standardkonfiguration}
+	\caption{Verschiedene Hyperparameter werden anhand des MAPE für eine Standardkonfiguration verglichen.}
 	\label{Vgl-HyperparameterII}
 \end{figure}
 \begin{figure}[tbp] %TODO Momentum irgendwo hinschreiben
@@ -670,23 +714,24 @@ Ein Trainingsvorgang ist bei größerer Batch-Size (siehe \textsf{\autoref{Vgl-H
 	\subfloat[Anzahl an Units]{\includegraphics[width=7.5cm]{graphics/15}} \\
 	\subfloat[Anzahl an Trainigspunkten]{\includegraphics[width=6.125cm]{graphics/16}}
 	\subfloat[Anfangs-Lernraten]{\includegraphics[width=6.125cm]{graphics/36}} 
-	\caption{Vergleich von Hyperparametern (II) am MAPE eines Testdatensets für eine Standardkonfiguration}
+	\caption{Verschiedene Hyperparameter werden anhand des MAPE für eine Standardkonfiguration verglichen.}
 	\label{Vgl-HyperparameterI}
-\end{figure} %TODO Bildunterschriften für vergleiche
-\section{Umgewichtung für verschiedene PDF-Sets} %TODO Reweight plots in verschiedene x bereichen
-Als nächstes wird ein neuronales Netz verwendet, um die Gewichte (\textsf{\autoref{Gewichte}}}) zwischen Wirkungsquerschnitten, die mit verschiedenen Anpassungen der PDFs berechnet wurden, zu erlernen. Konkret werden die Sets \glqq CT14nnlo\grqq~und \glqq MMHT2014nnlo\grqq~verwendet. Die Gewichte schwanken um eins und haben keine Polstellen und sind damit leichter zu modellieren als Problem im vorangegangenen Abschnitt. In Phasenraumbereichen mit großen $x$ weichen die Sets jedoch stark voneinander ab und die Gewichte beginnen teils zu oszillieren. Angelehnt an den Phasenraumschnitt aus \textit{\autoref{Selektionen}}, werden die Gewichte bis zu $x_{max} = 0.8$ trainiert, da die starken Abweichungen hier etwas später beginnen. Zusätzlich Selektieren wir Ereignisse, die unabhängig von $\eta_{\gamma}$ nicht messbar wären (siehe\textsf{\autoref{label}}). 
-Der Random-Search mit den besten Parametern ist in \textit{\autoref{hyperparameter-reweighting}} zu sehen.
+\end{figure}
+\section{Umgewichtung für verschiedene PDF-Sets} 
+Als Nächstes wird ein neuronales Netz verwendet, um die Umgewichtung (\textsf{\autoref{Gewichte}}}) zwischen Wirkungsquerschnitten, die mit verschiedenen Anpassungen der PDFs berechnet wurden, zu erlernen. Konkret werden die Sets \textit{CT14nnlo} und \textit{{MMHT2014nnlo}} verwendet. Die Gewichte schwanken um eins und besitzen keine Polstellen und sind damit leichter zu modellieren als das Problem im vorangegangenen Abschnitt. In Phasenraumbereichen mit großen $x$ weichen die Sets jedoch stark voneinander ab. Angelehnt an den Phasenraumschnitt aus \textsf{\autoref{Selektionen}}, werden die Gewichte bis zu $x_{\text{max}} = 0.8$ trainiert, da die starken Abweichungen hier etwas später beginnen. Zusätzlich werden Ereignisse selektiert, die unabhängig von $\eta_{\gamma}$ nicht messbar wären (siehe \textsf{\autoref{reweight-selektionen}}). 
+Die zufällige Suche mit den besten Parametern ist in \textsf{\autoref{hyperparameter-reweighting}} zu sehen.
 
-Wie erwartet, ist die Genauigkeit des Modells sehr gut, wie in \textit{\autoref{reweight-schnitte}} beobachtet werden kann. Die Abweichung beträgt generell weniger als $0.1\%$ und ist somit kaum von den analytisch berechneten Werten zu unterscheiden. Wie die Gewichte in der Anwendung funktionieren, ist in \textit{\autoref{reweight-angewendet}} dargestellt. Auch hier können nur minimale Abweichungen verzeichnet werden. Das Ratio in \textit{\autoref{reweight-angewendet} (c)}  ist wie erwartet konstant, da das Gewicht nicht von $\eta$ abhängt (siehe \textit{\autoref{Gewichte}}). 
+Erwartungsgemäß ist die Genauigkeit des Modells sehr gut, wie in \textsf{\autoref{reweight-schnitte}} beobachtet werden kann. Die Abweichung beträgt generell weniger als $0.1\%$ und ist somit kaum von den analytisch berechneten Werten zu unterscheiden. 
 \begin{figure}[htb]
 	\centering
 	\subfloat[Schnitt in $x_1$]{\includegraphics[width=7cm]{graphics/32}}
 	\subfloat[Schnitt in $x_2$]{\includegraphics[width=7cm]{graphics/33}} 
-	\caption{Vergleich DNN - analytische Werte für Schnitte der Gewichte $w$ in verschiedenen Phasenraumbereichen}
+	\caption{Der Vergleich der Vorhersagen des DNN mit analytischen Werten für Schnitte der Umgewichtung $w$ in verschiedenen Phasenraumbereichen ist gezeigt.}
 	\label{reweight-schnitte}
 \end{figure}
 \begin{table}[b]
 	\centering
+	\caption{Event-Selektion für die Umgewichtung des hadronischen Diphoton-Prozesses in Anlehnung an Messung mit ATLAS \cite{Cuts-Paper}.}
 	\begin{tabular}{|c|c|}
 		\hline
 		Typ & Selektion \\
@@ -696,42 +741,56 @@ Wie erwartet, ist die Genauigkeit des Modells sehr gut, wie in \textit{\autoref{
 		Impulsbruchteil & $x_{1,2} < 0.8 $\\
 		\hline
 	\end{tabular}
-	\caption{Event-Selektion für die Umgewichtung des hadronischen Diphoton-Prozess in Anlehnung an Messung mit ATLAS \cite{Cuts-Paper}}
-	\label{Selektionen}
+	\label{reweight-selektionen}
 \end{table}
-\begin{figure}[tbp]
-	\centering
-	\subfloat[Schnitt in $x_1$]{\includegraphics[width=7cm]{graphics/22}} 
-	\subfloat[Schnitt in $x_2$]{\includegraphics[width=7cm]{graphics/23.1}} \\
-	\subfloat[Schnitt in $\eta$]{\includegraphics[width=7cm]{graphics/21}}
-	\caption{Umgewichtung von CT14nnlo auf MMHT2014nnlo mittels gelernten Weights}
-	\label{reweight-angewendet}
-\end{figure}
 \section{Transfer-Learning zwischen PDF-Sets}
-Eine weitere Möglichkeit, den Wirkungsquerschnitt, der mit einem anderen PDF-Set berechnet wurde, zu ermitteln, ist Transfer-Learning (siehe \textit{\autoref{transfer-learning}}). Mit Transfer-Learning kann der, in den relevanten Phasenraumbereichen kleine, Unterschied ausgeglichen und so mit wenig Aufwand gute Modelle für andere PDF-Sets erhalten werden. Es kommt erneut ein Random-Search zum Einsatz, um gute Hyperparameter für den Transfer zu finden. Diese können in \textit{\autoref{hyperparameter-transfer}} nachgelesen werden. Das Ergebnis der Suche zeigt jedoch identische Genauigkeit mit Austausch des Output-Neurons und anschließendem Training\footnote{einschließlich Fine-Tuning} mit den Trainingsparametern aus \textsf{\autoref{Hyperparameter-Hadron}}, sodass das simplere Modell weiterverwendet wird.
+Eine weitere Möglichkeit, den Wirkungsquerschnitt, der mit einem anderen PDF-Set berechnet wurde, zu ermitteln, ist Transfer-Learning (siehe \textsf{\autoref{transfer-learning}}). Mit Transfer-Learning können der, in den relevanten Phasenraumbereichen kleine, Unterschied ausgeglichen und mit wenig Aufwand gute Modelle für andere PDF-Sets erhalten werden. Es kommt erneut eine zufällige Suche zum Einsatz, um gute Hyperparameter für den Transfer zu finden. Es wird unter anderem optimiert, wie viele Layer aus dem Quellen-Modell entfernt und wie viele Layer hinzugefügt werden, und evaluiert, ob das Modell anschließend per Fine-Tuning (siehe \textsf{\autoref{transfer-learning}}) weitertrainiert wird. Die Ergebnisse der Suche sind in \textsf{\autoref{hyperparameter-transfer}} gezeigt. Es zeigt sich jedoch, dass der zusätzlich hinzugefügte Layer keine Verbesserung der Genauigkeit mit sich bringt, sodass im Folgenden lediglich das Output-Neuron ausgetauscht wird.
+\begin{table}
+	\centering
+	\caption{Gezeigt sind Parameter einer zufälligen Suche für den Transfer eines Quellen-Modells mit bester Konfiguration Transfer zwischen PDF-Sets.}
+	\begin{tabular}{lll}
+		Hyperparameter & Pool & Beste Konfig. \\
+		\hline\hline
+		Anzahl entfernte Layer & $\left\lbrace  1, 2 \right\rbrace $ & 1 \\
+		Anzahl hinzugefügte Layer & $\left\lbrace  0, 1, 2 \right\rbrace $ & 1 \\
+		Units (hinzugefügte Layer) &$\left\lbrace 64, 128, 512\right\rbrace$ & 128\\
+		Aktivierungsfunktion & ReLU, Leaky-ReLU, Sigmoid & ReLU \\
+		Learning-Rate & $\left\lbrace 10^{-2}, 5 \cdot 10^{-3}, 10^{-3}, 10^{-4} \right\rbrace $ & $5 \cdot 10^{-3}$\\
+		Batch-Größe & $\left\lbrace 128, 512, 768, 2048, 8196 \right\rbrace $ & 768\\
+		Fine-Tuning & True, False & True \\
+		\hline
+		Loss-Funktion & \multicolumn{2}{c}{MAE} \\
+		Optimizer & \multicolumn{2}{c}{Adam} \\
+		Max. Epochen & \multicolumn{2}{c}{100}\\
+		Trainingspunkte & \multicolumn{2}{c}{1.000.000} \\
+		\hline
+	\end{tabular}
+	\label{hyperparameter-transfer}
+\end{table}
 
-In \textit{\autoref{Vgl-transfer-not-rw}} sind Schnitte des differentiellen Wirkungsquerschnitts des besten transferierten Modells, des Modells das als Quelle gedient hat, und den analytischen Werten gezeigt. Es ist zu beobachten, dass die Genauigkeit des transferierten Modells fast identisch mit der des Source-Modells in \textit{\autoref{Schnitte Hadron}} ist. Weder verliert das Modell beim Transfer an Genauigkeit, noch kann eine Verbesserung der Performance festgestellt werden.
+In \textsf{\autoref{Vgl-transfer-not-rw}} sind Schnitte des differentiellen Wirkungsquerschnitts des besten transferierten Modells, des Modells, das als Quelle gedient hat, und der analytischen Werten gezeigt. Es ist zu beobachten, dass die Genauigkeit des transferierten Modells fast identisch mit der des Quellen-Modells in \textsf{\autoref{Schnitte Hadron}} ist. Weder verliert das Modell beim Transfer an Genauigkeit noch kann eine Verbesserung der Performance festgestellt werden.
 
-Es kann in \textit{\autoref{Vergleich-Reweigt-Transfer-Tabelle}} eindeutig beobachtet werden, dass sich die Menge an Lerndaten und damit auch die Trainingsdauer signifikant verringert. Es konnte mit einfachen Mitteln eine Reduktion um den Faktor vier an Trainingspunkten erreicht werden. Sowohl das Transfer-Learning, als auch das Reweighting sind also legitime Methoden um den Wirkungsquerschnitt von einem PDF-Set auf das nächste zu übertragen. Ein visueller Vergleich folgt in \textit{\autoref{Vgl-transfer-rw}}, wobei sich hier nicht erkennen lässt, welche Methode die besseren Leistungen zeigt. Interessant zu sehen ist, dass sich die Form des Ratios beider Modelle ähnelt. Der Grund hierfür liegt darin, dass das transferierte Modell vom Source-Modell abstammt und sich die Gewichte der Neuronen ähneln.
+Sowohl das Transfer-Learning als auch die Umgewichtung sind also legitime Methoden, um den Wirkungsquerschnitt von einem PDF-Set auf das nächste zu übertragen. Ein visueller Vergleich folgt in \textsf{\autoref{Vgl-transfer-rw}}, wobei sich hier nicht erkennen lässt, welche Methode die besseren Leistungen zeigt. Interessanterweise zu sehen ist, dass sich die Form des Ratios beider Modelle ähnelt. Der Grund hierfür liegt darin, dass das transferierte Modell vom Quellen-Modell abstammt und sich die Gewichte der Neuronen nur schwach unterscheiden.
 
-In \textit{\autoref{Vergleich-Reweigt-Transfer-Tabelle}} sind einige Kenndaten der Modelle gegenübergestellt.
+In \textsf{\autoref{Vergleich-Reweigt-Transfer-Tabelle}} sind einige Kenndaten der Modelle gegenübergestellt. Es kann eindeutig beobachtet werden, dass sich die Menge an Lerndaten und damit auch die Trainingsdauer durch das Transfer-Learning signifikant verringert haben. Es konnte mit einfachen Mitteln eine Reduktion um den Faktor vier an Trainingspunkten erreicht werden.
 \begin{table} 
 	\centering
+	\captionsetup{justification=justified}
+	\caption{Vergleich von Umgewichtung- und Transfer-Modellen. TPM (Time per Million) ist die Berechnungszeit für $10^{6}$ Punkte. Die Zeiten sind aufgenommen mit der Konfiguration in \textsf{\autoref{hardware}}. Der MAPE ist für ein Test-Datensatz von MMHT2014nnlo-Werten berechnet. Beachte, dass ein transferiertes Modell, das ohne FT trainiert wurde, schlechtere Ergebnisse erzielt, als das nicht transferierte Quellen-Modell.}
 	\begin{tabular}{|l|c|c|c|c|}
 		\hline
 		Modell & MAPE & Training$[\text{s}]$ & Punkte & TPM$[\text{s}]$ \\
 		\hline
-		Reweight + Source & 0.076 & 145.38 & 1M & 30.60 \\
-		Reweight + Analy. &  0.017 & 145.38 & 1M & 13.84 \\
-		Transfer & 0.204 & 68.61 & 1M & 15.73\\
-		Transfer + FT & 0.064 & 162.13 & 1M & 15.65 \\
-		Source-Model & 0.229 & 860.30 & 4M & 15.81\\
+		Umgewichtung + Quelle & 0.076 & 145.38 & 1M & 0.683 \\
+		Umgewichtung + Analy. &  0.017 & 145.38 & 1M & 0.171 \\
+		Transfer & 0.228 & 68.61 & 1M & 0.503\\
+		Transfer + FT & 0.064 & 162.13 & 1M & 0.520 \\
+		Quellen-Modell & 0.207 & 860.30 & 4M & 0.504\\
 		\hline
 	\end{tabular}
-	\caption{Vergleich von Reweight- und Transfer-Modellen TPM: Time per Million, Berechnungszeit für $10^{6}$ Punkte. Zeiten aufgenommen auf \textsf{\autoref{hardware}}}
 	\label{Vergleich-Reweigt-Transfer-Tabelle}
 \end{table}
-Es ergibt sich, dass das präziseste und schnellste Modell die Umgewichtung der analytisch berechneten Werte ist. Steht eine große Anzahl an Werten von differentiellen Wirkungsquerschnitten zur Verfügung, dann ist dies das optimale Modell. Ist jedoch über ein vollständiges Modell benötigt, dass nicht auf die analytische Berechnung von differentiellen Wirkungsquerschnitten angewiesen ist, schneidet das Modell \glqq Transfer + FT\grqq~am Besten ab. Es übertrifft die Alternative \glqq Reweight + Source\grqq~ in den bedeutenden Kriterien. Da im zweiten Fall sowohl die Gewichte, als auch die Source-Wirkungsquerschnitten mit neuronalen Netzen berechnet werden, verdoppelt sich hier die Berechnungszeit für $10^{6}$ Punkte (Time per Million: TPM) im Vergleich zu den restlichen Modellen. Wird das Source-Modell geeignet transformiert, passt sich das Netz gut an die neuen Daten an und der MAPE bleibt minimal. Werden die Ergebnisse des Source-Models neu gewichtet, pflanzen sich beide Ungenauigkeiten fort und die Unsicherheit steigt etwas.
+Es ergibt sich, dass das präziseste und schnellste Modell die Umgewichtung der analytisch berechneten Werte ist. Steht eine große Anzahl an Werten von differentiellen Wirkungsquerschnitten zur Verfügung, dann ist dies das optimale Modell. Ist jedoch ein vollständiges Modell benötigt, das nicht auf die analytische Berechnung von differentiellen Wirkungsquerschnitten angewiesen ist, schneidet das Modell \textit{Transfer + FT} am besten ab. Es übertrifft die Alternative \textit{Umgewichtung + Quelle} in den bedeutenden Kriterien. Da im zweiten Fall sowohl die Gewichte als auch die Quellen-Wirkungsquerschnitten mit neuronalen Netzen berechnet werden, addiert sich hier die Berechnungszeit für $10^{6}$ Punkte (Time per Million: TPM) im Vergleich zu den restlichen Modellen. Wird das Quellen-Modell geeignet transformiert, passt sich das Netz gut an die neuen Daten an und der MAPE bleibt minimal. Werden die Ergebnisse des Quellen-Modells neu gewichtet, pflanzen sich beide Ungenauigkeiten fort und die Unsicherheit steigt etwas.
 
 Es kann geschlussfolgert werden, dass das Transfer-Learning eine generell bessere Methode für den angesprochenen Zweck ist und das Erlernen der Gewichte zwar gut funktioniert, jedoch nur nützlich ist, wenn speziell die Gewichte benötigt werden.
 \begin{figure}[hb!]
@@ -739,7 +798,7 @@ Es kann geschlussfolgert werden, dass das Transfer-Learning eine generell besser
 	\subfloat[Schnitt in $x_1$, $x_2$ klein]{\includegraphics[width=7cm]{graphics/34}} 
 	\subfloat[Schnitt in $x_2$, $x_1$ groß]{\includegraphics[width=7cm]{graphics/35.1}} \\
 	\subfloat[Schnitt in $\eta$, $x_1 \neq x_2$]{\includegraphics[width=7cm]{graphics/24}}
-	\caption{Vergleich transferiertes Modell - Source Model für verschiedene Phasenraumbereiche}
+	\caption{Der Vergleich der Vorhersagen eines transferierten Modells und eines Quellen-Modells ist für verschiedene Phasenraumbereiche gezeigt.}
 	\label{Vgl-transfer-not-rw}
 \end{figure}
 \begin{figure}[h]
@@ -748,51 +807,53 @@ Es kann geschlussfolgert werden, dass das Transfer-Learning eine generell besser
 	\subfloat[Schnitt in $x_2$, $x_1$ groß]{\includegraphics[width=7cm]{graphics/35.2}} \\
 	\subfloat[Schnitt in $\eta$, $x_1 \neq x_2$]{\includegraphics[width=7cm]{graphics/24.2}}
 	\subfloat[Vergleich am MAPE]{\includegraphics[width=7cm]{graphics/25,29}}
-	\caption{Vergleich transferiertes Modell - umgewichtetes Source Model für verschiedene Phasenraumbereiche. rw: reweighting}
+	\caption{Der Vergleich der Vorhersagen eines transferierten Modells und eines umgewichteten Quellen-Modells (rw) ist für verschiedene Phasenraumbereiche gezeigt.}
 	\label{Vgl-transfer-rw}
 \end{figure}
 \section{Monte-Carlo-Integration}
-\subsection{Parton-Ebene}
-Es werden Monte-Carlo-Methoden zur Integration von \textit{\autoref{diff_WQ_theta}}, \textit{\autoref{diff_WQ_eta}} und deren zugehörigen Machine Learning Modellen verwendet. Zur Integration von \textit{\autoref{diff_WQ_theta}} wird das Importance Sampling aus \textit{\autoref{theta-dist}} genutzt, um die Konvergenz des Integrals zu beschleunigen. Der Prozess $qq \rightarrow \gamma \gamma$ ist zwar nicht messbar, es muss dennoch ein Schnitt in $\eta$ festgelegt werden, da der totale Wirkungsquerschnitt sonst divergiert. Es werden die Beschränkungen \textit{\autoref{partonic-mc-cuts}} verwendet.
+\subsection{Partonischer Prozess}
+Es werden Monte-Carlo-Methoden zur Integration von \textsf{\autoref{diff_WQ_theta}}, \textsf{\autoref{diff_WQ_eta}} und den zugehörigen Näherungen durch Machine-Learning-Modelle verwendet. Zur Integration von \textsf{\autoref{diff_WQ_theta}} wird das Importance Sampling (IS) aus \textsf{\autoref{theta-dist}} genutzt, um die Konvergenz des Integrals zu beschleunigen. Der Prozess $qq \rightarrow \gamma \gamma$ ist zwar nicht messbar, es muss dennoch ein Schnitt in $\eta$ festgelegt werden, da der totale Wirkungsquerschnitt sonst divergiert. Es werden die Beschränkungen \textsf{\autoref{partonic-mc-cuts}} verwendet.
 \begin{equation}
 \abs{\eta} \leq 2.5 \qquad \Rightarrow \qquad \theta \in \left[\epsilon, \pi - \epsilon \right] \quad \text{mit} \quad \epsilon = 0.1638
 \label{partonic-mc-cuts}
 \end{equation}
-Die Unsicherheit der Monte-Carlo-Integration wird aus \textit{\autoref{uncertainty-mc}} bestimmt. Die Integrationen wird mit 1000 Stützstellen durchgeführt und 100 mal wiederholt. In \textit{\autoref{results-mc-partonic}} sind die erhaltenen Ergebnisse mit dem analytischen Wert verglichen.
+Die Unsicherheit der Monte-Carlo-Integration wird aus \textsf{\autoref{uncertainty-mc}} bestimmt. Die Integrationen wird mit 1000 Stützstellen durchgeführt und 100 Mal wiederholt. In \textsf{\autoref{results-mc-partonic}} sind die erhaltenen Ergebnisse mit dem analytischen Wert verglichen.
 \begin{table}[bh]
 	\centering
+	\captionsetup{justification=justified}
+	\caption{Die Ergebnisse der Monte-Carlo-Integration des partonischen Diphoton Prozesses sind für den analytischen und durch ML genäherten Integranden verglichen. Für $\derivative{\sigma}{\theta}$ wird der Nutzen von Importance Sampling untersucht}
 	\begin{tabular}{lll}
 		Integrand & \multicolumn{2}{c}{$\quad \sigma_{\text{tot}}[\text{pb}]$} \\
 		\hline
 		analytische Stammfunktion& \quad  $0.053793$ &$\pm~ 0$\\
 		$\derivative{\sigma}{\theta}$ analytisch + IS & $\quad 0.05382 $&$\pm~ 0.00006 $ \\
 		$\derivative{\sigma}{\theta}$ analytisch & $\quad 0.05389$ &$\pm~ 0.00015 $ \\
-		$\derivative{\sigma}{\theta}$ ml + IS &$\quad 0.05386$ &$\pm~ 0.00005$ \\
+		$\derivative{\sigma}{\theta}$ ML + IS &$\quad 0.05386$ &$\pm~ 0.00005$ \\
 		$\derivative{\sigma}{\eta}$ analytisch & $\quad 0.053796 $&$\pm~ 0.000034$ \\
-		$\derivative{\sigma}{\eta}$ ml & $\quad 0.053801 $&$\pm~ 0.000034$ \\
+		$\derivative{\sigma}{\eta}$ ML & $\quad 0.053801 $&$\pm~ 0.000034$ \\
+		\hline
 	\end{tabular}
-	\caption{Monte-Carlo-Integration des partonischen Diphoton Prozesses}
 	\label{results-mc-partonic}
 \end{table}
 Es ist zu sehen, dass die neuronalen Netze so präzise sind, dass ihre Abweichung in der Unsicherheit der Monte-Carlo-Integration untergeht. Das sind gute Voraussetzungen für die Anwendbarkeit von neuronalen Netzen auch bei höherdimensionalen Prozessen. Das simple Importance-Sampling bringt eine signifikante Varianz-Verringerung mit sich.
-\subsection{Hadron-Ebene}
-Auch für den hadronischen Diphoton-Prozess wird Importance-Sampling genutzt. Für die Generation der Impulsbruchteile $x$ wird die Verteilung aus \textit{\autoref{IS-hadron}} verwendet. Aufgrund der Selektionen leisten Phasenraumpunkte mit kleinem $\eta$ einen Größeren Beitrag zum messbaren $\sigma_{\text{tot}}$, daher werden die Pseudo-Rapiditäten aus einer Gaußverteilung um Null (\textit{\autoref{IS-eta}}) gezogen.
+\subsection{Hadronischer Prozess}
+Auch für den hadronischen Diphoton-Prozess wird Importance-Sampling genutzt. Für die Generation der Impulsbruchteile $x$ wird die Verteilung aus \textsf{\autoref{IS-hadron}} verwendet. Aufgrund der Selektionen leisten Phasenraumpunkte mit kleinem $\eta$ einen größeren Beitrag zum messbaren $\sigma_{\text{tot}}$, daher werden die Pseudo-Rapiditäten aus einer Gaußverteilung um null (\textsf{\autoref{IS-eta}}) gezogen.
 \begin{equation}
 \rho(\eta) = \frac{1}{\sqrt{2\pi \sigma^2}} \exp(-\frac{\eta^2}{2\sigma^2}) \quad \text{mit} \quad \sigma=2
 \label{IS-eta}
 \end{equation}
-Zunächst werden die Wirkungsquerschnitte über zwei Freiheitsgrade integriert und in Abhängigkeit von $x_1, x_2$ und $\eta$ betrachtet. Dazu werden 10.000.000 Punkte generiert und der Prozess zwanzig mal wiederholt. Die Ergebnisse sind in \textit{\autoref{MC-Int-Hadron}} dargestellt.
-\begin{figure}[tb!]
+Zunächst werden die Wirkungsquerschnitte über zwei Freiheitsgrade integriert und in Abhängigkeit von $x_1, x_2$ und $\eta$ betrachtet. Dazu werden 10.000.000 Punkte generiert und der Prozess zwanzigmal wiederholt. Die Ergebnisse sind in \textsf{\autoref{MC-Int-Hadron}} dargestellt.
+\begin{figure}
 	\centering
 	\subfloat[Integration über $x_2, \eta$]{\includegraphics[width=7cm]{graphics/27}} 
 	\subfloat[Integration über $x_1, \eta$]{\includegraphics[width=7cm]{graphics/28}} \\
 	\subfloat[Integration über $x_1, x_2$]{\includegraphics[width=7cm]{graphics/11}}
-	\caption{MC-Integrationen über zwei Freiheitsgrade. Unsicherheiten in logarithmischer Darstellung nicht sichtbar}
+	\caption{Die MC-Integration über zwei Freiheitsgrade ist gezeigt, wobei in den jeweiligen Bins über den dritten Freiheitsgrad integriert wurde. Die Unsicherheiten sind in logarithmischer Darstellung nicht sichtbar.}
 	\label{MC-Int-Hadron}
-\end{figure} %TODO sicherstellen, dass ratio immer analytisch/WQ ist.
-Es ist zu beobachten, dass sich die integrierten Wirkungsquerschnitte für die analytischen Werte und die Vorhersagen des DNN an vielen Phasenpunkten überdecken. Lediglich für große $x$ überschätzt die Vorhersage wie erwartet den eigentlichen Wert. Diese Abweichung kann jedoch vernachlässigt werden, da am Ratio von \textit{\autoref{MC-Int-Hadron} (c)}  zu sehen ist, dass die analytischen Werte insgesamt unterschätzt werden. Der Grund hierfür liegt vermutlich in der Polstelle an $x=0$. Die Selektionen nehmen viele Phasenraumpunkte um $x_1 = x_2 = 0$ mit großem Wirkungsquerschnitt heraus, die die $p_T$-Hürde nicht erfüllen und führen voraussichtlich zu einer geringfügigen Unterschätzung des Wirkungsquerschnittes an diesen einflussreichen Stellen. 
-
-Zur Integration über alle Freiheitsgrade werden die gleichen Daten wie im vorherigen Abschnitt verwendet. Die Ergebnisse sind in \textit{\autoref{results-mc-hadron}} aufgeführt.
+\end{figure}
+Es ist zu beobachten, dass sich die integrierten Wirkungsquerschnitte für die analytischen Werte und die Vorhersagen des DNN an vielen Phasenpunkten überdecken. Lediglich für große $x$ überschätzt die Vorhersage wie erwartet den eigentlichen Wert. Diese Abweichung kann jedoch vernachlässigt werden, da am Ratio von \textsf{\autoref{MC-Int-Hadron} (c)}  zu sehen ist, dass die analytischen Werte insgesamt unterschätzt werden. Der Grund hierfür liegt vermutlich in der Polstelle an $x=0$. Die Selektionen nehmen viele Phasenraumpunkte um $x_1 = x_2 = 0$ mit großem Wirkungsquerschnitt heraus, die die $p_\text{T}$-Hürde nicht erfüllen, und führen zu einer geringfügigen Unterschätzung des Wirkungsquerschnittes an diesen einflussreichen Stellen.
+ 
+Zur Integration über alle Freiheitsgrade werden die gleichen Daten wie im vorherigen Abschnitt verwendet. Die Ergebnisse sind in \textsf{\autoref{results-mc-hadron}} aufgeführt.
 \begin{equation}
 \label{results-mc-hadron}
 \begin{aligned}
@@ -800,35 +861,35 @@ Zur Integration über alle Freiheitsgrade werden die gleichen Daten wie im vorhe
 &\sigma_{\text{tot}}^{\text{ml}} &= (5.1588 \pm 0.0022) \text{ pb} \\
 \end{aligned}
 \end{equation}
-Dies entspricht einer Abweichung von $0.14\%$, wobei die Ergebnisse außerhalb ihrer Unsicherheiten liegen. Es kann abschließend gesagt werden, dass die Präzision des DNN sehr gut und die Näherung erfolgreich gelungen ist.   
+Dies entspricht einer Abweichung von $0.14\%$, wobei die Ergebnisse außerhalb ihrer Unsicherheiten liegen, insbesondere da dieselben zufälligen Phasenraumpunkte für die Integration der analytischen und genäherten Werte genutzt wurden und damit die statistischen Unsicherheiten stark korreliert sind. Es kann abschließend gesagt werden, dass die Präzision des DNN sehr gut und die Näherung erfolgreich gelungen ist.   
 \chapter{Zusammenfassung und Ausblick}
 \label{5}
 \section{Zusammenfassung}
-In dieser Arbeit wurde der Diphoton Prozess als $q\overline{q} \rightarrow \gamma \gamma$ und $pp \rightarrow \gamma \gamma$ in führender Ordnung behandelt und analytische Ausdrücke für die jeweiligen differentiellen Wirkungsquerschnitte hergeleitet. An diesen Beispielen wurde anschließend die Eignung von tiefen neuronalen Netzwerken zur Näherung des Integranden überprüft. Dabei mussten verschiedene Schwierigkeiten, wie quantitativ kleine Labels, bedacht und behandelt werden. In diesem Kontext wurde die Wichtigkeit von Label-Transformationen deutlich. Im Anschluss wurden die Gewichte zwischen den Sets der Partondichtefunktionen CT14nnlo und MMHT2014nnlo erlernt und angewendet. Schließlich wurde die Möglichkeit der Anwendung von Transfer-Learning zur Umgewichtung eines Modells überprüft. Mithilfe von Monte-Carlo-Methoden wurden die analytischen und vorhergesagten differentiellen Wirkungsquerschnitte integriert.
+In dieser Arbeit wurde der Diphoton Prozess als $q\overline{q} \rightarrow \gamma \gamma$ und $pp \rightarrow \gamma \gamma$ in führender Ordnung behandelt und analytische Ausdrücke für die jeweiligen differentiellen Wirkungsquerschnitte hergeleitet. An diesen Beispielen wurde anschließend die Eignung von tiefen neuronalen Netzwerken zur Näherung des Integranden überprüft. Dabei mussten verschiedene Schwierigkeiten, wie quantitativ kleine Labels, bedacht und behandelt werden. In diesem Kontext wurde die Wichtigkeit von Label-Transformationen deutlich. Im Anschluss wurden die Gewichte zwischen den Sets der Partondichtefunktionen CT14nnlo und MMHT2014nnlo erlernt und angewendet. Schließlich wurde die Möglichkeit der Nutzung von Transfer-Learning zur Umgewichtung eines Modells überprüft. Mithilfe von Monte-Carlo-Methoden wurden die analytischen und vorhergesagten differentiellen Wirkungsquerschnitte integriert.
 
-Wie erwartet, haben die neuronalen Netze keine Probleme mit einfachen Regressionsaufgaben, wie die Wirkungsquerschnitte des Prozesses $q\overline{q} \rightarrow \gamma \gamma$ darstellen. Die Funktionswerte können mit ausgezeichneter Genauigkeit ($\approx 0.1\%$ Abweichung) und wenig Aufwand vorhergesagt werden.
+Wie erwartet, haben die neuronalen Netze keine Probleme mit einfachen Regressionsaufgaben, wie dem Wirkungsquerschnitt des $q\overline{q} \rightarrow \gamma \gamma$ Prozesses. Die Funktionswerte können mit ausgezeichneter Genauigkeit ($\approx 0.1\%$ Abweichung) und wenig Aufwand vorhergesagt werden.
 
-Dagegen ist der differentielle Wirkungsquerschnitt des Prozesses $pp \rightarrow \gamma \gamma$ nicht trivial. Hier müssen Hürden wie das Dying-ReLU-Problem und die passende Wahl der Loss-Funktion überwunden werden. Hier kann es helfen, kaum beitragende Phasenraumbereiche zu vernachlässigen, um die Spanne an Größenordunungen, über die sich die Wirkungsquerschnitte verteilen, zu verkleinern. Letztendlich können mit Feingefühl und Erfahrung im Umgang mit neuronalen Netzen jedoch passende Modelle gefunden werden, die gute Genauigkeit ($\approx 0.5\%$ Abweichung) zeigen.
+Dagegen ist der differentielle Wirkungsquerschnitt des Prozesses $pp \rightarrow \gamma \gamma$ nicht trivial. Hier müssen Hürden wie das Dying-ReLU-Problem und die exponentielle Variation der Funktionswerte überwunden werden. Dabei kann es helfen, kaum beitragende Phasenraumbereiche zu vernachlässigen, um die Spanne an Größenordunungen, über die sich die Wirkungsquerschnitte verteilen, zu verkleinern. Die Label-Transformationen sind essentiell, um Modelle zu finden, die gute Genauigkeit ($\approx 0.5\%$ Abweichung) zeigen.
 
-Das Erlernen der Gewichte stellt aus Sicht des neuronalen Netzes kein Schwierigkeit dar, solange ein geeigneter Phasenraumbereich gewählt wird. Das Netz kann die Funktionswerte mit exzellenter Genauigkeit ($<0.1\%$ Abweichung) vorhersagen.
+Das Erlernen der Umgewichtung von Wirkungsquerschnitten stellt für das neuronale Netz keine Schwierigkeit dar, solange ein geeigneter Phasenraumbereich gewählt wird. Das Netz kann die Gewichte mit exzellenter Genauigkeit ($<0.1\%$ Abweichung) vorhersagen.
 
-Transfer-Learning stellt sich als eine gute Möglichkeit heraus, aus einem bereits vorhandenen Modell, ein Modell für ein anders Set an PDFs zu erhalten. In puncto Berechnungsgeschwindigkeit und Genauigkeit übertrifft das Transfer-Learning die Umgewichtung eines bereits vorhandenen Source-Models.
+Transfer-Learning stellt sich als eine gute Möglichkeit heraus, aus einem bereits vorhandenen Modell ein Modell für ein anders Set an PDFs zu erhalten. Die Berechnungsgeschwindigkeit und Genauigkeit wird durch das Transfer-Learning im Vergleich zur Umgewichtung eines bereits vorhandenen Quellen-Modells verbessert.
 
 \section{Ausblick}
-Die in dieser Arbeit behandelten Methoden haben gute Ergebnisse an den einfachen Beispielen gezeigt. Als nächstes sollte nun der Test an höherdimensionalen Prozessen mit analytisch nicht mehr oder nur aufwändig zu berechnenden Wirkungsquerschnitten folgen. Es muss noch untersucht werden, ob die neuronalen Netze ihre Genauigkeit auch in höheren Dimensionen aufrechterhalten können und wenn ja, ob dies mit einer realisierbaren Zahl an Trainingspunkten möglich ist. Anschließend muss überprüft werden, wie groß der rechentechnische Vorteil der neuronalen Netze ist. In den behandelten, einfachen Beispielen ist der analytische Weg noch um einen Faktor zwei schneller. Die in dieser Arbeit erhaltenen Ergebnisse sind jedoch gute Voraussetzungen für die Funktionstüchtigkeit im Höherdimensionalen. Zusätzlich sind neuronale Netze gut für die Arbeit mit hochdimensionalen Eingangswerten geeignet.
+Die in dieser Arbeit behandelten Methoden haben gute Ergebnisse an den niedrigdimensionalen Beispielen gezeigt. Als Nächstes sollte nun der Test an höherdimensionalen Prozessen mit analytisch nicht mehr oder nur aufwändig zu berechnenden Wirkungsquerschnitten folgen. Es muss noch untersucht werden, ob die neuronalen Netze ihre Genauigkeit auch in höheren Dimensionen aufrechterhalten können und ob dies mit einer realisierbaren Zahl an Trainingspunkten möglich ist. Anschließend muss überprüft werden, wie groß die Verringerung der Rechenzeit bei Nutzung von neuronalen Netzen ist. Bereits in dem behandelten Beispiel des hadronischen Diphoton-Prozesses ist die Näherung mittels DNN schneller als die Berechnung über Partondichtefunktionen. Die in dieser Arbeit erhaltenen Ergebnisse sind gute Voraussetzungen für die Funktionstüchtigkeit im Höherdimensionalen.
 
-Auch das Transfer-Learning hat in dieser Arbeit seine Funktionalität bewiesen. Es muss jedoch nicht beim Transfer zwischen PDF-Sets bleiben. Transfer-Learning kann zwischen viel diverseren Sachverhalten eingesetzt werden. Es könnte sich lohnen, den Transfer zwischen sich ähnelnden Prozessen in der Teilchenphysik zu untersuchen. Denkbar sind hier Vorgängen die sich beispielsweise nur durch das Vorhandensein von Myonen anstatt Elektronen unterscheiden oder auch den Transfer von Leading-Order Prozessen zu höheren Ordnungen. 
+Auch das Transfer-Learning hat in dieser Arbeit seine Funktionalität bewiesen. Es muss jedoch nicht beim Transfer zwischen PDF-Sets bleiben. Transfer-Learning kann zwischen viel diverseren Sachverhalten eingesetzt werden. Es könnte sich lohnen, den Transfer zwischen sich ähnelnden Prozessen in der Teilchenphysik zu untersuchen.
 
-Abgesehen von den hier untersuchten Verwendungsmöglichkeiten gibt es noch unzählige weiter Anwendungsmöglichkeiten von Machine-Learning oder tiefen neuronalen Netzen in der Teilchenphysik. Hierunter fällt beispielsweise... 
+Abgesehen von den hier untersuchten Verwendungsmöglichkeiten gibt es noch unzählige weitere Anwendungsmöglichkeiten von Machine-Learning oder tiefen neuronalen Netzen in der Teilchenphysik. Hierunter fallen beispielsweise die Umgewichtung von Simulationen oder das Training eines DNN zur Reproduktion von Dektektorverhalten, um die standardmäßige Monte-Carlo-Simulation zu ersetzen.
 %TODO Transfer zwischen ähnlichen Prozessen, nicht nur PDF-Sets 
 \appendix
 \chapter{Anhang}
-\textbf{Berechnung der freien Parameter eines Modells:} \label{freie parameter} Betrachte ein DNN mit $N$ versteckten Layern $l$, wobei $n_l$ die Anzahl an Neuronen von Layer $l$ bezeichnet, dann berechnet sich die Anzahl $k$ an zu trainierenden Parametern nach \textit{\autoref{free_parameters}}. Hierbei bezeichnet $n_0$ die Dimensionalität der Features.
+\textbf{Berechnung der freien Parameter eines Modells:} \label{freie parameter} Betrachte ein DNN mit $N$ versteckten Layern $l$, wobei $n_l$ die Anzahl an Neuronen von Layer $l$ bezeichnet, dann berechnet sich die Anzahl $k$ an zu trainierenden Parametern nach \textsf{\autoref{free_parameters}}. Hierbei bezeichnet $n_0$ die Dimensionalität der Features.
 \begin{equation}
 	k = \sum_{l=1}^{N} \left[(n_l \cdot n_{l-1}) + n_l\right] + (l_N + 1)
 	\label{free_parameters}
 \end{equation}
-Gilt hierbei $n_l = n_{l+1} = n$ für $l > 0$ vereinfacht sich \textit{\autoref{free_parameters}} zu:
+Gilt hierbei $n_l = n_{l+1} = n$ für $l > 0$ vereinfacht sich \textsf{\autoref{free_parameters}} zu:
 \begin{equation}
 	k = n \cdot (n_0 + 1) + (N-1)\cdot n(n+1) + n + 1 = n \left(n_0 + 2 + (n + 1)(N-1)\right) + 1~.
 \end{equation}
@@ -841,36 +902,38 @@ Gilt hierbei $n_l = n_{l+1} = n$ für $l > 0$ vereinfacht sich \textit{\autoref{
 \section{Such- und Hyperparameter}
 \begin{table}[hb!]
 	\centering
+	\caption{Die konkreten Implementierungen der erwähnten und genutzten Kostenfunktionen sind aufgelistet.}
 	\begin{tabular}{ll}
 		\multicolumn{2}{c}{\textbf{Loss-Funktionen}}\\[10pt]
 		Bezeichnung & Implementierung \\
 		\hline\\[-10pt]
-		Mean-Absolute-Error (MAE) &$C\left(\mathbf{M}, \mathbf{b}\right) = \frac{1}{N} \sum_{i=1}^{N} \abs{y^{(i)} - \tilde{y}^{(i)}}$\\[10pt]
-		Mean-Squared-Error (MSE) & $C\left(\mathbf{M}, \mathbf{b}\right) = \frac{1}{N} \sum_{i=1}^{N} \left(y^{(i)} - \tilde{y}^{(i)}\right)^2$\\[10pt]
-		Mean-Absolute-Percentage-Error (MAPE) & $C\left(\mathbf{M}, \mathbf{b}\right) = \frac{100}{N} \sum_{i=1}^{N} {\abs{y^{(i)} - \tilde{y}^{(i)}}  }/{\tilde{y}^{(i)}}$\\[10pt]
-		Mean-Squared-Logarithmic-Error (MSLE) &$C\left(\mathbf{M}, \mathbf{b}\right) = \frac{1}{N} \sum_{i=1}^{N} \left(\ln(y^{(i)}) - \ln(\tilde{y}^{(i)})\right)^2$ \\[10pt]
-		Huber-Loss & $C\left(\mathbf{M}, \mathbf{b}\right) = \frac{1}{N} \sum_{i=1}^{N} L_{\delta}\left(y^{(i)}, \tilde{y}^{(i)}\right)$\\[10pt]
+		Mean-Absolute-Error (MAE) &$C\left(\mathbf{W}, \mathbf{b}\right) = \frac{1}{N} \sum_{i=1}^{N} \abs{y^{(i)} - \tilde{y}^{(i)}}$\\[10pt]
+		Mean-Squared-Error (MSE) & $C\left(\mathbf{W}, \mathbf{b}\right) = \frac{1}{N} \sum_{i=1}^{N} \left(y^{(i)} - \tilde{y}^{(i)}\right)^2$\\[10pt]
+		Mean-Absolute-Percentage-Error (MAPE) & $C\left(\mathbf{W}, \mathbf{b}\right) = \frac{100}{N} \sum_{i=1}^{N} {\abs{y^{(i)} - \tilde{y}^{(i)}}  }/{\tilde{y}^{(i)}}$\\[10pt]
+		Mean-Squared-Logarithmic-Error (MSLE) &$C\left(\mathbf{W}, \mathbf{b}\right) = \frac{1}{N} \sum_{i=1}^{N} \left(\ln(y^{(i)}) - \ln(\tilde{y}^{(i)})\right)^2$ \\[10pt]
+		Huber-Loss & $C\left(\mathbf{W}, \mathbf{b}\right) = \frac{1}{N} \sum_{i=1}^{N} L_{\delta}\left(y^{(i)}, \tilde{y}^{(i)}\right)$\\[10pt]
 		\multicolumn{2}{c}{\hspace{1cm} mit \hspace{1cm} $L_{\delta}\left(y^{(i)}, \tilde{y}^{(i)}\right)´=\begin{cases}
 			\frac{1}{2}\left(y^{(i)} -  \tilde{y}^{(i)}\right)^2 \quad &\text{für}~\abs{y^{(i)} -  \tilde{y}^{(i)} \leq \delta} \\
 			\delta \abs{y^{(i)} -  \tilde{y}^{(i)}} - \frac{1}{2}\delta^2 &\text{sonst}
 			\end{cases}$} \\
+		\\[-10pt]
+		\hline
 	\end{tabular}
-	\caption{Erwähnte und genutzte Kostenfuntkionen}
 	\label{Loss-Funktionen-Tabelle}
 \end{table}
 \begin{figure}
 	\centering
-	\subfloat[Rectified Linear Unit: $f(x) = \text{max}(0, x)$]{\includegraphics[width=7.5cm]{graphics/ReLU(x)}} 
-	\subfloat[Leaky-ReLU \cite{Leaky-ReLU}: $f(\alpha, x) = \alpha x$ für $x<0$]{\includegraphics[width=7.5cm]{graphics/Leaky-ReLU(x)}} \\
-	\subfloat[ELU \cite{Elu}: $f(\alpha, x) = \alpha(e^x - 1)$ für $x < 0$]{\includegraphics[width=7.5cm]{graphics/ELU(x)}}
-	\subfloat[Sigmoid: $f(x) = \frac{e^x}{e^x + 1}$]{\includegraphics[width=7.5cm]{graphics/Sigmoid(x)}} \\
-	\subfloat[tanh : $f(x) = \tanh(x)$]{\includegraphics[width=7.5cm]{graphics/tanh(x)}}
-	\subfloat[Exp: $f(x) = e^x$]{\includegraphics[width=7.5cm]{graphics/Exp(x)}} \\  
-	\caption{verwendete Activation-Funkctions}
+	\subfloat[Rectified Linear Unit: $f(x) = \text{max}(0, x)$]{\includegraphics[width=8cm]{graphics/ReLU(x)}} 
+	\subfloat[Leaky-ReLU \cite{Leaky-ReLU}: $f(\alpha, x) = \alpha x$ für $x<0$]{\includegraphics[width=8cm]{graphics/Leaky-ReLU(x)}} \\
+	\subfloat[ELU \cite{Elu}: $f(\alpha, x) = \alpha(e^x - 1)$ für $x < 0$]{\includegraphics[width=8cm]{graphics/ELU(x)}}
+	\subfloat[Sigmoid: $f(x) = \frac{e^x}{e^x + 1}$]{\includegraphics[width=8cm]{graphics/Sigmoid(x)}} \\
+	\subfloat[tanh : $f(x) = \tanh(x)$]{\includegraphics[width=8cm]{graphics/tanh(x)}}
+	\caption{Es wurde verschiedene Aktivierungsfunktionen während der Arbeit getestet.}
 	\label{Aktivierungsfunktionen}
 \end{figure}
 \begin{table}
 	\centering
+	\caption{Die verwendeten Optimizer werden kurz erläutert.}
 	\begin{tabular}{ll}
 		\multicolumn{2}{c}{\textbf{Optimizer}} \\
 		Bezeichnung & Funktionsweise \\
@@ -880,29 +943,14 @@ Gilt hierbei $n_l = n_{l+1} = n$ für $l > 0$ vereinfacht sich \textit{\autoref{
 		\multirow{2}{*}{RMSprop \cite{RMSprop}} & Die Learning-Rate wird für jedes Gewicht durch ein gewichtetes Mittel von \\
 		& einigen vorhergehenden Gradienten geteilt. \\[5pt]
 		\multirow{2}{*}{Adam \cite{Adam}} & Die Learning-Rate wird für jedes Gewicht durch ein gewichtetes Mittel von \\
-		&einigen vorherg. Gradient geteilt und die Gradienten sind träge (\textit{Momentum}). 
+		&einigen vorherg. Gradient geteilt und die Gradienten sind träge (\textit{Momentum}). \\
+		\hline 
 	\end{tabular}
-	\caption{verwendete Optimizer}
 	\label{optimizer}
 \end{table}
-
 \begin{table}
 	\centering
-	\begin{tabular}{lll}
-		\multicolumn{3}{c}{\textbf{Daten-Transformationen}} \\[5pt]
-		Abkürzung & Bezeichnung & Implementierung \\
-		\hline\\[-10pt]
-		No Log & Nur Skalierung & $\tilde{y} \rightarrow \frac{\tilde{y}}{\tilde{y}_{\text{min}}}$ \\
-		Log & Logarithmus & $\tilde{y} \rightarrow \ln(\frac{\tilde{y}}{\tilde{y}_{\text{min}}}) =: \tilde{y}^{\text{(ln)}}$ \\
-		Base 10 & Logarithmus zur Basis 10 & $\tilde{y} \rightarrow \log_{10}(\frac{\tilde{y}}{\tilde{y}_{\text{min}}})$ \\
-		LN & Label-Normalization & $\tilde{y} \rightarrow \frac{2\tilde{y}^{\text{(ln)}}}{\tilde{y}^{\text{(ln)}}_{\text{max}}} - 1$\\
-		FN \cite{FN} & Feature-Normalization & $x \rightarrow {(x - \overline{x})}/{\sigma_x}$
-	\end{tabular}
-	\caption{Verwendete Daten-Transformationen, $\tilde{y}$ bezeichnet die Labels, $x$ ein Feature, $\overline{x}$ den Mittelwert und $\sigma_x$ die Standardabweichung des Features}
-	\label{mathe-daten-transformationen}
-\end{table}
-\begin{table}
-	\centering
+	\caption{Es ist eine Liste mit den für alle Modelle verwendeten Callbacks zur Steuerung des Trainings angegeben.}
 	\begin{tabular}{ll}
 		\multicolumn{2}{c}{\textbf{Callbacks}} \\[5pt]
 		Bezeichnung & Implementation\\
@@ -914,16 +962,16 @@ Gilt hierbei $n_l = n_{l+1} = n$ für $l > 0$ vereinfacht sich \textit{\autoref{
 		& $2 \cdot 10^{-6}$, wird die Learning-Rate um $50\%$ reduziert.\\[5pt]
 		\multirow{3}{*}{EarlyStopping}& Fällt der Loss in drei aufeinanderfolgenden \\
 		& Epochen nicht um $2 \cdot 10^{-7}$ ab, \\
-		& wird der Trainingsvorgang gestoppt.\\[5pt]
+		& wird der Trainingsvorgang gestoppt.\\
+		\hline
 	\end{tabular}
-	\caption{Für alle Modelle verwendete Callbakcs zur Steuerung des Trainings}
 	\label{Callbacks}
 \end{table}
 \begin{table}
 	\centering
+	\caption{Gezeigt sind die Parameter der zufälligen Suche für $\derivative{\sigma}{\theta}$ mit bester Konfiguration.}
 	\begin{tabular}{lll}
-
-		Hyperparameter & Pool & Best Config \\
+		Hyperparameter & Pool & Beste Konfig. \\
 		\hline\hline
 		Anzahl Layer & $\left\lbrace 1, 2, 3, 4 \right\rbrace$ & 4 \\
 		Anzahl Units & $\left\lbrace 32, 64, 128, 256\right\rbrace$ & 128 \\
@@ -934,17 +982,18 @@ Gilt hierbei $n_l = n_{l+1} = n$ für $l > 0$ vereinfacht sich \textit{\autoref{
 		Batch-Größe & $\left\lbrace 64, 128, 512, 768, 2048 \right\rbrace $ & 128\\
 		Label-Normalisierung & $\left\lbrace \text{keine}, [-1,1]\right\rbrace $ & $[-1,1]$\\
 		\hline
+		Skalierung & \multicolumn{2}{c}{True} \\
 		Max. Epochen & \multicolumn{2}{c}{200}\\
 		Anzahl Trainingspunkte & \multicolumn{2}{c}{60000} \\
-
+		\hline
 	\end{tabular}
-	\caption{Parameter der Random-Search für $\frac{d\sigma}{d\theta}$ mit Ergebnis}
 	\label{hyperparameter-theta}
 \end{table}
 \begin{table}
 	\centering
+	\caption{Gezeigt sind die Parameter der zufälligen Suche für $\frac{\text{d}^3\sigma}{\text{d}x_1\text{d}x_2\text{d}\eta}$ mit bester Konfiguration.}
 	\begin{tabular}{lll}
-		Hyperparameter & Pool & Best Config \\
+		Hyperparameter & Pool & Beste Konfig. \\
 		\hline\hline
 		(Units, Nr. of Layers) &$\left\lbrace (256,5), (512,3), (64,7), (1024, 2), (128, 6) \right\rbrace $ & $(256, 5)$ \\
 		Loss-Funktion & MAE, MSE, Huber & MAE \\
@@ -960,14 +1009,15 @@ Gilt hierbei $n_l = n_{l+1} = n$ für $l > 0$ vereinfacht sich \textit{\autoref{
 		Logarithmus & \multicolumn{2}{c}{True} \\ 
 		Max. Epochen & \multicolumn{2}{c}{100}\\
 		Trainingspunkte & \multicolumn{2}{c}{4.000.000} \\
+		\hline
 	\end{tabular}
-	\caption{Hyperparameter Pools eines Random-Search mit Ergebnis für $\frac{\text{d}^3\sigma}{\text{d}x_1\text{d}x_2\text{d}\eta}$}
 	\label{Hyperparameter-Hadron}
 \end{table}
 \begin{table}
 	\centering
+	\caption{Gezeigt sind die Parameter der zufälligen Suche für die Umgewichtung des differentiellen Wirkungsquerschnitt mit bester Konfiguration.}
 	\begin{tabular}{lll}
-		Hyperparameter & Pool & Best Config \\
+		Hyperparameter & Pool & Beste Konfig. \\
 		\hline\hline
 		Anzahl Layer & $\left\lbrace 1,2,3,4\right\rbrace$ & 2 \\
 		Units &$\left\lbrace 32, 64, 128, 256\right\rbrace$ & 256 \\
@@ -983,64 +1033,26 @@ Gilt hierbei $n_l = n_{l+1} = n$ für $l > 0$ vereinfacht sich \textit{\autoref{
 		Logarithmus & \multicolumn{2}{c}{False} \\ 
 		Max. Epochen & \multicolumn{2}{c}{100}\\
 		Trainingspunkte & \multicolumn{2}{c}{1.000.000} \\
+		\hline
 	\end{tabular}
-	\caption{Hyperparameter Pools eines Random-Search mit Ergebnis für die Umgewichtung des differentiellen Wirkungsquerschnitt}
 	\label{hyperparameter-reweighting}
 \end{table}
-\begin{table}
+\begin{SCfigure}
+	\captionsetup{
+		format=plain,
+		margin=0.5em,
+		labelsep=newline,
+		justification=justified,
+		singlelinecheck=false
+	}
 	\centering
-	\begin{tabular}{lll}
-		Hyperparameter & Pool & Best Config \\
-		\hline\hline
-		Anzahl entfernte Layer & $\left\lbrace  1, 2 \right\rbrace $ & 1 \\
-		Anzahl hinzugefügte Layer & $\left\lbrace  0, 1, 2 \right\rbrace $ & 1 \\
-		Units (hinzugefügte Layer) &$\left\lbrace 64, 128, 512\right\rbrace$ & 128\\
-		Aktivierungsfunktion & ReLU, Leaky-ReLU, Sigmoid & ReLU \\
-		Learning-Rate & $\left\lbrace 10^{-2}, 5 \cdot 10^{-3}, 10^{-3}, 10^{-4} \right\rbrace $ & $5 \cdot 10^{-3}$\\
-		Batch-Größe & $\left\lbrace 128, 512, 768, 2048, 8196 \right\rbrace $ & 768\\
-		Fine-Tuning & True, False & True \\
-		\hline
-		Loss-Funktion & \multicolumn{2}{c}{MAE} \\
-		Optimizer & \multicolumn{2}{c}{Adam} \\
-		Max. Epochen & \multicolumn{2}{c}{100}\\
-		Trainingspunkte & \multicolumn{2}{c}{1.000.000} \\
-	\end{tabular}
-	\caption{Hyperparameter Pools eines Random-Search mit Ergebnis für Transfer zwischen PDF-Sets}
-	\label{hyperparameter-transfer}
-\end{table}
-\begin{figure}
-	\centering
-	\subfloat[Schnitt in $x_1$]{\includegraphics[width=6cm]{graphics/6.2}}
-	\subfloat[Schnitt in $x_2$]{\includegraphics[width=6cm]{graphics/7.2}} \\
-	\subfloat[Schnitt in $\eta$]{\includegraphics[width=6cm]{graphics/5.2}} 
-	\label{Problems-in-action}
-	\caption{Das Dying-ReLU-Problem in Aktion. Werden bei quantitativ sehr kleinen Labels keine Transformationen verwendet, stirbt der Großteil der Neuronen ab. Im vorliegenden Fall scheinen alle Units des letzten Layers lediglich Null zurückzugeben, woraus resultiert, dass das Output-Neuron eine Parallele zur x-Achse mit Verschiebung (hervorgerufen dessen Bias) ausgibt. Die Konfiguration des gezeigten Modells ist in \textsf{\autoref{Config-no-trans}} festgehalten}
-\end{figure}
-\begin{figure}
-	\centering
-	\includegraphics[width=7cm]{graphics/2.2}
-	\caption{Modell für $\derivative{\sigma}{\theta}$ mit gleicher Konfiguration wie in $\textsf{\autoref{Hyperparameter-Eta}}$ und 60000 Trainingspunkten. Trotz mehr Trainingspunkte hat die Genauigkeit im Vergleich mit \textsf{\autoref{partonic_models}} abgenommen (nachweisbar am Ratio).}
+	\includegraphics[width=6cm]{graphics/2.2}
+	\caption{Es ist ein Vergleich der Vorhersagen eines Modells für $\derivative{\sigma}{\theta}$ mit gleicher Konfiguration wie in $\textsf{\autoref{Hyperparameter-Eta}}$ und den analytischen Werten gezeigt. Trotz einer Erhöhung der Trainingspunkte auf 60000 hat die Genauigkeit im Vergleich mit \textsf{\autoref{partonic_models}} abgenommen (nachweisbar am Ratio).}
 	\label{theta-bad-config}
-\end{figure}
+\end{SCfigure}
 \begin{table}
 	\centering
-	\begin{tabular}{ll|ll}
-		Hyperparameter & Wert & Hyperparameter & Wert \\
-		\hline \hline
-		Anzahl Layer & 5 & 		Batch-Größe & 256 \\
-		Anzahl Units & 256 & 		Max. Epochen & 100\\
-		Loss-Funktion & MAE & 		Anzahl Trainingspunkte $\quad$& 4M\\
-		Optimizer & Adam &		Scaling & False \\
-		Aktivierungsfunktion & ReLU & 		Logarithmus & False\\
-		Kernel-Initializer & HeNormal$\quad$ & 		Basis 10 & False \\
-		Bias-Initializer & Zeros &		Label-Normalisierung & keine \\
-		Learning-rate & 0.01 & 		Feature-Normal. & False\\
-	\end{tabular}
-	\caption{Hyperparameter des Modells $\frac{\text{d}^3\sigma}{\text{d}x_1 \text{d}x_2\text{d}\eta}$ mit sterbenden ReLU- Aktivierungsfunktionen. Es sei angemerkt, dass dies die Konfiguration ist, die sich durch den Random-Search in \textsf{\autoref{Hyperparameter-Hadron}} ergeben hat, mit dem Unterschied, dass keine Daten- Transformationen stattgefunden haben und Leaky-ReLU $\rightarrow$ ReLU.}
-	\label{Config-no-trans}
-\end{table}
-\begin{table}
-	\centering
+	\caption{Es ist eine Liste der verwendeten Hard- und Software angegeben, mit der alle Zeiten aufgenommen wurden.}
 	\begin{tabular}{ll}
 		\multicolumn{2}{c}{\textbf{Setup}} \\[5pt]
 		Betriebssystem $\quad$& Ubuntu 20.04.2.0 LTS \\
@@ -1051,14 +1063,13 @@ Gilt hierbei $n_l = n_{l+1} = n$ für $l > 0$ vereinfacht sich \textit{\autoref{
 		TensorFlow & 2.4.1 \\
 		CUDA & 11.3.0 \\
 	\end{tabular}
-	\caption{Verwendete Hard- und Software mit der alle Zeiten aufgenommen wurden}
 	\label{hardware}
 \end{table}
-% TODO gar nicht wahr, die dinger sind abh. von batch size
-
 \section{Abkürzungsverzeichnis}
-\begin{table}[htp]
+\begin{table}[h!]
 	\centering
+	\caption{Eine Liste der in dieser Arbeit verwendeten Abkürzungen ist gezeigt.}
+	\label{abk}
 	\begin{tabular}{ll}
 		ML $\hspace{3cm}$& Machine-Learning \\
 		TL & Transfer-Learning \\
@@ -1081,12 +1092,10 @@ Gilt hierbei $n_l = n_{l+1} = n$ für $l > 0$ vereinfacht sich \textit{\autoref{
 		Log & Nur Scaling+Logarithmus \\
 		No Log & Nur Scaling\\
 		FT & Fine-Tuning \\
-		rw & Reweighting \\
+		rw & Reweighting/Umgewichtung \\
 		TPM & Time per Million, Zeit zur Eval. von $10^{6}$ Phasenraumpunkten \\
 		&\\
 	\end{tabular}
-	\caption{Häufig genutzte Abkürzungen und Fachvokabular}
-	\label{Abkürzungen}
 \end{table}
 
 \bibliographystyle{plain}
@@ -1096,10 +1105,10 @@ Gilt hierbei $n_l = n_{l+1} = n$ für $l > 0$ vereinfacht sich \textit{\autoref{
 % Erklärung
 \clearpage
 \pagestyle{empty}
-\minisec{Danksagung} % TODO: anpassen
+\minisec{Danksagung}
 Danke an Frank Siegert, der mich während dieser Arbeit betreut und es mir möglich gemacht hat, an diesem interessanten Thema zu arbeiten. 
 
-Ich bedanke mich vielmals bei Christian Wiel für seine Unterstützung und sein offenes Ohr während meiner Arbeitsphase. Trotz Corona hatte ich so einen Ansprechpartner, der immer schnell und verlässlich Hilfe geleistet hat. Weiterhin möchte ich mich bei Heino Bülow, sowie Christian Wiel, für das Korrekturlesen meiner Arbeit bedanken.
+Ich bedanke mich vielmals bei Christian Wiel für seine Unterstützung und sein offenes Ohr während meiner Arbeitsphase. Trotz Corona hatte ich so einen Ansprechpartner, der immer schnell und verlässlich Hilfe geleistet hat. Weiterhin möchte ich mich bei ihm für das Korrekturlesen meiner Arbeit bedanken.
 \clearpage
 \thispagestyle{empty}
 \minisec{Erklärung}\vspace*{1.5em}
@@ -1157,4 +1166,25 @@ Im Folgenden werden die Möglichkeiten eines solchen Einsatzes von ML-Algortihme
 	\end{tabular}
 	\caption{Hyperparameter des Modells $\frac{\text{d}^3\sigma}{\text{d}x_1 \text{d}x_2\text{d}\eta}$ mit sterbenden ReLU- Aktivierungsfunktionen. Es sei angemerkt, dass dies die Konfiguration ist, die sich durch den Random- Search in \textsf{\autoref{Hyperparameter-Hadron}} ergeben hat, mit dem Unterschied, dass keine Daten- Transformationen stattgefunden haben und Leaky-ReLU $\rightarrow$ ReLU.}
 	\label{Hyperparameter-Eta}
+\end{table}
+\begin{table}
+	\centering
+	\captionsetup{
+		justification=justified
+	}
+	\caption{Hyperparameter des Modells $\frac{\text{d}^3\sigma}{\text{d}x_1 \text{d}x_2\text{d}\eta}$ mit sterbenden ReLU- Aktivierungsfunktionen. Es sei angemerkt, dass dies die Konfiguration ist, die sich durch die zufällige Suche in \textsf{\autoref{Hyperparameter-Hadron}} ergeben hat, mit dem Unterschied, dass keine Daten- Transformationen stattgefunden haben und Leaky-ReLU $\rightarrow$ ReLU.}
+	\begin{tabular}{ll|ll}
+		Hyperparameter & Wert & Hyperparameter & Wert \\
+		\hline \hline
+		Anzahl Layer & 5 & 		Batch-Größe & 256 \\
+		Anzahl Units & 256 & 		Max. Epochen & 100\\
+		Loss-Funktion & MAE & 		Anzahl Trainingspunkte $\quad$& 4M\\
+		Optimizer & Adam &		Scaling & False \\
+		Aktivierungsfunktion & ReLU & 		Logarithmus & False\\
+		Kernel-Initializer & HeNormal$\quad$ & 		Basis 10 & False \\
+		Bias-Initializer & Zeros &		Label-Normalisierung & keine \\
+		Learning-rate & 0.01 & 		Feature-Normal. & False\\
+		\hline
+	\end{tabular}
+	\label{Config-no-trans}
 \end{table}
