@@ -1,0 +1,1488 @@
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2021.3.25)  24 MAY 2021 08:00
+entering extended mode
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**BA_main_german.tex
+(./BA_main_german.tex
+LaTeX2e <2020-02-02> patch level 2
+L3 programming layer <2020-02-14> (./preamble.tex
+(/usr/share/texlive/texmf-dist/tex/latex/koma-script/scrreprt.cls
+Document Class: scrreprt 2020/01/24 v3.29 KOMA-Script document class (report)
+(/usr/share/texlive/texmf-dist/tex/latex/koma-script/scrkbase.sty
+Package: scrkbase 2020/01/24 v3.29 KOMA-Script package (KOMA-Script-dependent b
+asics and keyval usage)
+
+(/usr/share/texlive/texmf-dist/tex/latex/koma-script/scrbase.sty
+Package: scrbase 2020/01/24 v3.29 KOMA-Script package (KOMA-Script-independent 
+basics and keyval usage)
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/keyval.sty
+Package: keyval 2014/10/28 v1.15 key=value parser (DPC)
+\KV@toks@=\toks14
+)
+(/usr/share/texlive/texmf-dist/tex/latex/koma-script/scrlfile.sty
+Package: scrlfile 2020/01/24 v3.29 KOMA-Script package (loading files)
+)))
+(/usr/share/texlive/texmf-dist/tex/latex/koma-script/tocbasic.sty
+Package: tocbasic 2020/01/24 v3.29 KOMA-Script package (handling toc-files)
+\scr@dte@tocline@numberwidth=\skip47
+\scr@dte@tocline@numbox=\box45
+)
+Package tocbasic Info: omitting babel extension for `toc'
+(tocbasic)             because of feature `nobabel' available
+(tocbasic)             for `toc' on input line 137.
+
+(/usr/share/texlive/texmf-dist/tex/latex/base/fleqn.clo
+File: fleqn.clo 2016/12/29 v1.2b Standard LaTeX option (flush left equations)
+\mathindent=\dimen134
+Applying: [2015/01/01] Make \[ robust on input line 50.
+LaTeX Info: Redefining \[ on input line 51.
+Already applied: [0000/00/00] Make \[ robust on input line 62.
+Applying: [2015/01/01] Make \] robust on input line 74.
+LaTeX Info: Redefining \] on input line 75.
+Already applied: [0000/00/00] Make \] robust on input line 83.
+)
+
+Class scrreprt Warning: You've used obsolete option `bibtotocnumbered'.
+(scrreprt)              Usage of this option indicates an old document
+(scrreprt)              and changes compatibility level using
+(scrreprt)              `bibliography=totocnumbered,version=first,
+(scrreprt)              enabledeprecatedfontcommands' that may result
+(scrreprt)              in further warnings.
+(scrreprt)              If you don't want this, you should simply
+(scrreprt)              replace option `bibtotocnumbered' by `bibliography=toto
+cnumbered'.
+
+Class scrreprt Info: Switching compatibility level to `first'.
+
+Class scrreprt Warning: deprecated option `enabledeprecatedfontcommands'.
+(scrreprt)              Note, that this option was already depreacted when
+(scrreprt)              it has been defined. Support for old font commands
+(scrreprt)              has been removed from KOMA-Script more than one
+(scrreprt)              decade ago. It is not recommended to use them any
+(scrreprt)              longer. Therefore usage of this class option also
+(scrreprt)              is not recommended.
+
+
+Class scrreprt Warning: You've used obsolete option `liststotoc'.
+(scrreprt)              Usage of this option indicates an old document
+(scrreprt)              and changes compatibility level using
+(scrreprt)              `listof=totoc,version=first,
+(scrreprt)              enabledeprecatedfontcommands' that may result
+(scrreprt)              in further warnings.
+(scrreprt)              If you don't want this, you should simply
+(scrreprt)              replace option `liststotoc' by `listof=totoc'.
+
+Class scrreprt Info: Switching compatibility level to `first'.
+
+Class scrreprt Warning: deprecated option `enabledeprecatedfontcommands'.
+(scrreprt)              Note, that this option was already depreacted when
+(scrreprt)              it has been defined. Support for old font commands
+(scrreprt)              has been removed from KOMA-Script more than one
+(scrreprt)              decade ago. It is not recommended to use them any
+(scrreprt)              longer. Therefore usage of this class option also
+(scrreprt)              is not recommended.
+
+
+Class scrreprt Warning: You've used obsolete option `listsleft'.
+(scrreprt)              Usage of this option indicates an old document
+(scrreprt)              and changes compatibility level using
+(scrreprt)              `listof=flat,version=first,
+(scrreprt)              enabledeprecatedfontcommands' that may result
+(scrreprt)              in further warnings.
+(scrreprt)              If you don't want this, you should simply
+(scrreprt)              replace option `listsleft' by `listof=flat'.
+
+Class scrreprt Info: Switching compatibility level to `first'.
+
+Class scrreprt Warning: deprecated option `enabledeprecatedfontcommands'.
+(scrreprt)              Note, that this option was already depreacted when
+(scrreprt)              it has been defined. Support for old font commands
+(scrreprt)              has been removed from KOMA-Script more than one
+(scrreprt)              decade ago. It is not recommended to use them any
+(scrreprt)              longer. Therefore usage of this class option also
+(scrreprt)              is not recommended.
+
+
+Class scrreprt Warning: You've used obsolete option `pointlessnumbers'.
+(scrreprt)              Usage of this option indicates an old document
+(scrreprt)              and changes compatibility level using
+(scrreprt)              `numbers=noenddot,version=first,
+(scrreprt)              enabledeprecatedfontcommands' that may result
+(scrreprt)              in further warnings.
+(scrreprt)              If you don't want this, you should simply
+(scrreprt)              replace option `pointlessnumbers' by `numbers=noenddot'
+.
+
+Class scrreprt Info: Switching compatibility level to `first'.
+
+Class scrreprt Warning: deprecated option `enabledeprecatedfontcommands'.
+(scrreprt)              Note, that this option was already depreacted when
+(scrreprt)              it has been defined. Support for old font commands
+(scrreprt)              has been removed from KOMA-Script more than one
+(scrreprt)              decade ago. It is not recommended to use them any
+(scrreprt)              longer. Therefore usage of this class option also
+(scrreprt)              is not recommended.
+
+Class scrreprt Info: File `scrsize11pt.clo' used to setup font sizes on input l
+ine 2421.
+(/usr/share/texlive/texmf-dist/tex/latex/koma-script/scrsize11pt.clo
+File: scrsize11pt.clo 2020/01/24 v3.29 KOMA-Script font size class option (11pt
+)
+)
+(/usr/share/texlive/texmf-dist/tex/latex/koma-script/typearea.sty
+Package: typearea 2020/01/24 v3.29 KOMA-Script package (type area)
+\ta@bcor=\skip48
+\ta@div=\count167
+\ta@hblk=\skip49
+\ta@vblk=\skip50
+\ta@temp=\skip51
+\footheight=\skip52
+
+
+Package typearea Warning: Bad type area settings!
+(typearea)                The detected line width is about 22%
+(typearea)                larger than the heuristically estimated maximum
+(typearea)                limit of typographical good line width.
+(typearea)                You should e.g. decrease DIV, increase fontsize
+(typearea)                or change papersize.
+
+Package typearea Info: These are the values describing the layout:
+(typearea)             DIV  = 22
+(typearea)             BCOR = 42.67912pt
+(typearea)             \paperwidth      = 597.50793pt
+(typearea)              \textwidth      = 479.17036pt
+(typearea)              DIV departure   = -22%
+(typearea)              \evensidemargin = -21.83102pt
+(typearea)              \oddsidemargin  = -4.37138pt
+(typearea)             \paperheight     = 845.04694pt
+(typearea)              \textheight     = 704.60031pt
+(typearea)              \topmargin      = -33.85876pt
+(typearea)              \headheight     = 17.0pt
+(typearea)              \headsep        = 20.40001pt
+(typearea)              \topskip        = 11.0pt
+(typearea)              \footskip       = 47.6pt
+(typearea)              \baselineskip   = 13.6pt
+(typearea)              on input line 1719.
+)
+\c@part=\count168
+\c@chapter=\count169
+\c@section=\count170
+\c@subsection=\count171
+\c@subsubsection=\count172
+\c@paragraph=\count173
+\c@subparagraph=\count174
+\scr@dte@chapter@maxnumwidth=\skip53
+Class scrreprt Info: using compatibility default `afterindent=bysign'
+(scrreprt)           for `\chapter on input line 5547.
+\scr@dte@section@maxnumwidth=\skip54
+Class scrreprt Info: using compatibility default `runin=bysign'
+(scrreprt)           for `\section on input line 5557.
+Class scrreprt Info: using compatibility default `afterindent=bysign'
+(scrreprt)           for `\section on input line 5557.
+\scr@dte@part@maxnumwidth=\skip55
+Class scrreprt Info: using compatibility default `afterindent=true'
+(scrreprt)           for `\part on input line 5566.
+\scr@dte@subsection@maxnumwidth=\skip56
+Class scrreprt Info: using compatibility default `runin=bysign'
+(scrreprt)           for `\subsection on input line 5576.
+Class scrreprt Info: using compatibility default `afterindent=bysign'
+(scrreprt)           for `\subsection on input line 5576.
+\scr@dte@subsubsection@maxnumwidth=\skip57
+Class scrreprt Info: using compatibility default `runin=bysign'
+(scrreprt)           for `\subsubsection on input line 5586.
+Class scrreprt Info: using compatibility default `afterindent=bysign'
+(scrreprt)           for `\subsubsection on input line 5586.
+\scr@dte@paragraph@maxnumwidth=\skip58
+Class scrreprt Info: using compatibility default `runin=bysign'
+(scrreprt)           for `\paragraph on input line 5596.
+Class scrreprt Info: using compatibility default `afterindent=bysign'
+(scrreprt)           for `\paragraph on input line 5596.
+\scr@dte@subparagraph@maxnumwidth=\skip59
+Class scrreprt Info: using compatibility default `runin=bysign'
+(scrreprt)           for `\subparagraph on input line 5606.
+Class scrreprt Info: using compatibility default `afterindent=bysign'
+(scrreprt)           for `\subparagraph on input line 5606.
+\abovecaptionskip=\skip60
+\belowcaptionskip=\skip61
+\c@pti@nb@sid@b@x=\box46
+Package tocbasic Info: omitting babel extension for `lof'
+(tocbasic)             because of feature `nobabel' available
+(tocbasic)             for `lof' on input line 6842.
+\scr@dte@figure@maxnumwidth=\skip62
+\c@figure=\count175
+Package tocbasic Info: omitting babel extension for `lot'
+(tocbasic)             because of feature `nobabel' available
+(tocbasic)             for `lot' on input line 6859.
+\scr@dte@table@maxnumwidth=\skip63
+\c@table=\count176
+Class scrreprt Info: Using old \@makefntext due to compatibility level
+(scrreprt)           less than 3.22 on input line 7015.
+Class scrreprt Info: Redefining `\numberline' on input line 7028.
+\bibindent=\dimen135
+) (/usr/share/texlive/texmf-dist/tex/latex/base/inputenc.sty
+Package: inputenc 2018/08/11 v1.3c Input encoding file
+\inpenc@prehook=\toks15
+\inpenc@posthook=\toks16
+)
+(/usr/share/texlive/texmf-dist/tex/latex/base/fontenc.sty
+Package: fontenc 2020/02/11 v2.0o Standard LaTeX package
+)
+(/usr/share/texlive/texmf-dist/tex/generic/babel/babel.sty
+Package: babel 2020/02/14 3.40 The Babel package
+
+(/usr/share/texlive/texmf-dist/tex/generic/babel/switch.def
+File: switch.def 2020/02/14 3.40 Babel switching mechanism
+)
+(/usr/share/texlive/texmf-dist/tex/generic/babel-german/ngerman.ldf
+Language: ngerman 2018/12/08 v2.11 German support for babel (post-1996 orthogra
+phy)
+
+(/usr/share/texlive/texmf-dist/tex/generic/babel-german/ngermanb.ldf
+Language: ngermanb 2018/12/08 v2.11 German support for babel (post-1996 orthogr
+aphy)
+
+(/usr/share/texlive/texmf-dist/tex/generic/babel/babel.def
+File: babel.def 2020/02/14 3.40 Babel common definitions
+\babel@savecnt=\count177
+\U@D=\dimen136
+
+(/usr/share/texlive/texmf-dist/tex/generic/babel/txtbabel.def)
+\bbl@readstream=\read2
+\bbl@dirlevel=\count178
+)
+Package babel Info: Making " an active character on input line 121.
+)))
+(/usr/share/texlive/texmf-dist/tex/latex/cmap/cmap.sty
+Package: cmap 2008/03/06 v1.0h CMap support: searchable PDF
+
+
+Package cmap Warning: fontenc already loaded - some fonts may be unprocessed.
+
+) (/usr/share/texlive/texmf-dist/tex/latex/koma-script/scrpage2.sty
+Package: scrpage2 2020/01/24 v3.29 KOMA-Script package (page head and foot)
+
+
+Package scrpage2 Warning: usage of obsolete package!
+(scrpage2)                Package `scrpage2' is obsolete.
+(scrpage2)                You should not longer use package `scrpage2'.
+(scrpage2)                You should replace usage of package `scrpage2'
+(scrpage2)                by `scrlayer-scrpage' on input line 52.
+
+LaTeX Info: Redefining \pagemark on input line 180.
+) (/usr/share/texlive/texmf-dist/tex/latex/setspace/setspace.sty
+Package: setspace 2011/12/19 v6.7a set line spacing
+)
+Class scrreprt Info: Using old \@makefntext due to compatibility level
+(scrreprt)           less than 3.22 on input line 28.
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/graphicx.sty
+Package: graphicx 2019/11/30 v1.2a Enhanced LaTeX Graphics (DPC,SPQR)
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/graphics.sty
+Package: graphics 2019/11/30 v1.4a Standard LaTeX Graphics (DPC,SPQR)
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/trig.sty
+Package: trig 2016/01/03 v1.10 sin cos tan (DPC)
+)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-cfg/graphics.cfg
+File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
+)
+Package graphics Info: Driver file: pdftex.def on input line 105.
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-def/pdftex.def
+File: pdftex.def 2018/01/08 v1.0l Graphics/color driver for pdftex
+))
+\Gin@req@height=\dimen137
+\Gin@req@width=\dimen138
+)
+(/usr/share/texlive/texmf-dist/tex/latex/xcolor/xcolor.sty
+Package: xcolor 2016/05/11 v2.12 LaTeX color extensions (UK)
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-cfg/color.cfg
+File: color.cfg 2016/01/02 v1.6 sample color configuration
+)
+Package xcolor Info: Driver file: pdftex.def on input line 225.
+Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1348.
+Package xcolor Info: Model `hsb' substituted by `rgb' on input line 1352.
+Package xcolor Info: Model `RGB' extended on input line 1364.
+Package xcolor Info: Model `HTML' substituted by `rgb' on input line 1366.
+Package xcolor Info: Model `Hsb' substituted by `hsb' on input line 1367.
+Package xcolor Info: Model `tHsb' substituted by `hsb' on input line 1368.
+Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1369.
+Package xcolor Info: Model `Gray' substituted by `gray' on input line 1370.
+Package xcolor Info: Model `wave' substituted by `hsb' on input line 1371.
+)
+(/usr/share/texlive/texmf-dist/tex/latex/wrapfig/wrapfig.sty
+\wrapoverhang=\dimen139
+\WF@size=\dimen140
+\c@WF@wrappedlines=\count179
+\WF@box=\box47
+\WF@everypar=\toks17
+Package: wrapfig 2003/01/31  v 3.6
+)
+(/usr/share/texlive/texmf-dist/tex/latex/sidecap/sidecap.sty
+Package: sidecap 2003/06/06 v1.6f SideCap Package (RN/HjG)
+
+(/usr/share/texlive/texmf-dist/tex/latex/base/ifthen.sty
+Package: ifthen 2014/09/29 v1.1c Standard LaTeX ifthen package (DPC)
+)
+\SC@BOXWD=\dimen141
+\SC@CAPWD=\dimen142
+\SC@tempdima=\dimen143
+\SC@tempdimb=\dimen144
+\c@SC@C=\count180
+\SC@BOX=\box48
+)
+(/usr/share/texlive/texmf-dist/tex/latex/tools/tabularx.sty
+Package: tabularx 2020/01/15 v2.11c `tabularx' package (DPC)
+
+(/usr/share/texlive/texmf-dist/tex/latex/tools/array.sty
+Package: array 2019/08/31 v2.4l Tabular extension package (FMi)
+\col@sep=\dimen145
+\ar@mcellbox=\box49
+\extrarowheight=\dimen146
+\NC@list=\toks18
+\extratabsurround=\skip64
+\backup@length=\skip65
+\ar@cellbox=\box50
+)
+\TX@col@width=\dimen147
+\TX@old@table=\dimen148
+\TX@old@col=\dimen149
+\TX@target=\dimen150
+\TX@delta=\dimen151
+\TX@cols=\count181
+\TX@ftn=\toks19
+)
+(/usr/share/texlive/texmf-dist/tex/latex/tools/multicol.sty
+Package: multicol 2019/12/09 v1.8y multicolumn formatting (FMi)
+\c@tracingmulticols=\count182
+\mult@box=\box51
+\multicol@leftmargin=\dimen152
+\c@unbalance=\count183
+\c@collectmore=\count184
+\doublecol@number=\count185
+\multicoltolerance=\count186
+\multicolpretolerance=\count187
+\full@width=\dimen153
+\page@free=\dimen154
+\premulticols=\dimen155
+\postmulticols=\dimen156
+\multicolsep=\skip66
+\multicolbaselineskip=\skip67
+\partial@page=\box52
+\last@line=\box53
+\maxbalancingoverflow=\dimen157
+\mult@rightbox=\box54
+\mult@grightbox=\box55
+\mult@gfirstbox=\box56
+\mult@firstbox=\box57
+\@tempa=\box58
+\@tempa=\box59
+\@tempa=\box60
+\@tempa=\box61
+\@tempa=\box62
+\@tempa=\box63
+\@tempa=\box64
+\@tempa=\box65
+\@tempa=\box66
+\@tempa=\box67
+\@tempa=\box68
+\@tempa=\box69
+\@tempa=\box70
+\@tempa=\box71
+\@tempa=\box72
+\@tempa=\box73
+\@tempa=\box74
+\@tempa=\box75
+\@tempa=\box76
+\@tempa=\box77
+\@tempa=\box78
+\@tempa=\box79
+\@tempa=\box80
+\@tempa=\box81
+\@tempa=\box82
+\@tempa=\box83
+\@tempa=\box84
+\@tempa=\box85
+\@tempa=\box86
+\@tempa=\box87
+\@tempa=\box88
+\@tempa=\box89
+\@tempa=\box90
+\@tempa=\box91
+\@tempa=\box92
+\@tempa=\box93
+\@tempa=\box94
+\c@minrows=\count188
+\c@columnbadness=\count189
+\c@finalcolumnbadness=\count190
+\last@try=\dimen158
+\multicolovershoot=\dimen159
+\multicolundershoot=\dimen160
+\mult@nat@firstbox=\box95
+\colbreak@box=\box96
+\mc@col@check@num=\count191
+)
+(/usr/share/texlive/texmf-dist/tex/latex/multirow/multirow.sty
+Package: multirow 2019/05/31 v2.5 Span multiple rows of a table
+\multirow@colwidth=\skip68
+\multirow@cntb=\count192
+\multirow@dima=\skip69
+\bigstrutjot=\dimen161
+)
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsmath.sty
+Package: amsmath 2020/01/20 v2.17e AMS math features
+\@mathmargin=\skip70
+
+For additional information on amsmath, use the `?' option.
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amstext.sty
+Package: amstext 2000/06/29 v2.01 AMS text
+
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsgen.sty
+File: amsgen.sty 1999/11/30 v2.0 generic functions
+\@emptytoks=\toks20
+\ex@=\dimen162
+))
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsbsy.sty
+Package: amsbsy 1999/11/29 v1.2d Bold Symbols
+\pmbraise@=\dimen163
+)
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsopn.sty
+Package: amsopn 2016/03/08 v2.02 operator names
+)
+\inf@bad=\count193
+LaTeX Info: Redefining \frac on input line 227.
+\uproot@=\count194
+\leftroot@=\count195
+LaTeX Info: Redefining \overline on input line 389.
+\classnum@=\count196
+\DOTSCASE@=\count197
+LaTeX Info: Redefining \ldots on input line 486.
+LaTeX Info: Redefining \dots on input line 489.
+LaTeX Info: Redefining \cdots on input line 610.
+\Mathstrutbox@=\box97
+\strutbox@=\box98
+\big@size=\dimen164
+LaTeX Font Info:    Redeclaring font encoding OML on input line 733.
+LaTeX Font Info:    Redeclaring font encoding OMS on input line 734.
+\macc@depth=\count198
+\c@MaxMatrixCols=\count199
+\dotsspace@=\muskip16
+\c@parentequation=\count266
+\dspbrk@lvl=\count267
+\tag@help=\toks21
+\row@=\count268
+\column@=\count269
+\maxfields@=\count270
+\andhelp@=\toks22
+\eqnshift@=\dimen165
+\alignsep@=\dimen166
+\tagshift@=\dimen167
+\tagwidth@=\dimen168
+\totwidth@=\dimen169
+\lineht@=\dimen170
+\@envbody=\toks23
+\multlinegap=\skip71
+\multlinetaggap=\skip72
+\mathdisplay@stack=\toks24
+LaTeX Info: Redefining \[ on input line 2859.
+LaTeX Info: Redefining \] on input line 2860.
+)
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/amsfonts.sty
+Package: amsfonts 2013/01/14 v3.01 Basic AMSFonts support
+\symAMSa=\mathgroup4
+\symAMSb=\mathgroup5
+LaTeX Font Info:    Redeclaring math symbol \hbar on input line 98.
+LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
+(Font)                  U/euf/m/n --> U/euf/b/n on input line 106.
+)
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/amssymb.sty
+Package: amssymb 2013/01/14 v3.01 AMS font symbols
+)
+(/usr/share/texlive/texmf-dist/tex/latex/physics/physics.sty
+Package: physics 
+
+(/usr/share/texlive/texmf-dist/tex/latex/l3packages/xparse/xparse.sty
+(/usr/share/texlive/texmf-dist/tex/latex/l3kernel/expl3.sty
+Package: expl3 2020-02-14 L3 programming layer (loader) 
+
+(/usr/share/texlive/texmf-dist/tex/latex/l3backend/l3backend-pdfmode.def
+File: l3backend-pdfmode.def 2020-02-03 L3 backend support: PDF mode
+\l__kernel_color_stack_int=\count271
+\l__pdf_internal_box=\box99
+))
+Package: xparse 2020-02-14 L3 Experimental document command parser
+\l__xparse_current_arg_int=\count272
+\g__xparse_grabber_int=\count273
+\l__xparse_m_args_int=\count274
+\l__xparse_v_nesting_int=\count275
+))
+(/usr/share/texlive/texmf-dist/tex/latex/cancel/cancel.sty
+Package: cancel 2013/04/12 v2.2 Cancel math terms
+)
+(/usr/share/texlive/texmf-dist/tex/latex/base/flafter.sty
+Package: flafter 2018/11/28 v1.4d Standard LaTeX floats after reference (FMi)
+Applying: [2015/01/01] float order in 2-column on input line 49.
+Already applied: [0000/00/00] float order in 2-column on input line 151.
+)
+(/usr/share/texlive/texmf-dist/tex/latex/tools/afterpage.sty
+Package: afterpage 2014/10/28 v1.08 After-Page Package (DPC)
+\AP@output=\toks25
+\AP@partial=\box100
+\AP@footins=\box101
+)
+(/usr/share/texlive/texmf-dist/tex/latex/placeins/placeins.sty
+Package: placeins 2005/04/18  v 2.2
+)
+(/usr/share/texlive/texmf-dist/tex/latex/caption/caption.sty
+Package: caption 2020/01/03 v3.4h Customizing captions (AR)
+
+(/usr/share/texlive/texmf-dist/tex/latex/caption/caption3.sty
+Package: caption3 2020/01/03 v1.8h caption3 kernel (AR)
+Package caption3 Info: TeX engine: e-TeX on input line 61.
+\captionmargin=\dimen171
+\captionmargin@=\dimen172
+\captionwidth=\dimen173
+\caption@tempdima=\dimen174
+\caption@indent=\dimen175
+\caption@parindent=\dimen176
+\caption@hangindent=\dimen177
+Package caption Info: KOMA-Script document class detected.
+)
+Package caption Info: KOMA-Script document class.
+\c@caption@flags=\count276
+\c@continuedfloat=\count277
+Package caption Info: sidecap package is loaded.
+Package caption Info: wrapfig package is loaded.
+)
+(/usr/share/texlive/texmf-dist/tex/latex/caption/subcaption.sty
+Package: subcaption 2020/01/22 v1.3d Sub-captions (AR)
+\c@subfigure=\count278
+\c@subtable=\count279
+)
+(/usr/share/texlive/texmf-dist/tex/latex/lipsum/lipsum.sty
+Package: lipsum 2019/01/02 v2.2 150 paragraphs of Lorem Ipsum dummy text
+
+(/usr/share/texlive/texmf-dist/tex/latex/lipsum/lipsum.ltd.tex
+File: lipsum.ltd.tex 2019/01/02 v2.2 The Lorem ipsum dummy text
+)))
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/hyperref.sty
+Package: hyperref 2020/01/14 v7.00d Hypertext links for LaTeX
+
+(/usr/share/texlive/texmf-dist/tex/generic/ltxcmds/ltxcmds.sty
+Package: ltxcmds 2019/12/15 v1.24 LaTeX kernel commands for general use (HO)
+)
+(/usr/share/texlive/texmf-dist/tex/generic/iftex/iftex.sty
+Package: iftex 2019/11/07 v1.0c TeX engine tests
+)
+(/usr/share/texlive/texmf-dist/tex/latex/pdftexcmds/pdftexcmds.sty
+Package: pdftexcmds 2019/11/24 v0.31 Utility functions of pdfTeX for LuaTeX (HO
+)
+
+(/usr/share/texlive/texmf-dist/tex/generic/infwarerr/infwarerr.sty
+Package: infwarerr 2019/12/03 v1.5 Providing info/warning/error messages (HO)
+)
+Package pdftexcmds Info: \pdf@primitive is available.
+Package pdftexcmds Info: \pdf@ifprimitive is available.
+Package pdftexcmds Info: \pdfdraftmode found.
+)
+(/usr/share/texlive/texmf-dist/tex/generic/kvsetkeys/kvsetkeys.sty
+Package: kvsetkeys 2019/12/15 v1.18 Key value parser (HO)
+)
+(/usr/share/texlive/texmf-dist/tex/generic/kvdefinekeys/kvdefinekeys.sty
+Package: kvdefinekeys 2019-12-19 v1.6 Define keys (HO)
+)
+(/usr/share/texlive/texmf-dist/tex/generic/pdfescape/pdfescape.sty
+Package: pdfescape 2019/12/09 v1.15 Implements pdfTeX's escape features (HO)
+)
+(/usr/share/texlive/texmf-dist/tex/latex/hycolor/hycolor.sty
+Package: hycolor 2020-01-27 v1.10 Color options for hyperref/bookmark (HO)
+)
+(/usr/share/texlive/texmf-dist/tex/latex/letltxmacro/letltxmacro.sty
+Package: letltxmacro 2019/12/03 v1.6 Let assignment for LaTeX macros (HO)
+)
+(/usr/share/texlive/texmf-dist/tex/latex/auxhook/auxhook.sty
+Package: auxhook 2019-12-17 v1.6 Hooks for auxiliary files (HO)
+)
+(/usr/share/texlive/texmf-dist/tex/latex/kvoptions/kvoptions.sty
+Package: kvoptions 2019/11/29 v3.13 Key value format for package options (HO)
+)
+\@linkdim=\dimen178
+\Hy@linkcounter=\count280
+\Hy@pagecounter=\count281
+
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/pd1enc.def
+File: pd1enc.def 2020/01/14 v7.00d Hyperref: PDFDocEncoding definition (HO)
+Now handling font encoding PD1 ...
+... no UTF-8 mapping file for font encoding PD1
+)
+(/usr/share/texlive/texmf-dist/tex/generic/intcalc/intcalc.sty
+Package: intcalc 2019/12/15 v1.3 Expandable calculations with integers (HO)
+)
+(/usr/share/texlive/texmf-dist/tex/generic/etexcmds/etexcmds.sty
+Package: etexcmds 2019/12/15 v1.7 Avoid name clashes with e-TeX commands (HO)
+)
+\Hy@SavedSpaceFactor=\count282
+\pdfmajorversion=\count283
+Package hyperref Info: Hyper figures OFF on input line 4547.
+Package hyperref Info: Link nesting OFF on input line 4552.
+Package hyperref Info: Hyper index ON on input line 4555.
+Package hyperref Info: Plain pages OFF on input line 4562.
+Package hyperref Info: Backreferencing OFF on input line 4567.
+Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
+Package hyperref Info: Bookmarks ON on input line 4800.
+\c@Hy@tempcnt=\count284
+
+(/usr/share/texlive/texmf-dist/tex/latex/url/url.sty
+\Urlmuskip=\muskip17
+Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
+)
+LaTeX Info: Redefining \url on input line 5159.
+\XeTeXLinkMargin=\dimen179
+
+(/usr/share/texlive/texmf-dist/tex/generic/bitset/bitset.sty
+Package: bitset 2019/12/09 v1.3 Handle bit-vector datatype (HO)
+
+(/usr/share/texlive/texmf-dist/tex/generic/bigintcalc/bigintcalc.sty
+Package: bigintcalc 2019/12/15 v1.5 Expandable calculations on big integers (HO
+)
+))
+\Fld@menulength=\count285
+\Field@Width=\dimen180
+\Fld@charsize=\dimen181
+Package hyperref Info: Hyper figures OFF on input line 6430.
+Package hyperref Info: Link nesting OFF on input line 6435.
+Package hyperref Info: Hyper index ON on input line 6438.
+Package hyperref Info: backreferencing OFF on input line 6445.
+Package hyperref Info: Link coloring OFF on input line 6450.
+Package hyperref Info: Link coloring with OCG OFF on input line 6455.
+Package hyperref Info: PDF/A mode OFF on input line 6460.
+LaTeX Info: Redefining \ref on input line 6500.
+LaTeX Info: Redefining \pageref on input line 6504.
+
+(/usr/share/texlive/texmf-dist/tex/generic/atbegshi/atbegshi.sty
+Package: atbegshi 2019/12/05 v1.19 At begin shipout hook (HO)
+)
+\Hy@abspage=\count286
+\c@Item=\count287
+\c@Hfootnote=\count288
+)
+Package hyperref Info: Driver (autodetected): hpdftex.
+
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/hpdftex.def
+File: hpdftex.def 2020/01/14 v7.00d Hyperref driver for pdfTeX
+
+(/usr/share/texlive/texmf-dist/tex/latex/atveryend/atveryend.sty
+Package: atveryend 2019-12-11 v1.11 Hooks at the very end of document (HO)
+Package atveryend Info: \AP@enddocument detected (standard20110627).
+)
+\Fld@listcount=\count289
+\c@bookmark@seq@number=\count290
+
+(/usr/share/texlive/texmf-dist/tex/latex/rerunfilecheck/rerunfilecheck.sty
+Package: rerunfilecheck 2019/12/05 v1.9 Rerun checks for auxiliary files (HO)
+
+(/usr/share/texlive/texmf-dist/tex/generic/uniquecounter/uniquecounter.sty
+Package: uniquecounter 2019/12/15 v1.4 Provide unlimited unique counter (HO)
+)
+Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
+86.
+)
+\Hy@SectionHShift=\skip73
+)
+(./BA_main_german.aux)
+\openout1 = `BA_main_german.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 2.
+LaTeX Font Info:    ... okay on input line 2.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 2.
+LaTeX Font Info:    ... okay on input line 2.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 2.
+LaTeX Font Info:    ... okay on input line 2.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 2.
+LaTeX Font Info:    ... okay on input line 2.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 2.
+LaTeX Font Info:    ... okay on input line 2.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 2.
+LaTeX Font Info:    ... okay on input line 2.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 2.
+LaTeX Font Info:    ... okay on input line 2.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 2.
+LaTeX Font Info:    ... okay on input line 2.
+
+
+Package scrpage2 Warning: seems you are using a very small headheight.
+(scrpage2)                If you get overfull \vbox warnings at almost every
+(scrpage2)                page, you should increase headheight e.g. writing
+(scrpage2)                 \setlength{\headheight}{1.1\baselineskip}
+(scrpage2)                into the preamble of your document.
+(scrpage2)                A better solution would be to use typearea package.
+
+(/usr/share/texlive/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count291
+\scratchdimen=\dimen182
+\scratchbox=\box102
+\nofMPsegments=\count292
+\nofMParguments=\count293
+\everyMPshowfont=\toks26
+\MPscratchCnt=\count294
+\MPscratchDim=\dimen183
+\MPnumerator=\count295
+\makeMPintoPDFobject=\count296
+\everyMPtoPDFconversion=\toks27
+) (/usr/share/texlive/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
+Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
+Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
+85.
+
+(/usr/share/texlive/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
+File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
+e
+))
+(/usr/share/texlive/texmf-dist/tex/latex/ragged2e/ragged2e.sty
+Package: ragged2e 2019/07/28 v2.2 ragged2e Package (MS)
+
+(/usr/share/texlive/texmf-dist/tex/latex/ms/everysel.sty
+Package: everysel 2011/10/28 v1.2 EverySelectfont Package (MS)
+
+ABD: EverySelectfont initializing macros
+LaTeX Info: Redefining \selectfont on input line 126.
+)
+\CenteringLeftskip=\skip74
+\RaggedLeftLeftskip=\skip75
+\RaggedRightLeftskip=\skip76
+\CenteringRightskip=\skip77
+\RaggedLeftRightskip=\skip78
+\RaggedRightRightskip=\skip79
+\CenteringParfillskip=\skip80
+\RaggedLeftParfillskip=\skip81
+\RaggedRightParfillskip=\skip82
+\JustifyingParfillskip=\skip83
+\CenteringParindent=\skip84
+\RaggedLeftParindent=\skip85
+\RaggedRightParindent=\skip86
+\JustifyingParindent=\skip87
+)
+Package caption Info: Begin \AtBeginDocument code.
+Package caption Info: hyperref package is loaded.
+Package caption Info: End \AtBeginDocument code.
+\AtBeginShipoutBox=\box103
+Package hyperref Info: Link coloring OFF on input line 2.
+
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/nameref.sty
+Package: nameref 2019/09/16 v2.46 Cross-referencing by name of section
+
+(/usr/share/texlive/texmf-dist/tex/latex/refcount/refcount.sty
+Package: refcount 2019/12/15 v3.6 Data extraction from label references (HO)
+)
+(/usr/share/texlive/texmf-dist/tex/generic/gettitlestring/gettitlestring.sty
+Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
+)
+\c@section@level=\count297
+)
+LaTeX Info: Redefining \ref on input line 2.
+LaTeX Info: Redefining \pageref on input line 2.
+LaTeX Info: Redefining \nameref on input line 2.
+
+(./BA_main_german.out) (./BA_main_german.out)
+\@outlinefile=\write3
+\openout3 = `BA_main_german.out'.
+
+Class scrreprt Info: loading recommended package `bookmark'.
+(scrreprt)           Using `bookmark' together with `hyperref' is recommended,
+(scrreprt)           because of handling of possible bookmark level gaps.
+(scrreprt)           You can avoid loading `bookmark' with KOMA-Script option
+(scrreprt)           `bookmarkpackage=false' before \begin{document} and
+(scrreprt)           you can avoid this message adding:
+(scrreprt)             \usepackage{bookmark}
+(scrreprt)           before \begin{document} on input line 2.
+
+(/usr/share/texlive/texmf-dist/tex/latex/bookmark/bookmark.sty
+Package: bookmark 2019/12/03 v1.28 PDF bookmarks (HO)
+
+(/usr/share/texlive/texmf-dist/tex/latex/bookmark/bkm-pdftex.def
+File: bkm-pdftex.def 2019/12/03 v1.28 bookmark driver for pdfTeX (HO)
+Package auxhook Info: \AddLineBeginMainAux comes a little late,
+(auxhook)             because the main .aux file is already opened on input lin
+e 168.
+\BKM@id=\count298
+))<<ot1.cmap>><<oml.cmap>><<oms.cmap>><<omx.cmap>>
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd)
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd)<<t1.cmap>>
+File: TU_Logo_SW.pdf Graphic file (type pdf)
+<use TU_Logo_SW.pdf>
+Package pdftex.def Info: TU_Logo_SW.pdf  used on input line 42.
+(pdftex.def)             Requested size: 170.71652pt x 50.01544pt.
+
+Overfull \hbox (10.88788pt too wide) in paragraph at lines 42--43
+[][] 
+ []
+
+[1
+
+
+
+{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map} <./TU_Logo_SW.pdf>]
+[2] [3] [4
+
+
+]
+LaTeX Font Info:    Trying to load font information for T1+cmss on input line 7
+4.
+ (/usr/share/texlive/texmf-dist/tex/latex/base/t1cmss.fd
+File: t1cmss.fd 2019/12/16 v2.5j Standard LaTeX font definitions
+)
+(./BA_main_german.toc)
+\tf@toc=\write4
+\openout4 = `BA_main_german.toc'.
+
+ [5
+
+] [6
+
+
+]
+chapter 1.
+
+Overfull \hbox (7.96931pt too wide) in paragraph at lines 85--86
+[]\T1/cmr/m/n/10.95 Die nicht-resonante Photon-Paar-Produktion in Pro-ton Kol-l
+i-sio-nen stellt den Hin-ter-grund zur Diphoton-
+ []
+
+LaTeX Font Info:    Trying to load font information for T1+cmtt on input line 9
+2.
+(/usr/share/texlive/texmf-dist/tex/latex/base/t1cmtt.fd
+File: t1cmtt.fd 2019/12/16 v2.5j Standard LaTeX font definitions
+)pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has
+ been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.93 
+      [1
+
+]pdfTeX warning (ext4): destination with the same identifier (name{page.2}) has
+ been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.94 \chapter
+             {Diphoton-Prozess} [2]
+chapter 2.
+<graphics/t.pdf, id=133, 251.79059pt x 315.05243pt>
+File: graphics/t.pdf Graphic file (type pdf)
+<use graphics/t.pdf>
+Package pdftex.def Info: graphics/t.pdf  used on input line 98.
+(pdftex.def)             Requested size: 105.41806pt x 131.90288pt.
+<graphics/u.pdf, id=134, 251.79059pt x 315.05243pt>
+File: graphics/u.pdf Graphic file (type pdf)
+<use graphics/u.pdf>
+Package pdftex.def Info: graphics/u.pdf  used on input line 100.
+(pdftex.def)             Requested size: 105.41806pt x 131.90288pt.
+
+Underfull \hbox (badness 3679) in paragraph at lines 104--105
+\T1/cmr/m/n/10.95 schnitt des par-to-ni-schen Diphoton-Prozesses
+ []
+
+pdfTeX warning (ext4): destination with the same identifier (name{page.3}) has 
+been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.128 \end{equation}
+                     [3
+
+ <./graphics/t.pdf> <./graphics/u.pdf
+
+pdfTeX warning: /usr/bin/pdflatex (file ./graphics/u.pdf): PDF inclusion: multi
+ple pdfs with page group included in a single page
+>]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+pdfTeX warning (ext4): destination with the same identifier (name{page.4}) has 
+been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.182 \end{equation}
+                     [4]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+pdfTeX warning (ext4): destination with the same identifier (name{page.5}) has 
+been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.214 \begin{equation}
+                       [5]
+<graphics/Kinematik.pdf, id=215, 597.50786pt x 845.04686pt>
+File: graphics/Kinematik.pdf Graphic file (type pdf)
+<use graphics/Kinematik.pdf>
+Package pdftex.def Info: graphics/Kinematik.pdf  used on input line 231.
+(pdftex.def)             Requested size: 128.0374pt x 181.0755pt.
+pdfTeX warning (ext4): destination with the same identifier (name{page.6}) has 
+been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.243 \begin{align}
+                    [6 <./graphics/Kinematik.pdf>] [7] [8]
+chapter 3.
+<graphics/NeuralNetwork.pdf, id=272, 478.77837pt x 366.38832pt>
+File: graphics/NeuralNetwork.pdf Graphic file (type pdf)
+<use graphics/NeuralNetwork.pdf>
+Package pdftex.def Info: graphics/NeuralNetwork.pdf  used on input line 327.
+(pdftex.def)             Requested size: 191.6652pt x 146.6757pt.
+[9
+
+] [10 <./graphics/NeuralNetwork.pdf>] [11] [12]
+Underfull \hbox (badness 10000) in paragraph at lines 417--420
+
+ []
+
+[13] [14]
+chapter 4.
+[15
+
+]
+<graphics/1_eta.pdf, id=368, 462.52798pt x 520.34402pt>
+File: graphics/1_eta.pdf Graphic file (type pdf)
+<use graphics/1_eta.pdf>
+Package pdftex.def Info: graphics/1_eta.pdf  used on input line 493.
+(pdftex.def)             Requested size: 184.9429pt x 208.06245pt.
+<graphics/2.pdf, id=369, 462.52798pt x 520.34402pt>
+File: graphics/2.pdf Graphic file (type pdf)
+<use graphics/2.pdf>
+Package pdftex.def Info: graphics/2.pdf  used on input line 494.
+(pdftex.def)             Requested size: 184.9429pt x 208.06245pt.
+<graphics/4.pdf, id=375, 462.52798pt x 520.34402pt>
+File: graphics/4.pdf Graphic file (type pdf)
+<use graphics/4.pdf>
+Package pdftex.def Info: graphics/4.pdf  used on input line 505.
+(pdftex.def)             Requested size: 191.6652pt x 215.62114pt.
+ [16 <./graphics/1_eta.pdf> <./graphics/2.pdf
+
+pdfTeX warning: /usr/bin/pdflatex (file ./graphics/2.pdf): PDF inclusion: multi
+ple pdfs with page group included in a single page
+>]
+<graphics/26.pdf, id=478, 325.215pt x 346.89601pt>
+File: graphics/26.pdf Graphic file (type pdf)
+<use graphics/26.pdf>
+Package pdftex.def Info: graphics/26.pdf  used on input line 537.
+(pdftex.def)             Requested size: 184.9429pt x 197.27756pt.
+
+
+LaTeX Warning: Command \textquoteright invalid in math mode on input line 538.
+
+
+LaTeX Warning: Command \textquoteright invalid in math mode on input line 538.
+
+
+LaTeX Warning: Command \textquoteright invalid in math mode on input line 538.
+
+
+Underfull \hbox (badness 2781) in paragraph at lines 538--538
+|\T1/cmr/m/n/10 Ein Ver-gleich des MA-PE der un-ter-
+ []
+
+[17 <./graphics/4.pdf> <./graphics/26.pdf
+
+pdfTeX warning: /usr/bin/pdflatex (file ./graphics/26.pdf): PDF inclusion: mult
+iple pdfs with page group included in a single page
+>]
+<graphics/3.pdf, id=575, 462.52798pt x 520.34402pt>
+File: graphics/3.pdf Graphic file (type pdf)
+<use graphics/3.pdf>
+Package pdftex.def Info: graphics/3.pdf  used on input line 544.
+(pdftex.def)             Requested size: 184.9429pt x 208.06245pt.
+
+
+LaTeX Warning: Command \textquoteright invalid in math mode on input line 544.
+
+
+LaTeX Warning: Command \textquoteright invalid in math mode on input line 544.
+
+
+LaTeX Warning: Command \textquoteright invalid in math mode on input line 544.
+
+
+LaTeX Warning: Command \textquoteright invalid in math mode on input line 544.
+
+
+LaTeX Warning: Command \textquoteright invalid in math mode on input line 544.
+
+
+LaTeX Warning: Command \textquoteright invalid in math mode on input line 544.
+
+<graphics/3.1.pdf, id=576, 462.52798pt x 520.34402pt>
+File: graphics/3.1.pdf Graphic file (type pdf)
+<use graphics/3.1.pdf>
+Package pdftex.def Info: graphics/3.1.pdf  used on input line 546.
+(pdftex.def)             Requested size: 184.9429pt x 208.06245pt.
+<graphics/3.2.pdf, id=577, 462.52798pt x 520.34402pt>
+File: graphics/3.2.pdf Graphic file (type pdf)
+<use graphics/3.2.pdf>
+Package pdftex.def Info: graphics/3.2.pdf  used on input line 547.
+(pdftex.def)             Requested size: 184.9429pt x 208.06245pt.
+
+LaTeX Warning: Command \textquoteright invalid in math mode on input line 548.
+
+
+LaTeX Warning: Command \textquoteright invalid in math mode on input line 548.
+
+
+LaTeX Warning: Command \textquoteright invalid in math mode on input line 548.
+
+
+LaTeX Warning: Command \textquoteright invalid in math mode on input line 548.
+
+
+LaTeX Warning: Command \textquoteright invalid in math mode on input line 548.
+
+
+LaTeX Warning: Command \textquoteright invalid in math mode on input line 548.
+
+
+LaTeX Warning: Command \textquoteright invalid in math mode on input line 548.
+
+
+LaTeX Warning: Command \textquoteright invalid in math mode on input line 548.
+
+
+LaTeX Warning: Command \textquoteright invalid in math mode on input line 548.
+
+
+LaTeX Warning: Command \textquoteright invalid in math mode on input line 548.
+
+
+LaTeX Warning: Command \textquoteright invalid in math mode on input line 548.
+
+
+LaTeX Warning: Command \textquoteright invalid in math mode on input line 548.
+
+[18 <./graphics/3.pdf> <./graphics/3.1.pdf
+
+pdfTeX warning: /usr/bin/pdflatex (file ./graphics/3.1.pdf): PDF inclusion: mul
+tiple pdfs with page group included in a single page
+> <./graphics/3.2.pdf
+
+pdfTeX warning: /usr/bin/pdflatex (file ./graphics/3.2.pdf): PDF inclusion: mul
+tiple pdfs with page group included in a single page
+>]
+
+LaTeX Warning: Command \textquoteright invalid in math mode on input line 573.
+
+
+Overfull \hbox (5.61087pt too wide) in paragraph at lines 584--586
+\T1/cmr/m/n/10.95 Für die Be-rech-nung des Wir-kungs-quer-schnit-tes nach []\T1
+/cmss/m/n/10.95 Gl. 2.34[][] \T1/cmr/m/n/10.95 wird das PDF-Set CT14nnlo von LH
+APDF
+ []
+
+[19]
+Overfull \hbox (1.81293pt too wide) in paragraph at lines 589--590
+[]\T1/cmr/m/n/10.95 Wird ein nai-ver An-satz mit glei-cher Hy-per-pa-ra-me-ter-
+kon-fi-gu-ra-ti-on wie der des $[]$-Modells ([]\T1/cmss/m/n/10.95 Tabelle A.4[]
+[]\T1/cmr/m/n/10.95 ),
+ []
+
+<graphics/6.2.pdf, id=760, 346.89601pt x 520.34402pt>
+File: graphics/6.2.pdf Graphic file (type pdf)
+<use graphics/6.2.pdf>
+Package pdftex.def Info: graphics/6.2.pdf  used on input line 602.
+(pdftex.def)             Requested size: 142.26378pt x 213.398pt.
+<graphics/6.3.pdf, id=761, 346.89601pt x 520.34402pt>
+File: graphics/6.3.pdf Graphic file (type pdf)
+<use graphics/6.3.pdf>
+Package pdftex.def Info: graphics/6.3.pdf  used on input line 603.
+(pdftex.def)             Requested size: 142.26378pt x 213.398pt.
+<graphics/6.4.pdf, id=762, 346.89601pt x 520.34402pt>
+File: graphics/6.4.pdf Graphic file (type pdf)
+<use graphics/6.4.pdf>
+Package pdftex.def Info: graphics/6.4.pdf  used on input line 604.
+(pdftex.def)             Requested size: 142.26378pt x 213.398pt.
+[20] [21 <./graphics/6.2.pdf> <./graphics/6.3.pdf
+
+pdfTeX warning: /usr/bin/pdflatex (file ./graphics/6.3.pdf): PDF inclusion: mul
+tiple pdfs with page group included in a single page
+> <./graphics/6.4.pdf
+
+pdfTeX warning: /usr/bin/pdflatex (file ./graphics/6.4.pdf): PDF inclusion: mul
+tiple pdfs with page group included in a single page
+>]
+<graphics/5.pdf, id=919, 462.52798pt x 520.34402pt>
+File: graphics/5.pdf Graphic file (type pdf)
+<use graphics/5.pdf>
+Package pdftex.def Info: graphics/5.pdf  used on input line 646.
+(pdftex.def)             Requested size: 184.9429pt x 208.06245pt.
+<graphics/8.pdf, id=920, 462.52798pt x 520.34402pt>
+File: graphics/8.pdf Graphic file (type pdf)
+<use graphics/8.pdf>
+Package pdftex.def Info: graphics/8.pdf  used on input line 647.
+(pdftex.def)             Requested size: 184.9429pt x 208.06245pt.
+<graphics/6.pdf, id=921, 462.52798pt x 520.34402pt>
+File: graphics/6.pdf Graphic file (type pdf)
+<use graphics/6.pdf>
+Package pdftex.def Info: graphics/6.pdf  used on input line 648.
+(pdftex.def)             Requested size: 184.9429pt x 208.06245pt.
+<graphics/9.pdf, id=922, 462.52798pt x 520.34402pt>
+File: graphics/9.pdf Graphic file (type pdf)
+<use graphics/9.pdf>
+Package pdftex.def Info: graphics/9.pdf  used on input line 649.
+(pdftex.def)             Requested size: 184.9429pt x 208.06245pt.
+<graphics/7.pdf, id=923, 462.52798pt x 520.34402pt>
+File: graphics/7.pdf Graphic file (type pdf)
+<use graphics/7.pdf>
+Package pdftex.def Info: graphics/7.pdf  used on input line 650.
+(pdftex.def)             Requested size: 184.9429pt x 208.06245pt.
+<graphics/10.pdf, id=924, 462.52798pt x 520.34402pt>
+File: graphics/10.pdf Graphic file (type pdf)
+<use graphics/10.pdf>
+Package pdftex.def Info: graphics/10.pdf  used on input line 651.
+(pdftex.def)             Requested size: 184.9429pt x 208.06245pt.
+
+
+LaTeX Warning: Float too large for page by 20.25313pt on input line 654.
+
+<graphics/17,18.pdf, id=931, 686.565pt x 346.89601pt>
+File: graphics/17,18.pdf Graphic file (type pdf)
+<use graphics/17,18.pdf>
+Package pdftex.def Info: graphics/17,18.pdf  used on input line 662.
+(pdftex.def)             Requested size: 398.33858pt x 201.26334pt.
+[22] [23 <./graphics/5.pdf> <./graphics/8.pdf
+
+pdfTeX warning: /usr/bin/pdflatex (file ./graphics/8.pdf): PDF inclusion: multi
+ple pdfs with page group included in a single page
+> <./graphics/6.pdf
+
+pdfTeX warning: /usr/bin/pdflatex (file ./graphics/6.pdf): PDF inclusion: multi
+ple pdfs with page group included in a single page
+> <./graphics/9.pdf
+
+pdfTeX warning: /usr/bin/pdflatex (file ./graphics/9.pdf): PDF inclusion: multi
+ple pdfs with page group included in a single page
+> <./graphics/7.pdf
+
+pdfTeX warning: /usr/bin/pdflatex (file ./graphics/7.pdf): PDF inclusion: multi
+ple pdfs with page group included in a single page
+> <./graphics/10.pdf
+
+pdfTeX warning: /usr/bin/pdflatex (file ./graphics/10.pdf): PDF inclusion: mult
+iple pdfs with page group included in a single page
+>]
+<graphics/33-comp.pdf, id=1227, 542.025pt x 346.89601pt>
+File: graphics/33-comp.pdf Graphic file (type pdf)
+<use graphics/33-comp.pdf>
+Package pdftex.def Info: graphics/33-comp.pdf  used on input line 679.
+(pdftex.def)             Requested size: 312.9803pt x 200.31586pt.
+ [24 <./graphics/17,18.pdf>] [25 <./graphics/33-comp.pdf>]
+<graphics/19.pdf, id=1365, 397.485pt x 346.89601pt>
+File: graphics/19.pdf Graphic file (type pdf)
+<use graphics/19.pdf>
+Package pdftex.def Info: graphics/19.pdf  used on input line 704.
+(pdftex.def)             Requested size: 199.16928pt x 173.8234pt.
+<graphics/20.pdf, id=1366, 397.485pt x 346.89601pt>
+File: graphics/20.pdf Graphic file (type pdf)
+<use graphics/20.pdf>
+Package pdftex.def Info: graphics/20.pdf  used on input line 705.
+(pdftex.def)             Requested size: 199.16928pt x 173.8234pt.
+<graphics/12.pdf, id=1367, 252.945pt x 346.89601pt>
+File: graphics/12.pdf Graphic file (type pdf)
+<use graphics/12.pdf>
+Package pdftex.def Info: graphics/12.pdf  used on input line 711.
+(pdftex.def)             Requested size: 135.15059pt x 185.35197pt.
+<graphics/14.pdf, id=1368, 397.485pt x 346.89601pt>
+File: graphics/14.pdf Graphic file (type pdf)
+<use graphics/14.pdf>
+Package pdftex.def Info: graphics/14.pdf  used on input line 712.
+(pdftex.def)             Requested size: 213.39566pt x 186.24124pt.
+<graphics/13.pdf, id=1369, 252.945pt x 346.89601pt>
+File: graphics/13.pdf Graphic file (type pdf)
+<use graphics/13.pdf>
+Package pdftex.def Info: graphics/13.pdf  used on input line 713.
+(pdftex.def)             Requested size: 135.15059pt x 185.35197pt.
+<graphics/15.pdf, id=1370, 397.485pt x 346.89601pt>
+File: graphics/15.pdf Graphic file (type pdf)
+<use graphics/15.pdf>
+Package pdftex.def Info: graphics/15.pdf  used on input line 714.
+(pdftex.def)             Requested size: 213.39566pt x 186.24124pt.
+<graphics/16.pdf, id=1371, 325.215pt x 346.89601pt>
+File: graphics/16.pdf Graphic file (type pdf)
+<use graphics/16.pdf>
+Package pdftex.def Info: graphics/16.pdf  used on input line 715.
+(pdftex.def)             Requested size: 174.27312pt x 185.89717pt.
+<graphics/36.pdf, id=1372, 325.215pt x 346.89601pt>
+File: graphics/36.pdf Graphic file (type pdf)
+<use graphics/36.pdf>
+Package pdftex.def Info: graphics/36.pdf  used on input line 716.
+(pdftex.def)             Requested size: 174.27312pt x 185.89717pt.
+ [26 <./graphics/19.pdf> <./graphics/20.pdf
+
+pdfTeX warning: /usr/bin/pdflatex (file ./graphics/20.pdf): PDF inclusion: mult
+iple pdfs with page group included in a single page
+>] [27 <./graphics/12.pdf> <./graphics/14.pdf
+
+pdfTeX warning: /usr/bin/pdflatex (file ./graphics/14.pdf): PDF inclusion: mult
+iple pdfs with page group included in a single page
+> <./graphics/13.pdf
+
+pdfTeX warning: /usr/bin/pdflatex (file ./graphics/13.pdf): PDF inclusion: mult
+iple pdfs with page group included in a single page
+> <./graphics/15.pdf
+
+pdfTeX warning: /usr/bin/pdflatex (file ./graphics/15.pdf): PDF inclusion: mult
+iple pdfs with page group included in a single page
+> <./graphics/16.pdf
+
+pdfTeX warning: /usr/bin/pdflatex (file ./graphics/16.pdf): PDF inclusion: mult
+iple pdfs with page group included in a single page
+> <./graphics/36.pdf
+
+pdfTeX warning: /usr/bin/pdflatex (file ./graphics/36.pdf): PDF inclusion: mult
+iple pdfs with page group included in a single page
+>]
+! Too many }'s.
+<recently read> }
+                 
+l.721 ...mgewichtung (\textsf{\autoref{Gewichte}}}
+                                                  ) zwischen Wirkungsquersch...
+You've closed more groups than you opened.
+Such booboos are generally harmless, so keep going.
+
+<graphics/32.pdf, id=1718, 462.52798pt x 520.34402pt>
+File: graphics/32.pdf Graphic file (type pdf)
+<use graphics/32.pdf>
+Package pdftex.def Info: graphics/32.pdf  used on input line 727.
+(pdftex.def)             Requested size: 199.16928pt x 224.06909pt.
+<graphics/33.pdf, id=1719, 462.52798pt x 520.34402pt>
+File: graphics/33.pdf Graphic file (type pdf)
+<use graphics/33.pdf>
+Package pdftex.def Info: graphics/33.pdf  used on input line 728.
+(pdftex.def)             Requested size: 199.16928pt x 224.06909pt.
+[28 <./graphics/32.pdf> <./graphics/33.pdf
+
+pdfTeX warning: /usr/bin/pdflatex (file ./graphics/33.pdf): PDF inclusion: mult
+iple pdfs with page group included in a single page
+>] [29]
+<graphics/34.pdf, id=1830, 462.52798pt x 520.34402pt>
+File: graphics/34.pdf Graphic file (type pdf)
+<use graphics/34.pdf>
+Package pdftex.def Info: graphics/34.pdf  used on input line 798.
+(pdftex.def)             Requested size: 199.16928pt x 224.06909pt.
+<graphics/35.1.pdf, id=1831, 462.52798pt x 520.34402pt>
+File: graphics/35.1.pdf Graphic file (type pdf)
+<use graphics/35.1.pdf>
+Package pdftex.def Info: graphics/35.1.pdf  used on input line 799.
+(pdftex.def)             Requested size: 199.16928pt x 224.06909pt.
+<graphics/24.pdf, id=1832, 462.52798pt x 520.34402pt>
+File: graphics/24.pdf Graphic file (type pdf)
+<use graphics/24.pdf>
+Package pdftex.def Info: graphics/24.pdf  used on input line 800.
+(pdftex.def)             Requested size: 199.16928pt x 224.06909pt.
+<graphics/34.3.pdf, id=1833, 462.52798pt x 520.34402pt>
+File: graphics/34.3.pdf Graphic file (type pdf)
+<use graphics/34.3.pdf>
+Package pdftex.def Info: graphics/34.3.pdf  used on input line 806.
+(pdftex.def)             Requested size: 199.16928pt x 224.06909pt.
+<graphics/35.2.pdf, id=1834, 462.52798pt x 520.34402pt>
+File: graphics/35.2.pdf Graphic file (type pdf)
+<use graphics/35.2.pdf>
+Package pdftex.def Info: graphics/35.2.pdf  used on input line 807.
+(pdftex.def)             Requested size: 199.16928pt x 224.06909pt.
+<graphics/24.2.pdf, id=1835, 462.52798pt x 520.34402pt>
+File: graphics/24.2.pdf Graphic file (type pdf)
+<use graphics/24.2.pdf>
+Package pdftex.def Info: graphics/24.2.pdf  used on input line 808.
+(pdftex.def)             Requested size: 199.16928pt x 224.06909pt.
+<graphics/25,29.pdf, id=1836, 325.215pt x 346.89601pt>
+File: graphics/25,29.pdf Graphic file (type pdf)
+<use graphics/25,29.pdf>
+Package pdftex.def Info: graphics/25,29.pdf  used on input line 809.
+(pdftex.def)             Requested size: 199.16928pt x 212.45316pt.
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[30] [31 <./graphics/34.pdf> <./graphics/35.1.pdf
+
+pdfTeX warning: /usr/bin/pdflatex (file ./graphics/35.1.pdf): PDF inclusion: mu
+ltiple pdfs with page group included in a single page
+> <./graphics/24.pdf
+
+pdfTeX warning: /usr/bin/pdflatex (file ./graphics/24.pdf): PDF inclusion: mult
+iple pdfs with page group included in a single page
+>] [32 <./graphics/34.3.pdf> <./graphics/35.2.pdf
+
+pdfTeX warning: /usr/bin/pdflatex (file ./graphics/35.2.pdf): PDF inclusion: mu
+ltiple pdfs with page group included in a single page
+> <./graphics/24.2.pdf
+
+pdfTeX warning: /usr/bin/pdflatex (file ./graphics/24.2.pdf): PDF inclusion: mu
+ltiple pdfs with page group included in a single page
+> <./graphics/25,29.pdf
+
+pdfTeX warning: /usr/bin/pdflatex (file ./graphics/25,29.pdf): PDF inclusion: m
+ultiple pdfs with page group included in a single page
+>]
+<graphics/27.pdf, id=2197, 438.35854pt x 453.77893pt>
+File: graphics/27.pdf Graphic file (type pdf)
+<use graphics/27.pdf>
+Package pdftex.def Info: graphics/27.pdf  used on input line 848.
+(pdftex.def)             Requested size: 199.16928pt x 206.17892pt.
+<graphics/28.pdf, id=2198, 438.3576pt x 453.77893pt>
+File: graphics/28.pdf Graphic file (type pdf)
+<use graphics/28.pdf>
+Package pdftex.def Info: graphics/28.pdf  used on input line 849.
+(pdftex.def)             Requested size: 199.16928pt x 206.17892pt.
+<graphics/11.pdf, id=2199, 437.09045pt x 453.35547pt>
+File: graphics/11.pdf Graphic file (type pdf)
+<use graphics/11.pdf>
+Package pdftex.def Info: graphics/11.pdf  used on input line 850.
+(pdftex.def)             Requested size: 199.16928pt x 206.58144pt.
+ [33
+
+] [34 <./graphics/27.pdf> <./graphics/28.pdf
+
+pdfTeX warning: /usr/bin/pdflatex (file ./graphics/28.pdf): PDF inclusion: mult
+iple pdfs with page group included in a single page
+> <./graphics/11.pdf
+
+pdfTeX warning: /usr/bin/pdflatex (file ./graphics/11.pdf): PDF inclusion: mult
+iple pdfs with page group included in a single page
+>] [35]
+chapter 5.
+[36
+
+] [37]
+chapter A.
+
+LaTeX Warning: Command \textasciiacute invalid in math mode on input line 918.
+
+
+LaTeX Warning: Command \textasciiacute invalid in math mode on input line 918.
+
+Missing character: There is no ´ in font cmr10!
+<graphics/ReLU(x).pdf, id=2357, 462.52798pt x 346.89601pt>
+File: graphics/ReLU(x).pdf Graphic file (type pdf)
+<use graphics/ReLU(x).pdf>
+Package pdftex.def Info: graphics/ReLU(x).pdf  used on input line 926.
+(pdftex.def)             Requested size: 227.62204pt x 170.71628pt.
+<graphics/Leaky-ReLU(x).pdf, id=2358, 462.52798pt x 346.89601pt>
+File: graphics/Leaky-ReLU(x).pdf Graphic file (type pdf)
+<use graphics/Leaky-ReLU(x).pdf>
+Package pdftex.def Info: graphics/Leaky-ReLU(x).pdf  used on input line 927.
+(pdftex.def)             Requested size: 227.62204pt x 170.71628pt.
+<graphics/ELU(x).pdf, id=2361, 462.52798pt x 346.89601pt>
+File: graphics/ELU(x).pdf Graphic file (type pdf)
+<use graphics/ELU(x).pdf>
+Package pdftex.def Info: graphics/ELU(x).pdf  used on input line 928.
+(pdftex.def)             Requested size: 227.62204pt x 170.71628pt.
+<graphics/Sigmoid(x).pdf, id=2364, 462.52798pt x 346.89601pt>
+File: graphics/Sigmoid(x).pdf Graphic file (type pdf)
+<use graphics/Sigmoid(x).pdf>
+Package pdftex.def Info: graphics/Sigmoid(x).pdf  used on input line 929.
+(pdftex.def)             Requested size: 227.62204pt x 170.71628pt.
+<graphics/tanh(x).pdf, id=2365, 462.52798pt x 346.89601pt>
+File: graphics/tanh(x).pdf Graphic file (type pdf)
+<use graphics/tanh(x).pdf>
+Package pdftex.def Info: graphics/tanh(x).pdf  used on input line 930.
+(pdftex.def)             Requested size: 227.62204pt x 170.71628pt.
+<graphics/2.2.pdf, id=2368, 462.52798pt x 520.34402pt>
+File: graphics/2.2.pdf Graphic file (type pdf)
+<use graphics/2.2.pdf>
+Package pdftex.def Info: graphics/2.2.pdf  used on input line 1049.
+(pdftex.def)             Requested size: 170.71652pt x 192.05582pt.
+[38
+
+] [39 <./graphics/ReLU(x).pdf> <./graphics/Leaky-ReLU(x).pdf
+
+pdfTeX warning: /usr/bin/pdflatex (file ./graphics/Leaky-ReLU(x).pdf): PDF incl
+usion: multiple pdfs with page group included in a single page
+> <./graphics/ELU(x).pdf
+
+pdfTeX warning: /usr/bin/pdflatex (file ./graphics/ELU(x).pdf): PDF inclusion: 
+multiple pdfs with page group included in a single page
+> <./graphics/Sigmoid(x).pdf
+
+pdfTeX warning: /usr/bin/pdflatex (file ./graphics/Sigmoid(x).pdf): PDF inclusi
+on: multiple pdfs with page group included in a single page
+> <./graphics/tanh(x).pdf
+
+pdfTeX warning: /usr/bin/pdflatex (file ./graphics/tanh(x).pdf): PDF inclusion:
+ multiple pdfs with page group included in a single page
+>] [40] [41 <./graphics/2.2.pdf>] (./BA_main_german.bbl [42]
+chapter B.
+[43
+
+]) [44] [45
+
+]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 1124.
+ [46
+
+]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 1124.
+ (./BA_main_german.aux)
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 1124.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 1124.
+
+Package rerunfilecheck Info: File `BA_main_german.out' has not changed.
+(rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 1124.
+ ) 
+Here is how much of TeX's memory you used:
+ 14720 strings out of 483057
+ 246695 string characters out of 5962301
+ 766963 words of memory out of 5000000
+ 29125 multiletter control sequences out of 15000+600000
+ 565374 words of font info for 98 fonts, out of 8000000 for 9000
+ 59 hyphenation exceptions out of 8191
+ 49i,26n,74p,10151b,575s stack positions out of 5000i,500n,10000p,200000b,80000s
+ </home/andiw/.texlive2019/texmf-var/fonts/pk/ljfour/jknappen/ec/ecss0900.600
+pk> </home/andiw/.texlive2019/texmf-var/fonts/pk/ljfour/jknappen/ec/ecsx1200.60
+0pk> </home/andiw/.texlive2019/texmf-var/fonts/pk/ljfour/jknappen/ec/ecss1000.6
+00pk> </home/andiw/.texlive2019/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm0700.
+600pk> </home/andiw/.texlive2019/texmf-var/fonts/pk/ljfour/jknappen/ec/tcrm1095
+.600pk> </home/andiw/.texlive2019/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx109
+5.600pk> </home/andiw/.texlive2019/texmf-var/fonts/pk/ljfour/jknappen/ec/ecti10
+95.600pk> </home/andiw/.texlive2019/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm0
+600.600pk> </home/andiw/.texlive2019/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm
+0800.600pk> </home/andiw/.texlive2019/texmf-var/fonts/pk/ljfour/jknappen/ec/ecr
+m1000.600pk> </home/andiw/.texlive2019/texmf-var/fonts/pk/ljfour/jknappen/ec/ec
+bx1000.600pk> </home/andiw/.texlive2019/texmf-var/fonts/pk/ljfour/jknappen/ec/e
+crm0900.600pk> </home/andiw/.texlive2019/texmf-var/fonts/pk/ljfour/jknappen/ec/
+ecbx0900.600pk> </home/andiw/.texlive2019/texmf-var/fonts/pk/ljfour/jknappen/ec
+/ecsx1440.600pk> </home/andiw/.texlive2019/texmf-var/fonts/pk/ljfour/jknappen/e
+c/ectt1095.600pk> </home/andiw/.texlive2019/texmf-var/fonts/pk/ljfour/jknappen/
+ec/ecsl1095.600pk> </home/andiw/.texlive2019/texmf-var/fonts/pk/ljfour/jknappen
+/ec/ecss1095.600pk> </home/andiw/.texlive2019/texmf-var/fonts/pk/ljfour/jknappe
+n/ec/ecsx1095.600pk> </home/andiw/.texlive2019/texmf-var/fonts/pk/ljfour/jknapp
+en/ec/ecsx2074.600pk> </home/andiw/.texlive2019/texmf-var/fonts/pk/ljfour/jknap
+pen/ec/ecrm1095.600pk> </home/andiw/.texlive2019/texmf-var/fonts/pk/ljfour/jkna
+ppen/ec/ecrm1200.600pk> </home/andiw/.texlive2019/texmf-var/fonts/pk/ljfour/jkn
+appen/ec/ecbx2488.600pk></usr/share/texlive/texmf-dist/fonts/type1/public/amsfo
+nts/cm/cmbx10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm
+/cmbx8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10
+.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmex8.p
+fb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></u
+sr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></usr/shar
+e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb></usr/share/texli
+ve/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texlive/texm
+f-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/share/texlive/texmf-dist/
+fonts/type1/public/amsfonts/cm/cmmi9.pfb></usr/share/texlive/texmf-dist/fonts/t
+ype1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/pu
+blic/amsfonts/cm/cmr5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/ams
+fonts/cm/cmr6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm
+/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pf
+b></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb></usr/
+share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/
+texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb></usr/share/texlive
+/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/share/texlive/texmf-
+dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/share/texlive/texmf-dist/fo
+nts/type1/public/amsfonts/cm/cmsy9.pfb></usr/share/texlive/texmf-dist/fonts/typ
+e1/public/amsfonts/latxfont/line10.pfb></usr/share/texlive/texmf-dist/fonts/typ
+e1/public/amsfonts/symbols/msbm10.pfb>
+Output written on BA_main_german.pdf (52 pages, 1880416 bytes).
+PDF statistics:
+ 3632 PDF objects out of 4296 (max. 8388607)
+ 1194 compressed objects within 12 object streams
+ 198 named destinations out of 1000 (max. 500000)
+ 506 words of extra memory for PDF output out of 10000 (max. 10000000)
+
